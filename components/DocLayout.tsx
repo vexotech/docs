@@ -127,7 +127,7 @@ export const DocLayout = ({ current, children, links = [], previous, next }: Pro
                     </div>
                     {links.length > 0 && <div className='w-72 h-72 fixed top-28 right-8 pl-8 pr-2 hidden lg:block'>
                         <div className="text-xs mb-4 uppercase font-light text-slate-300">On this Page</div>
-                        {links.map(link => <div className="text-sm mb-3 cursor-pointer font-light text-slate-300 hover:text-slate-500 hover:underline underline-offset-2"><a href="#create-an-account">{link}</a></div>)}
+                        {links.map((link, idx) => <div key={idx} className="text-sm mb-3 cursor-pointer font-light text-slate-300 hover:text-slate-500 hover:underline underline-offset-2"><a href="#create-an-account">{link}</a></div>)}
                     </div>}
                 </div>
             </div>
