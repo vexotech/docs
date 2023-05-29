@@ -6,10 +6,15 @@ import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import React, { useState } from 'react';
 
+type DocLink = {
+    href: string,
+    label: string,
+}
+
 interface Props {
     current: string,
-    previous: string,
-    next: string,
+    previous: DocLink,
+    next: DocLink,
 
     links: string[],
 
