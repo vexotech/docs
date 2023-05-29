@@ -1,0 +1,21 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image'
+
+# Popular Screens
+
+### How it works
+
+Watching your most popular screens will provide you with confidence about assumptions you've done on how your users are interacting with your app.
+
+Popular screens is calculated by counting the amount of times a screen is visited by gathering the screen name using [React Navigation component](https://reactnavigation.org/docs/screen/).
+For this count, we do not take in account any type of context, that is, we will count even if it's the same user visiting the N amount of times,
+or different app versions from the same screen.
+
+<DocImage src="/docs/popular-screens.png" width="502" height="392" smallImage/>
+
+export default ({ children }) => <DocLayout
+    current="popular-screens"
+    previous={{ href: 'version-adoption', label: 'Version Adoption'}}
+    next={{ href: 'app-intensity', label: 'App Intensity' }} >
+        {children}
+</DocLayout>

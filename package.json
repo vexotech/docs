@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "v1",
+    "@mdx-js/loader": "^2.3.0",
+    "@mdx-js/react": "^2.3.0",
+    "@next/mdx": "^13.4.4",
     "@types/node": "20.2.5",
     "@types/react": "18.2.7",
     "@types/react-dom": "18.2.4",

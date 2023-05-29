@@ -1,0 +1,23 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image'
+
+# New Downloads
+
+### How it works
+
+Having a distribution of how often your app is being downloaded is extremely important to make marketing decisions.
+If you've invested a lot of effort in making sure that you support all of your iOS devices,
+though, most of your downloads are from Android phones, you should make a different move to respond to that audience.
+
+A new download is registered when the user opens the app for the first time, as there is no way for us to know when the real download happened.
+It is the best approximation in time to the download time as it's a normal use case to download an app and immediately open it;
+that time frame gives us the confidence needed to meet our precision which is within seconds.
+
+<DocImage src="/docs/new-downloads.png" width="1018" height="392"/>
+
+export default ({ children }) => <DocLayout
+    current="new-downloads"
+    previous={{ href: 'average-session', label: 'Average Session'}}
+    next={{ href: 'drop-off-rate', label: 'Drop Off Rate' }} >
+        {children}
+</DocLayout>

@@ -1,0 +1,37 @@
+import { DocLayout } from '../components/DocLayout';
+
+# Introduction to Vexo
+
+Vexo is the first React Native out of the box tool for analytics.
+We provide a solution for precise and actionable data with a seamless integration and zero-configuration, zero-coding support.
+
+Our documentation is a great place to find most answers and make sure that your experience using Vexo is a magical one.
+
+## Quickstart
+
+**Prerequisites**
+
+- Using [React Navigation](https://reactnavigation.org/)
+
+**Getting started**
+
+1. Create an account [here](https://www.vexo.co/sign-up)
+2. You'll be prompted into creating a new app, give it a cool name (you will be able to change that later) and once you submit it, you'll be given an API key.
+3. Run `yarn add vexo-analytics` or `npm install vexo-analytics` in your project. `cd ios && pod install` is required for iOS as well.
+4. You are just one line of code away! In your `index.js` add the following, eg:
+
+```js
+// index.js
+import { AppRegistry } from 'react-native';
+import { App } from './MyCoolApp';
+
+// Vexo
+import { vexo } from 'vexo-analytics';
+vexo('YOUR_API_KEY');
+
+AppRegistry.registerComponent(appName, () => App);
+```
+
+**Wait, that's it?** Yes! That's it. With that ease of integration experience you get an incredible set of features, go [check them out](https://www.vexo.co/docs/features)!
+
+export default ({ children }) => <DocLayout current="integration" next={{href: 'expo', label: 'Integrate with Expo'}}>{children}</DocLayout>

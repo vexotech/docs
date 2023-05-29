@@ -1,0 +1,25 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image';
+
+# Delete Account
+
+Deleting your account is a feature we provide to assure every user that the data belongs to yourself.
+By deleting your app, we will delete **all the information** that relates to your account.
+This is a really sensible operation, and it is not recommended to take it lightly, this is because when deleting your account, we'll delete:
+* All of the apps you own
+* Related data from the apps you own
+* Screenshots from the apps
+* Empty all caches with your information
+* Delete all the API keys
+* Block data from remnant clients that are still sending data to [Vexo](https://vexo.co)
+
+This is done this way so that we assure privacy for your business and that your data is yours, only that it flows through our systems.
+
+<DocImage src="/docs/delete-account.png" width="1039" height="329"/>
+
+export default ({ children }) => <DocLayout
+    current="delete-account"
+    previous={{ href: 'account-general-information', label: 'Account General Information'}}
+    >
+        {children}
+</DocLayout>

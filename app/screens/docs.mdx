@@ -1,0 +1,30 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image'
+
+# Screens & Taps
+
+### How it works
+
+Having a heatmap of where your screen is getting more activity is essential to visualize your most interacted components.
+It can reveal unexpected user behavior that you might have slipped when designing.
+For example, if your dashboard with a list of to-do items has taps on the sides, it means that they are dragging to use the control widgets often.
+
+On every tap, we calculate `x` and `y` position in the screen and multiply it by the pixel density, so we'll have a generic representation of where
+the tap was in the screen, and then be able to show it to you in the most accurate way.
+We then aggregate this data into heat points and overlap them in your screen.
+
+We also understand the context of the tap, which means:
+- The current screen it's being tapped on
+- The current version of your app
+- The phone model the device is on
+
+You can select all of your app versions to see past heatmaps of your screen, and different models to understand different patterns across models adopting your app.
+
+<DocImage src="/docs/screens.png" width="990" height="702"/>
+
+export default ({ children }) => <DocLayout
+    current="screens"
+    previous={{ href: 'real-time', label: 'Real Time Inspector'}}
+    next={{ href: 'screenshots', label: 'Screenshots' }} >
+        {children}
+</DocLayout>

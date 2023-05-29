@@ -1,0 +1,28 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image'
+
+# Device Sessions
+
+### How it works
+
+As mentioned in [average-session metric](https://vexo.co/docs/average-sessions),
+a session for a user is defined under the initial event of start using your app, and one of the closing events:
+- They close the app
+- They start browsing other apps
+- They lock the screen
+
+Contained under a session, we will track user actions and show them ordered by the time those events happened so that you can understand the sequence
+under analysis. Sessions will be listed by device with valuable data added to further understand what is it that you are taking a look at,
+such as the time a session took, the amount of events, the app version, the device model and more!
+
+This feature is great to understand specific behavior from a user,
+track down bugs from your application, and understand that users are following patterns when using your app.
+
+<DocImage src="/docs/sessions.png" width="1018" height="392"/>
+
+export default ({ children }) => <DocLayout
+    current="sessions"
+    previous={{ href: 'custom-events', label: 'Custom Events'}}
+    next={{ href: 'real-time', label: 'Real Time' }} >
+        {children}
+</DocLayout>

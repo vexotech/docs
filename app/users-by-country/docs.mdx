@@ -1,0 +1,26 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image'
+
+# Users By Country
+
+### How it works
+
+Checking out the demographic distribution of your users will allow you to prioritize and improve specific sections of your app targeted to different audiences.
+For example, you could move your data and API from EU to Australia if you see that most of your users live there.
+
+Whenever we receive the data from a device, we resolve the GeoLocation (using [GeoLite](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en))
+from the incoming network package based on the [IP address](https://en.wikipedia.org/wiki/IP_address) and link the device with the location resolved.
+
+You have users in San Francisco, USA, and one of them just opened the app. We will receive a request in our servers from an IP address,
+from which we'll figure out it's location. The same happens for another user which is in Mumbai, India.
+
+You will be able to see in the world map that USA and India are highlighted countries, adding 1 user per unique device interaction in each for the time period specified.
+
+<DocImage src="/docs/users-by-country.png" width="502" height="392" smallImage/>
+
+export default ({ children }) => <DocLayout
+    current="users-by-country"
+    previous={{ href: 'drop-off-rate', label: 'Drop Off Rate'}}
+    next={{ href: 'version-adoption', label: 'Version Adoption' }} >
+        {children}
+</DocLayout>

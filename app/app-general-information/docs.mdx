@@ -1,0 +1,18 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image';
+
+# General information
+
+General information describes the high overview information of your app.
+This is where most of the settings are, such as the app name, your API keys, billing info, current usage, etc.
+
+Here you are able to change your apps properties, as the name or the icon, as well as copying the key, revoke it or request a new one in case you want to circle them
+
+<DocImage src="/docs/app-general-information.png" width="1050" height="703"/>
+
+export default ({ children }) => <DocLayout
+    current="app-general-information"
+    previous={{ href: 'screenshots', label: 'Screenshots'}}
+    next={{ href: 'people', label: 'People' }} >
+        {children}
+</DocLayout>
