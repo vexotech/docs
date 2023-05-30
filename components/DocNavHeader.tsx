@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 
-export const DocNavHeader: React.ReactNode = () => {
+export const DocNavHeader = (): React.JSX.Element => {
     return <div className="w-full h-16 fixed top-0 bg-white bg-opacity-95 pl-0 sm:pl-56 md:pl-72">
         <div className="w-full h-full px-12 flex items-center justify-between">
             <div className="text-sm text-slate-600 cursor-pointer flex items-center sm:hidden">

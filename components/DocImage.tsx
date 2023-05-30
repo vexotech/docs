@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import React from "react";
 
 interface Props {
     alt: string | null,
@@ -8,7 +9,7 @@ interface Props {
     height: number,
 }
 
-export const DocImage = ({ alt, src, smallImage, width, height }: Props) => {
+export const DocImage = ({ alt, src, smallImage, width, height }: Props): React.JSX.Element => {
     return (
         <div
             style={smallImage ? {width: `${width}px`, height: `${height}px`} : {}}

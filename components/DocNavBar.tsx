@@ -5,7 +5,17 @@ interface Props {
     currentItemName: string,
 }
 
-const NavItem: React.ReactNode = ({ isActive, title, href }) => {
+interface NavItemsProps {
+    isActive?: boolean,
+    title: string,
+    href?: string,
+}
+
+interface NavTitleProps {
+    title: string,
+}
+
+const NavItem = ({ isActive, title, href }: NavItemsProps): React.JSX.Element => {
     return <li className="py-1">
         <a className={`${isActive ? 'text-gray-600 underline' : 'text-gray-500' } text-sm font-light hover:underline underline-offset-2`} href={href}>
             {title}
@@ -13,11 +23,11 @@ const NavItem: React.ReactNode = ({ isActive, title, href }) => {
     </li>
 };
 
-const NavTitle: React.ReactNode = ({ title }) => {
+const NavTitle = ({ title }: NavTitleProps): React.JSX.Element => {
     return <li className="text-gray-600 font-bold pt-5 pb-2 uppercase text-xs">{title}</li>
 };
 
-export const DocNavBar: React.ReactNode = ({ currentItemName }) : Props => {
+export const DocNavBar = ({ currentItemName }: Props): React.JSX.Element => {
   return <div className={`fixed transition-all top-0 w-56 sm:left-0 md:w-72 h-screen bg-white border-r-2 border-r-slate-50 z-10`}>
       <div className="flex flex-col">
           <div className="w-full h-16 flex items-center px-10 pr-5 sm:pr-10 justify-between">

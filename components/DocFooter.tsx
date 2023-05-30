@@ -7,7 +7,12 @@ export type DocLink = {
     label: string,
 }
 
-export const DocFooter: React.ReactNode = ({ previous, next }: DocLink) => {
+interface Props {
+    previous: DocLink,
+    next: DocLink,
+}
+
+export const DocFooter = ({ previous, next }: Props): React.JSX.Element => {
     const router = useRouter();
 
     const navigate = (href: string) => (): void => {

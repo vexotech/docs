@@ -16,7 +16,7 @@ interface Props {
     children: React.ReactNode,
 }
 
-export const DocLayout = ({ current, children, links = [], previous, next }: Props) => {
+export const DocLayout = ({ current, children, links = [], previous, next }: Props): React.JSX.Element => {
     return (
         <div>
             <DocNavBar currentItemName={current} />
