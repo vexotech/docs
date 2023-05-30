@@ -21,7 +21,7 @@ export const DocLayout = ({ current, children, links = [], previous, next }: Pro
         <div>
             <DocNavBar currentItemName={current} />
             <DocNavHeader />
-            <DocBody>{children}</DocBody>
+            <DocBody next={next} previous={previous}>{children}</DocBody>
         </div>
     );
 };
