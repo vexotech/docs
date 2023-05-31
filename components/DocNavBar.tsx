@@ -28,7 +28,7 @@ const NavTitle = ({ title }: NavTitleProps): React.JSX.Element => {
 };
 
 export const DocNavBar = ({ currentItemName }: Props): React.JSX.Element => {
-  return <div className={`fixed transition-all top-0 w-56 sm:left-0 md:w-72 h-screen bg-white border-r-2 border-r-slate-50 z-10`}>
+  return <div className={`fixed transition-all top-0 hidden md:block w-56 md:w-72 h-screen bg-white border-r-2 border-r-slate-50 z-10`}>
       <div className="flex flex-col">
           <div className="w-full h-16 flex items-center px-10 pr-5 sm:pr-10 justify-between">
               <div className="text-gray-600 font-bold text-xs sm:text-sm">
