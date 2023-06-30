@@ -10,8 +10,7 @@ type Data = {
 
 export const sidebarData: SidebarData = [
     { isHeader: true, title: 'Getting Started', name: 'getting-started' },
-    { title: 'React Native', name: 'integration', href: '/' },
-    { title: 'Expo', name: 'expo', href: '/expo' },
+    { title: 'Quickstart', name: 'integration', href: '/' },
     { title: 'Features', name: 'features', href: '/features' },
 
     { isHeader: true, title: 'Dashboard', name: 'dashboard' },
