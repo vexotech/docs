@@ -2,8 +2,20 @@ import Head from 'next/head'
 import './globals.css'
 
 export const metadata = {
-  title: 'Vexo Documentation',
-  description: 'Vexo Documentation',
+  title: 'Vexo | Documentation | Next Generation Analytics',
+  description: 'Out of the box insights for your React Native applications',
+  openGraph: {
+    title: 'Vexo | Documentation | Next Generation Analytics',
+    description: 'Out of the box insights for your React Native applications',
+    images: {
+      url: 'https://www.vexo.co/vexo-04.png'
+    } 
+  },
+  twitter: {
+    title: 'Vexo | Documentation | Next Generation Analytics',
+    description: 'Out of the box insights for your React Native applications',
+    images: ['https://www.vexo.co/vexo-04.png']
+  }
 }
 
 export default function RootLayout({
