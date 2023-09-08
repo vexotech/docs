@@ -1,7 +1,9 @@
-import { DocLayout, DocImage } from '../../components';
+import { DocLayout, DocImage, Deprecation } from '../../components';
 import Image from 'next/image'
 
 # New Downloads
+
+<Deprecation message={(<div>This stat was <b>deprecated</b> in favor of <a href="/unique-downloads">Unique downloads</a></div>)} />
 
 ### How it works
 
@@ -9,7 +11,7 @@ Having a distribution of how often your app is being downloaded is extremely imp
 If you've invested a lot of effort in making sure that you support all of your iOS devices,
 though, most of your downloads are from Android phones, you should make a different move to respond to that audience.
 
-A new download is registered when the user opens the app for the first time, as there is no way for us to know when the real download happened.
+A new download is registered when the user opens the app for the first time, including multiple downloads from the same device.
 It is the best approximation in time to the download time as it's a normal use case to download an app and immediately open it;
 that time frame gives us the confidence needed to meet our precision which is within seconds.
 
@@ -17,7 +19,7 @@ that time frame gives us the confidence needed to meet our precision which is wi
 
 export default ({ children }) => <DocLayout
     current="new-downloads"
-    previous={{ href: 'average-session', label: 'Average Session'}}
-    next={{ href: 'drop-off-rate', label: 'Drop Off Rate' }} >
+    previous={{ href: 'custom-events', label: 'Custom Events'}}
+    next={{ href: 'sessions', label: 'Sessions' }} >
         {children}
 </DocLayout>
