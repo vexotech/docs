@@ -1,0 +1,23 @@
+import { DocLayout, DocImage } from '../../components';
+import Image from 'next/image'
+
+# Devices Distributions
+
+### How it works
+
+Knowing in which OS version and model your users are allows you to delve deeper into your users' devices and tailor your software or services to their specific needs and preferences, enhancing their overall experience and satisfaction.
+
+As an example, you might be interested in shipping a specific set of APIs that are not supported for users with the most used OS version, since they haven't upgraded their phone yet.
+Or, if you want to add an animation, you should know if it fits in the majority of your users screens.
+
+When your devices are sending data, we're able to detect that a device has changed the operating system version and model - eg: from iOS 16.16 to 16.16.1 - and we will update it in our end as well.
+We then count the total devices in a given operating system version.
+
+<DocImage src="/docs/os-distribution.png" width="502" height="400" smallImage/>
+
+export default ({ children }) => <DocLayout
+    current="devices-distributions"
+    previous={{ href: 'users-devices', label: 'Users Devices' }}
+    next={{ href: 'version-adoption', label: 'Version Adoption' }} >
+        {children}
+</DocLayout>

@@ -19,6 +19,8 @@ export const sidebarData: SidebarData = [
     { title: 'Unique Downloads', name: 'unique-downloads', href: '/unique-downloads' },
     { title: 'Drop Off Rate', name: 'drop-off-rate', href: '/drop-off-rate' },
     { title: 'Users By Country', name: 'users-by-country', href: '/users-by-country' },
+    { title: 'Users Devices', name: 'users-devices', href: '/users-devices' },
+    { title: 'Devices Distributions', name: 'devices-distributions', href: '/devices-distributions' },
     { title: 'Version Adoption', name: 'version-adoption', href: '/version-adoption' },
     { title: 'Popular Screens', name: 'popular-screens', href: '/popular-screens' },
     { title: 'App Intensity', name: 'app-intensity', href: '/app-intensity' },
