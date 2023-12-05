@@ -44,6 +44,22 @@ It's important to note that the identifier is a string and can be anything you w
 that you can then map it into your users' data to be able to know which user is it.
 As an example, in SQL a unique ID as a foreign key to your users' table should suffice.
 
+In case you want to make the device anonymous, `identifyDevice` supports `null` like in the following example:
+
+```js
+import { useEffect } from 'react'
+import { View } from 'react-native'
+import { identifyDevice } from 'vexo-analytics'
+
+const TrackerComponent = () => {
+    const onAskedNotToTrack = async () => {
+        // your code
+        await identifyDevice(null);
+    }
+    return (<View>{...}</View>);
+};
+```
+
 ### Tracking Opt-in
 
 Today users are more and more the owners of their data, and we want to go down that road for real.
