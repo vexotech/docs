@@ -24,40 +24,8 @@ your app is tracking depends on what tools your using, with Vexo analytics you a
 Additionaly you can use custom events when using Vexo, so if you use them to track anything else you might need to 
 include that information as well.
 
-### Handling tracking permissions
 
-When using Vexo Analytics you don't need to require special permissions, everything works out of the box!
-
-
-If you choose to do so we recommend using a third party library to do so such as `react-native-tracking-transparency` 
-with our opt-in/opt-out features.
-
-Check [react-native-tracking-transparency](https://github.com/mrousavy/react-native-tracking-transparency) to see how 
-to integrate it into your app, to disable or enable Vexo based on your users permissions, you shou call `disableTracking` or `enableTracking` accordingly.
-
-```
-import { enableTracking, disableTracking } from 'vexo-analytics';
-import { getTrackingStatus } from 'react-native-tracking-transparency';
-
-const App = () => {
-    ...
-
-    useEffect(() => {
-        getTrackingStatus().then(status => {
-            if (status !== 'authorized') {
-                disableTracking();
-            } else {
-                enableTracking();
-            }
-        })
-    }, []);
-
-    ...
-};
-```
-
-
-### Apple app privacy form
+### Publishing to Apple store
 
 Apple requires you to fill out the App Privacy form when you submit your app to the App Store.
 
@@ -87,6 +55,29 @@ Finally, they’ll explain their definition of what Tracking is and ask you to c
 Apple only considers tracking when data is linked to an user’s identity and used for targeted advertising or advertising measurement purposes, which is not something we do at Vexo so you can select *No*.
 
 <DocImage src="/docs/apple-identify-device.png" width="502" height="650" smallImage/>
+
+
+### Publishing to Google store
+
+When submiting to the Google store you'll need to submit information about what your app tracks too. Particulary you'll need
+to select specific options on **Data collection and security** and **Data safety**
+
+
+#### Data collection and security
+
+You'll be asked if your app collects or shares any of the required user data types and if that data is encrypted. You must select 
+**yes** to both of them.
+
+<DocImage src="/docs/android-collection.jpeg" width="502" height="250" smallImage/>
+
+#### Data safety
+
+Next you'll be asked about data safety. Make sure to select **Device or other IDs** since Vexo uses them.
+
+<DocImage src="/docs/android-safety.jpeg" width="520" height="230" smallImage/>
+
+
+And thats it! Once your app is approved you'll enjoy all the insights Vexo provides out of the box!
 
 
 
