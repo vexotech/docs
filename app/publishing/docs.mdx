@@ -5,25 +5,9 @@ import Image from 'next/image'
 
 ### Introduction
 
-Publishing your application to a store is an exciting step of the development journey.
-
-When submitting your app you'll be asked to submit information about what data you are tracking. The full list of items
-your app is tracking depends on what tools your using, with Vexo analytics you are tracking:
-
-- Device ID
-- Device model, OS
-- Device country
-- Application version
-- Opened/closed/browsing app
-- Changed screen
-- Taps on screen
-- Started and finished typying
-- Screen orientation
-- Network requests 
-
-Additionaly you can use custom events when using Vexo, so if you use them to track anything else you might need to 
-include that information as well.
-
+Publishing your application to a store is an exciting step of the development journey. When submitting your application to
+the store you'll be asked about privacy and data collection practicies. We'll guide you through the process
+on each platform.
 
 ### Publishing to Apple store
 
@@ -49,7 +33,7 @@ You’ll then be asked to expand on how you use the Product Interaction data. Se
 <DocImage src="/docs/apple-analytics.png" width="502" height="610" smallImage/>
 
 Then next question is related to **User Identification**.
-This depends on how you are using `identifyUser` to identify your users. If you are not using any personal information such as their email then you can safely select **No** for this question.
+We are not any personal information so you can safely select **No** for this question.
 
 Finally, they’ll explain their definition of what Tracking is and ask you to confirm if you track users.
 Apple only considers tracking when data is linked to an user’s identity and used for targeted advertising or advertising measurement purposes, which is not something we do at Vexo so you can select *No*.
