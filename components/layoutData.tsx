@@ -12,6 +12,7 @@ export const sidebarData: SidebarData = [
     { isHeader: true, title: 'Getting Started', name: 'getting-started' },
     { title: 'Quickstart', name: 'integration', href: '/' },
     { title: 'Features', name: 'features', href: '/features' },
+    { title: 'Publishing', name: 'publishing', href: '/publishing' },
 
     { isHeader: true, title: 'Dashboard', name: 'dashboard' },
     { title: 'Active Users', name: 'active-users', href: '/active-users' },
