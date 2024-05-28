@@ -1,0 +1,48 @@
+import { DocLayout, DocImage, Warning } from '../../components';
+import Image from 'next/image'
+import Link from 'next/link'
+
+# Customize your dashboard
+
+<Warning message={(<div>This feature is for <b>enterprise</b> accounts only</div>)} />
+
+### How it works
+
+Tracking custom events is a great way to gain insight into key business metrics. To make it easier
+to track each custom events we allow our enterprise users to add custom widgets to their dashboard, this
+custom widgets shows the daily events of a selected custom events filtered by any property attached to it.
+
+Additionally, custom widgets support the same global filters as the rest of the dashboard so all the information
+you'll see shares the same context.
+
+<DocImage src="/docs/custom-dashboards-main.png" width="1018" height="392"/>
+
+### Usage
+
+<Warning message={(<div>Follow <Link href="/custom-events">this link</Link> for a guide on how to integrate custom events.</div>)} />
+
+To start tracking a custom event on your dashboard first click on the <b>Add to Dashboard</b> button.
+
+
+<DocImage src="/docs/custom-dashboards-first-step.png" width="1018" height="392" />
+
+
+You'll be prompt with a form asking you to name your widget and select any of your custom events. Optinally,
+you can add any number of filters based on your custom event properties.
+
+
+<DocImage src="/docs/custom-dashboards-form.png" width="1018" height="392"/>
+
+
+Once you completed filling in the form, hit submit and your widget will be automatically added to your dashboard.
+We'll gather all the data necessary and show the daily custom event usage for any period of time selected, even periods
+before the custom widget was ever added to your dashboard!
+
+
+
+export default ({ children }) => <DocLayout
+    current="new-downloads"
+    previous={{ href: 'custom-events', label: 'Custom Events'}}
+    next={{ href: 'sessions', label: 'Sessions' }} >
+        {children}
+</DocLayout>

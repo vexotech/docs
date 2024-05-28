@@ -26,7 +26,7 @@ export const sidebarData: SidebarData = [
     { title: 'Popular Screens', name: 'popular-screens', href: '/popular-screens' },
     { title: 'App Intensity', name: 'app-intensity', href: '/app-intensity' },
     { title: 'Custom Events', name: 'custom-events', href: '/custom-events' },
-    { title: 'New Downloads [deprecated]', name: 'new-downloads', href: '/new-downloads' },
+    { title: 'Customize your dashboard', name: 'custom-dashboards', href: '/custom-dashboards' },
 
     { isHeader: true, title: 'Devices', name: 'devices' },
     { title: 'Sessions', name: 'sessions', href: '/sessions' },
