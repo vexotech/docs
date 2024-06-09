@@ -33,9 +33,6 @@ export const sidebarData: SidebarData = [
     { title: 'Screen & Taps', name: 'screens', href: '/screens' },
     { title: 'Screenshots', name: 'screenshots', href: '/screenshots' },
 
-    { isHeader: true, title: 'Most Popular Paths', name: 'most-popular-paths' },
-    { title: 'Overview', name: 'overview', href: '/most-popular-paths' },
-
     { isHeader: true, title: 'App Settings', name: 'app-settings' },
     { title: 'General Information', name: 'app-general-information', href: '/app-general-information' },
     { title: 'People', name: 'people', href: '/people' },
