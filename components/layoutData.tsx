@@ -18,26 +18,20 @@ export const sidebarData: SidebarData = [
     { title: 'Active Users', name: 'active-users', href: '/active-users' },
     { title: 'Average Session', name: 'average-session', href: '/average-session' },
     { title: 'Unique Downloads', name: 'unique-downloads', href: '/unique-downloads' },
-    { title: 'Drop Off Rate', name: 'drop-off-rate', href: '/drop-off-rate' },
+    { title: 'Total Sessions', name: 'total-sessions', href: '/total-sessions' },
     { title: 'Users By Country', name: 'users-by-country', href: '/users-by-country' },
     { title: 'Users Devices', name: 'users-devices', href: '/users-devices' },
-    { title: 'Devices Distributions', name: 'devices-distributions', href: '/devices-distributions' },
     { title: 'Version Adoption', name: 'version-adoption', href: '/version-adoption' },
-    { title: 'Popular Screens', name: 'popular-screens', href: '/popular-screens' },
     { title: 'App Intensity', name: 'app-intensity', href: '/app-intensity' },
     { title: 'Custom Events', name: 'custom-events', href: '/custom-events' },
     { title: 'Customize your dashboard', name: 'custom-dashboards', href: '/custom-dashboards' },
 
     { isHeader: true, title: 'Devices', name: 'devices' },
     { title: 'Sessions', name: 'sessions', href: '/sessions' },
-    { title: 'Real Time Inspector', name: 'real-time', href: '/real-time' },
 
     { isHeader: true, title: 'Heatmaps', name: 'heatmaps' },
     { title: 'Screen & Taps', name: 'screens', href: '/screens' },
     { title: 'Screenshots', name: 'screenshots', href: '/screenshots' },
-
-    { isHeader: true, title: 'Most Popular Paths', name: 'most-popular-paths' },
-    { title: 'Overview', name: 'overview', href: '/most-popular-paths' },
 
     { isHeader: true, title: 'App Settings', name: 'app-settings' },
     { title: 'General Information', name: 'app-general-information', href: '/app-general-information' },
