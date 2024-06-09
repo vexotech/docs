@@ -1,24 +1,20 @@
 import { DocLayout, DocImage } from '../../components';
 import Image from 'next/image';
 
-# Drop off rate
+# Total Sessions
 
 ### How it works
 
-The rate at which users abandon your app provides further understanding about the enhancement that your users have with your app.
+As mentioned in [average-session metric](https://vexo.co/docs/average-session),
+A user's session begins with the initial event of starting to use the app and extends until the app is either closed or the screen is locked.
 
-This metric is related to what is known as bounce rate in the web,
-calculated as the percentage of users that only have one session for the current day, or the current time period and over all users that are active.
+By tracking the total number of sessions across a given timeframe you will be able to understand how much your users interact with your app.
+Combining this with the active users and session time stats you will get a clear picture of your app userbase.
 
-That means that if a user has interacted with your app only once and the time span is 28 days, this will be counted as drop off.
-In the case where it has interacted twice or more, this will be counted as a user that hasn't dropped off.
-
-In the future, the time span will be configurable so that you can specify what time span is appropriate.
-
-<DocImage src="/docs/drop-off-rate.png" width="1018" height="392"/>
+<DocImage src="/docs/total-sessions.png" width="1018" height="392"/>
 
 export default ({ children }) => <DocLayout
-    current="drop-off-rate"
+    current="total-sessions"
     previous={{ href: 'new-downloads', label: 'New Downloads'}}
     next={{ href: 'users-by-country', label: 'Users By Country' }} >
         {children}
