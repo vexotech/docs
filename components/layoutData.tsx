@@ -23,14 +23,12 @@ export const sidebarData: SidebarData = [
     { title: 'Users Devices', name: 'users-devices', href: '/users-devices' },
     { title: 'Devices Distributions', name: 'devices-distributions', href: '/devices-distributions' },
     { title: 'Version Adoption', name: 'version-adoption', href: '/version-adoption' },
-    { title: 'Popular Screens', name: 'popular-screens', href: '/popular-screens' },
     { title: 'App Intensity', name: 'app-intensity', href: '/app-intensity' },
     { title: 'Custom Events', name: 'custom-events', href: '/custom-events' },
     { title: 'New Downloads [deprecated]', name: 'new-downloads', href: '/new-downloads' },
 
     { isHeader: true, title: 'Devices', name: 'devices' },
     { title: 'Sessions', name: 'sessions', href: '/sessions' },
-    { title: 'Real Time Inspector', name: 'real-time', href: '/real-time' },
 
     { isHeader: true, title: 'Heatmaps', name: 'heatmaps' },
     { title: 'Screen & Taps', name: 'screens', href: '/screens' },
