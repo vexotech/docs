@@ -11,7 +11,7 @@ Our documentation is a great place to find most answers and make sure that your 
 
 **Prerequisites**
 
-- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://expo.github.io/router/docs/)
+- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://docs.expo.dev/router/introduction/)
 
 **Expo**
 
@@ -22,8 +22,8 @@ Our documentation is a great place to find most answers and make sure that your 
 
 1. Create an account [here](https://www.vexo.co/sign-up)
 2. You'll be prompted into creating a new app, give it a cool name (you will be able to change that later) and once you submit it, you'll be given an API key.
-3. Run `yarn add vexo-analytics` or `npm install vexo-analytics` in your project. Run `npx pod-install` if you have an iOS project.
-4. Add the following code to your app entry file (usually `index.js` or `App.js`):
+3. Run `yarn add vexo-analytics` or `npm install vexo-analytics` in your project. If you are using bare React Native, run `pod install` in the iOS folder.
+4. Add the following code to your app entry file (usually `index.js`, `App.js` or `_layout.tsx` if you're using Expo Router):
 
 ```js
 import { vexo } from 'vexo-analytics';
