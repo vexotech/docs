@@ -1,0 +1,174 @@
+import { DocLayout } from '../../components';
+import Link from 'next/link'
+
+# Changelog
+
+## 1.3.16 (2024-08-16)
+
+### Bug Fixes
+
+* Events with empty route
+
+## 1.3.15 (2024-06-11)
+
+### Bug Fixes
+
+* Support new RN architecture
+
+## 1.3.14 (2024-05-07)
+
+### Bug Fixes
+
+* Prevent re render on init
+
+## 1.3.13 (2024-01-29)
+
+### Bug Fixes
+
+* Fetch event serialization
+
+### Features
+
+* Add support for new iOS device models
+* Expo router v3 support
+
+## 1.3.12 (2023-12-05)
+
+### Features
+
+* Add support to make device anonymous
+
+## 1.3.11 (2023-09-07)
+
+### Bug Fixes
+
+* Fix bottom sheet not visible
+
+## 1.3.10 (2023-09-01)
+
+### Bug Fixes
+
+* State managment integration
+
+## 1.3.9 (2023-08-24)
+
+### Bug Fixes
+
+* Fix Blur for Expo images
+
+## 1.3.8 (2023-08-05)
+
+### Bug Fixes
+
+* Custom events with missing routes
+
+## 1.3.7 (2023-08-02)
+
+### Changed
+
+* Update main entry point
+
+## 1.3.6 (2023-07-04)
+
+### Bug Fixes
+
+* Event cleanup
+* Route syncing
+
+## 1.3.5 (2023-06-30)
+
+### Features
+
+* Add ts types to exported methods
+* Change methods description
+* Remove async for ts declaration
+
+## 1.3.4 (2023-06-27)
+
+### Bug Fixes
+
+* Fetch args tracking
+
+## 1.3.3 (2023-06-26)
+
+### Bug Fixes
+
+* Fix rtk query
+
+## 1.3.2 (2023-06-12)
+
+### Bug Fixes
+
+* Renderscript toolkit release build error
+
+# 1.3.1 (2023-06-03)
+
+### Bug Fixes
+* Route name for expo router
+
+# 1.3.0 (2023-05-31)
+
+### Bug Fixes
+
+* iOS modal screenshots
+
+### Features
+
+* Add support for expo-router
+
+## 1.2.4 (2023-05-12)
+
+### Bug Fixes
+
+* Navigation ref
+
+## 1.2.3 (2023-04-02)
+
+### Bug Fixes
+
+* Screenshots in new react native arch 
+
+
+## 1.2.2 (2023-03-31)
+
+### Bug Fixes
+
+* Fix screen taps
+* Fix screenshots request
+
+## 1.2.1 (2023-03-17)
+
+### Features
+
+* Track device cli version
+
+# 1.2.0 (2023-03-07)
+
+### Bug Fixes
+
+* Drop events if api key invalid
+
+### Features
+
+* Blur screenshot on Android
+* Blur screenshot on iOS
+
+# 1.1.0 (2023-01-20)
+
+### Features
+* Support custom events
+
+# 1.0.0 (2022-11-16)
+
+### Features
+* Initial release
+
+
+
+
+export default ({ children }) => <DocLayout
+    current="new-downloads"
+    previous={{ href: 'delete-account', label: 'Delete Account'}}
+    next={{ href: '/', label: 'Quick Start' }} >
+        {children}
+</DocLayout>
