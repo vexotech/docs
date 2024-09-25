@@ -41,4 +41,7 @@ export const sidebarData: SidebarData = [
     { isHeader: true, title: 'Account Settings', name: 'account-settings' },
     { title: 'General Information', name: 'account-general-information', href: '/account-general-information' },
     { title: 'Delete Account', name: 'delete-account', href: '/delete-account' },
+
+    { isHeader: true, title: 'Releases', name: 'releases' },
+    { title: 'Changelog', name: 'changelog', href: '/changelog' },
 ];
