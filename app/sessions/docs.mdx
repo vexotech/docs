@@ -5,7 +5,7 @@ import Image from 'next/image'
 
 ### How it works
 
-As mentioned in [average-session metric](https://vexo.co/docs/average-session),
+As mentioned in [average-session metric](https://docs.vexo.co/average-session),
 A user's session begins with the initial event of starting to use the app and extends until the app is either closed or the screen is locked.
 
 Contained under a session, we will track user actions and show them ordered by the time those events happened so that you can understand the sequence
@@ -20,6 +20,6 @@ track down bugs from your application, and understand that users are following p
 export default ({ children }) => <DocLayout
     current="sessions"
     previous={{ href: 'custom-dashboards', label: 'Customize your dashboard'}}
-    next={{ href: 'screens', label: 'Screen & Taps' }} >
+    next={{ href: 'session-replays', label: 'Session Replays' }} >
         {children}
 </DocLayout>

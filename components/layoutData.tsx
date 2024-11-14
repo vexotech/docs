@@ -29,12 +29,16 @@ export const sidebarData: SidebarData = [
     { isHeader: true, title: 'Devices', name: 'devices' },
     { title: 'Sessions', name: 'sessions', href: '/sessions' },
 
+    { isHeader: true, title: 'Session Replays', name: 'replays' },
+    { title: 'Session Replays', name: 'session-replays', href: '/session-replays' },
+
     { isHeader: true, title: 'Heatmaps', name: 'heatmaps' },
     { title: 'Screen & Taps', name: 'screens', href: '/screens' },
     { title: 'Screenshots', name: 'screenshots', href: '/screenshots' },
 
     { isHeader: true, title: 'App Settings', name: 'app-settings' },
     { title: 'General Information', name: 'app-general-information', href: '/app-general-information' },
+    { title: 'Tracking Information', name: 'app-tracking-information', href: '/app-tracking-information' },
     { title: 'People', name: 'people', href: '/people' },
     { title: 'Delete Application', name: 'delete-application', href: '/delete-application' },
 
