@@ -38,6 +38,7 @@ export const sidebarData: SidebarData = [
 
     { isHeader: true, title: 'App Settings', name: 'app-settings' },
     { title: 'General Information', name: 'app-general-information', href: '/app-general-information' },
+    { title: 'Webhooks', name: 'webhooks', href: '/webhooks' },
     { title: 'Tracking Information', name: 'app-tracking-information', href: '/app-tracking-information' },
     { title: 'People', name: 'people', href: '/people' },
     { title: 'Delete Application', name: 'delete-application', href: '/delete-application' },
