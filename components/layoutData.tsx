@@ -25,6 +25,7 @@ export const sidebarData: SidebarData = [
     { title: 'App Intensity', name: 'app-intensity', href: '/app-intensity' },
     { title: 'Custom Events', name: 'custom-events', href: '/custom-events' },
     { title: 'Customize your dashboard', name: 'custom-dashboards', href: '/custom-dashboards' },
+    { title: 'Funnels', name: 'funnels', href: '/funnels' },
 
     { isHeader: true, title: 'Devices', name: 'devices' },
     { title: 'Sessions', name: 'sessions', href: '/sessions' },
