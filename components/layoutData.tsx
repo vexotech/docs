@@ -13,6 +13,7 @@ export const sidebarData: SidebarData = [
     { title: 'Quickstart', name: 'integration', href: '/' },
     { title: 'Features', name: 'features', href: '/features' },
     { title: 'Publishing', name: 'publishing', href: '/publishing' },
+    { title: 'Web Analytics', name: 'web-analytics', href: '/web-analytics' },
 
     { isHeader: true, title: 'Dashboard', name: 'dashboard' },
     { title: 'Active Users', name: 'active-users', href: '/active-users' },
