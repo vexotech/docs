@@ -10,9 +10,9 @@ type Data = {
 
 export const sidebarData: SidebarData = [
     { isHeader: true, title: 'Getting Started', name: 'getting-started' },
-    { title: 'Quickstart', name: 'integration', href: '/' },
-    { title: 'Features', name: 'features', href: '/features' },
-    { title: 'Publishing', name: 'publishing', href: '/publishing' },
+    { title: 'Mobile Analytics', name: 'integration', href: '/' },
+    { title: 'Mobile Features', name: 'features', href: '/features' },
+    { title: 'Mobile Publishing', name: 'publishing', href: '/publishing' },
     { title: 'Web Analytics', name: 'web-analytics', href: '/web-analytics' },
 
     { isHeader: true, title: 'Dashboard', name: 'dashboard' },

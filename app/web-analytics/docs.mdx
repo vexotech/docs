@@ -21,6 +21,22 @@ To start collecting analytics data, paste the following script into your site’
 <script src="https://www.vexo.co/analytics.js" defer></script>
 ```
 
+3. **Track custom events and identify devices (optional)**
+
+You can enhance your analytics by tracking custom events and identifying devices:
+
+- Custom Event
+
+```js
+global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
+```
+
+- Identify device
+
+```js
+global?.vexo?.identifyDevice('user@example.com');
+```
+
 That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
 
 export default ({ children }) => <DocLayout
