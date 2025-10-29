@@ -1,0 +1,58 @@
+import { DocLayout } from '../../../../components/DocLayout';
+
+# Quickstart Guide
+
+Get Vexo Analytics running in your React Native app in under 5 minutes.
+
+## Installation
+
+Install the Vexo Analytics package:
+
+```bash
+npm install vexo-analytics
+# or
+yarn add vexo-analytics
+```
+
+## Basic Setup
+
+### 1. Initialize Vexo Analytics
+
+Add this to your app's entry point (`App.js` or `index.js`):
+
+```js
+import { initVexo } from 'vexo-analytics';
+
+// Initialize with your API key
+initVexo('YOUR_API_KEY');
+```
+
+### 2. Get Your API Key
+
+1. Visit [Vexo Dashboard](https://dashboard.vexo.co)
+2. Create your account
+3. Add your React Native app
+4. Copy your API key
+
+### 3. That's It!
+
+Vexo Analytics is now automatically tracking:
+- App sessions
+- Screen navigation
+- User interactions
+- Device information
+- Performance metrics
+
+## Verification
+
+1. Run your app
+2. Navigate through a few screens
+3. Check your [Vexo Dashboard](https://dashboard.vexo.co) for real-time data
+
+## Next Steps
+
+- Learn [How it Works](/react-native-guide/integration/how-it-works)
+- Explore [Mobile Features](/react-native-guide/mobile-features/overview)
+- Implement [Custom Events](/react-native-guide/mobile-features/custom-events)
+
+export default ({ children }) => <DocLayout current="quickstart" previous={{href: '/react-native-guide/introduction', label: 'Introduction'}} next={{href: '/react-native-guide/integration/how-it-works', label: 'How it Works'}}>{children}</DocLayout>

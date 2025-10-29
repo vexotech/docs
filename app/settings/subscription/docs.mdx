@@ -1,0 +1,165 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Subscription
+
+Manage your Vexo Analytics subscription plan and features.
+
+## Overview
+
+The Subscription section provides detailed control over your Vexo Analytics plan, including feature management, usage monitoring, and plan modifications.
+
+## Current Subscription
+
+### Plan Information
+- **Plan Name**: Your current subscription tier (Starter, Professional, Enterprise)
+- **Billing Cycle**: Monthly or annual billing
+- **Subscription Status**: Active, canceled, or suspended
+- **Auto-Renewal**: Whether your plan auto-renews
+- **Contract End Date**: When your current commitment expires
+
+### Subscription ID
+- **Subscription ID**: Unique identifier for support requests
+- **Account Manager**: Your dedicated contact (Enterprise plans)
+- **Support Level**: Your included support tier
+
+## Plan Features
+
+### Included Features
+- **Monthly Page Views**: Your plan's page view allowance
+- **Data Retention**: How long data is stored
+- **API Calls**: Monthly API request limit
+- **Session Replays**: Number of session recordings included
+- **Custom Events**: Custom event tracking limit
+- **Team Members**: Maximum users on your account
+
+### Feature Usage
+- **Current Usage**: Real-time usage statistics
+- **Usage Trends**: Historical usage patterns
+- **Projected Usage**: Estimated monthly consumption
+- **Overage Alerts**: Notifications when approaching limits
+
+## Available Plans
+
+### Starter Plan - $29/month
+- **Page Views**: Up to 100K monthly page views
+- **Data Retention**: 12 months
+- **API Calls**: 1M monthly requests
+- **Session Replays**: 1,000 monthly sessions
+- **Team Members**: Up to 3 users
+- **Support**: Email support
+
+### Professional Plan - $99/month
+- **Page Views**: Up to 1M monthly page views
+- **Data Retention**: 24 months
+- **API Calls**: 10M monthly requests
+- **Session Replays**: 10,000 monthly sessions
+- **Custom Events**: Unlimited
+- **Team Members**: Up to 10 users
+- **Support**: Priority email + chat support
+
+### Enterprise Plan - Custom Pricing
+- **Page Views**: Unlimited
+- **Data Retention**: Custom (up to 7 years)
+- **API Calls**: Unlimited
+- **Session Replays**: Unlimited
+- **Custom Features**: Custom dashboard widgets
+- **Team Members**: Unlimited
+- **Support**: Dedicated account manager + phone support
+
+## Plan Management
+
+### Upgrade Your Plan
+- **Instant Upgrades**: Immediate access to new features
+- **Prorated Billing**: Pay only for the remaining billing period
+- **Feature Activation**: New features enabled immediately
+- **Data Migration**: Seamless transition of existing data
+
+### Downgrade Considerations
+- **Feature Loss**: Features removed with lower plans
+- **Data Retention**: Potential data loss with shorter retention
+- **User Limits**: May need to remove team members
+- **Effective Date**: Changes take effect at next billing cycle
+
+### Plan Customization (Enterprise)
+- **Custom Limits**: Negotiate specific usage allowances
+- **Feature Additions**: Add specialized features
+- **Integration Support**: Custom integration assistance
+- **Training**: Dedicated onboarding and training
+
+## Add-ons & Extensions
+
+### Available Add-ons
+- **Additional Page Views**: $10 per 100K additional views
+- **Extended Data Retention**: $50/month per additional year
+- **Extra Session Replays**: $20 per 1,000 additional sessions
+- **Priority Support**: $200/month for enhanced support
+- **Custom Integrations**: Quote-based custom development
+
+### Temporary Upgrades
+- **Traffic Spikes**: Temporary increases for expected traffic
+- **Event Coverage**: Short-term upgrades for special events
+- **Seasonal Adjustments**: Automatic scaling for seasonal businesses
+
+## Subscription History
+
+### Plan Changes
+- **Change History**: Record of all plan modifications
+- **Effective Dates**: When changes took effect
+- **Price History**: Historical pricing information
+- **Feature Changes**: Log of feature additions/removals
+
+### Subscription Events
+- **Renewals**: Automatic renewal history
+- **Suspensions**: Any account suspension periods
+- **Reactivations**: Account reactivation events
+- **Cancellations**: Cancellation and reason history
+
+## Usage Analytics
+
+### Real-time Monitoring
+- **Current Usage**: Live usage dashboard
+- **Daily Trends**: Daily usage patterns
+- **Monthly Projections**: Predicted monthly usage
+- **Alert Thresholds**: Customizable usage alerts
+
+### Historical Analysis
+- **Usage Trends**: Long-term usage patterns
+- **Seasonal Variations**: Usage fluctuations over time
+- **Growth Tracking**: Account growth metrics
+- **Efficiency Metrics**: Cost per page view, session, etc.
+
+## Cancellation & Suspension
+
+### Cancellation Options
+- **Immediate Cancellation**: Cancel with immediate effect
+- **End of Billing Period**: Cancel at natural expiration
+- **Account Suspension**: Temporarily suspend service
+- **Data Export**: Export data before cancellation
+
+### Retention Offers
+- **Discount Offers**: Special pricing to retain subscription
+- **Feature Adjustments**: Modified plans to meet needs
+- **Pause Options**: Temporarily pause service
+- **Feedback Collection**: Understanding cancellation reasons
+
+### Reactivation
+- **Easy Reactivation**: Simple process to restart service
+- **Data Recovery**: Restore previously exported data
+- **Plan Selection**: Choose new plan upon reactivation
+- **Welcome Back Offers**: Special pricing for returning customers
+
+## Support & Contact
+
+### Subscription Support
+- **Plan Questions**: Get help choosing the right plan
+- **Billing Issues**: Resolve subscription billing problems
+- **Feature Questions**: Understand plan features and limits
+- **Usage Optimization**: Tips to optimize your plan usage
+
+### Contact Methods
+- **Email Support**: subscription@vexo.co
+- **Live Chat**: Available during business hours
+- **Phone Support**: Available for Professional+ plans
+- **Account Manager**: Direct contact for Enterprise customers
+
+export default ({ children }) => <DocLayout current="subscription" previous={{href: '/settings/billing', label: 'Billing'}}>{children}</DocLayout>

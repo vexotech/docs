@@ -1,0 +1,98 @@
+import { DocLayout } from '../../../../components/DocLayout';
+
+# How Vexo Analytics Works
+
+Understanding the technical architecture behind Vexo Analytics in React Native applications.
+
+## Architecture Overview
+
+Vexo Analytics operates as a lightweight, background service that automatically captures user interactions and app events without impacting your app's performance.
+
+## Event Collection
+
+### Automatic Events
+Vexo automatically tracks:
+- **App State Changes**: Foreground/background transitions
+- **Screen Navigation**: Route changes and screen views
+- **User Interactions**: Taps, swipes, and gestures
+- **Device Events**: Orientation changes, network status
+- **Performance Metrics**: App launch time, memory usage
+
+### Custom Events
+You can also track business-specific events:
+
+```js
+import { customEvent } from 'vexo-analytics';
+
+// Track user actions
+customEvent('button_clicked', {
+  button_name: 'purchase',
+  screen: 'product_detail'
+});
+
+// Track business metrics
+customEvent('purchase_completed', {
+  product_id: 'abc123',
+  amount: 29.99,
+  currency: 'USD'
+});
+```
+
+## Data Processing Pipeline
+
+1. **Event Capture**: Events are captured in real-time
+2. **Local Buffering**: Data is temporarily stored locally
+3. **Batch Upload**: Events are sent in optimized batches
+4. **Real-time Processing**: Data appears in dashboard within minutes
+
+## Privacy & Security
+
+### Data Protection
+- No PII (Personally Identifiable Information) collected
+- All data encrypted in transit
+- Optional user identification with your own identifiers
+
+### User Consent
+```js
+import { enableTracking, disableTracking } from 'vexo-analytics';
+
+// Respect user privacy preferences
+const handlePrivacyToggle = async (userConsent) => {
+  if (userConsent) {
+    await enableTracking();
+  } else {
+    await disableTracking();
+  }
+};
+```
+
+## Performance Impact
+
+- **Bundle Size**: < 50KB added to your app
+- **Memory Usage**: < 5MB additional RAM
+- **Battery Impact**: Negligible battery consumption
+- **Network Usage**: Minimal, optimized batch uploads
+
+## Integration with React Native
+
+### Navigation Tracking
+Works seamlessly with popular navigation libraries:
+- React Navigation
+- React Native Navigation
+- Native Stack Navigator
+
+### State Management
+Compatible with all state management solutions:
+- Redux
+- MobX
+- Zustand
+- Context API
+
+## Next Steps
+
+Now that you understand how Vexo works, explore the powerful features available:
+- [Mobile Features Overview](/react-native-guide/mobile-features/overview)
+- [Dashboard Analytics](/react-native-guide/mobile-features/dashboard/active-users)
+- [Custom Events](/react-native-guide/mobile-features/custom-events)
+
+export default ({ children }) => <DocLayout current="how-it-works" previous={{href: '/react-native-guide/integration/quickstart', label: 'Quickstart'}} next={{href: '/react-native-guide/mobile-features/overview', label: 'Mobile Features Overview'}}>{children}</DocLayout>

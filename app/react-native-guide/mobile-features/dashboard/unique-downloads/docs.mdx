@@ -1,0 +1,22 @@
+import { DocLayout, DocImage } from '../../../../../components';
+import Image from 'next/image'
+
+# Unique Downloads
+
+### How it works
+
+Gaining insights into how often your app is downloaded is a key factor in making informed marketing decisions.
+
+We ensure each download is counted uniquely when the app is initially installed on a device. If a user downloads the app multiple times on the same device, we'll still treat it as a single download.
+
+Our download tracking mechanism triggers upon the user's initial app launch. This methodology provides the most accurate approximation of download times, aligning with typical user behavior—downloading and promptly launching the app. This precision is measured within seconds.
+
+
+<DocImage src="/docs/unique-downloads.png" width="1018" height="392"/>
+
+export default ({ children }) => <DocLayout
+    current="unique-downloads"
+    previous={{ href: 'average-session', label: 'Average Session'}}
+    next={{ href: 'total-sessions', label: 'Total Sessions' }} >
+        {children}
+</DocLayout>

@@ -1,0 +1,76 @@
+import { DocLayout } from '../../../../components/DocLayout';
+
+# Mobile Features Overview
+
+Discover the comprehensive suite of analytics features available for your React Native application.
+
+## Core Analytics Features
+
+### 📊 Dashboard Analytics
+Get deep insights into your app's performance with our comprehensive dashboard:
+- [Active Users](/react-native-guide/mobile-features/dashboard/active-users) - Real-time and historical user activity
+- [Session Analytics](/react-native-guide/mobile-features/dashboard/average-session) - Understanding user engagement
+- [Download Metrics](/react-native-guide/mobile-features/dashboard/unique-downloads) - Track app adoption
+- [Geographic Insights](/react-native-guide/mobile-features/dashboard/users-by-country) - Global user distribution
+
+### 👥 User Management
+- [People](/react-native-guide/mobile-features/people) - Individual user tracking and profiles
+- User identification and segmentation
+- Custom user properties and attributes
+
+### 📹 Behavioral Analytics
+- [Session Replays & Heatmaps](/react-native-guide/mobile-features/session-replays-heatmaps) - Visual user journey analysis
+- Touch and interaction tracking
+- Screen recording capabilities
+
+### 🎯 Custom Analytics
+- [Custom Events](/react-native-guide/mobile-features/custom-events) - Business-specific tracking
+- Conversion funnel analysis
+- Goal tracking and measurement
+
+## Quick Feature Access
+
+### Most Popular Features
+1. **[Active Users Dashboard](/react-native-guide/mobile-features/dashboard/active-users)** - Monitor real-time user activity
+2. **[Custom Events](/react-native-guide/mobile-features/custom-events)** - Track business-specific actions
+3. **[Session Replays](/react-native-guide/mobile-features/session-replays-heatmaps)** - Watch user interactions
+
+### Advanced Analytics
+- [Funnels](/react-native-guide/mobile-features/dashboard/funnels) - Conversion tracking
+- [Customize Dashboard](/react-native-guide/mobile-features/dashboard/customize-dashboard) - Personalized analytics views
+- [App Intensity](/react-native-guide/mobile-features/dashboard/app-intensity) - Usage pattern analysis
+
+## Implementation Examples
+
+### Basic Event Tracking
+```js
+import { customEvent } from 'vexo-analytics';
+
+// Track user actions
+const handleButtonPress = () => {
+  customEvent('button_pressed', {
+    button_name: 'subscribe',
+    screen: 'pricing'
+  });
+};
+```
+
+### User Identification
+```js
+import { identifyDevice } from 'vexo-analytics';
+
+// Identify users for personalized analytics
+const handleUserLogin = async (userId) => {
+  await identifyDevice(userId);
+};
+```
+
+## Getting Started
+
+Choose a feature that matches your current needs:
+
+- **New to analytics?** Start with [Active Users](/react-native-guide/mobile-features/dashboard/active-users)
+- **Want to track specific actions?** Implement [Custom Events](/react-native-guide/mobile-features/custom-events)
+- **Need visual insights?** Set up [Session Replays](/react-native-guide/mobile-features/session-replays-heatmaps)
+
+export default ({ children }) => <DocLayout current="overview" previous={{href: '/react-native-guide/integration/how-it-works', label: 'How it Works'}} next={{href: '/react-native-guide/mobile-features/dashboard/active-users', label: 'Active Users'}}>{children}</DocLayout>

@@ -1,0 +1,27 @@
+import { DocLayout, DocImage } from '../../../../../components';
+import Image from 'next/image';
+
+# Average session
+
+### How it works
+
+A session is defined from the moment a user opens the app until is closed or the screen is locked.
+
+The average session time is equal to the sum of the time of all the sessions divided by the number of sessions in a given time range:
+
+*average session time = total session time / total sessions*
+
+Understanding how long your user sessions are will serve you as a good starting point for identifying issues in the user journey.
+This doesn't mean that low average sessions are because you have lower engagement!
+
+For example, if your app scans and shares documents, the average session time will be probably low.
+However, if the average session time is high could mean that users are taking too long to scan a document and it might be because the steps are not clear enough.
+
+<DocImage src="/docs/average-session.png" width="1018" height="440"/>
+
+export default ({ children }) => <DocLayout
+    current="average-session"
+    previous={{ href: 'active-users', label: 'Active Users'}}
+    next={{ href: 'unique-downloads', label: 'Unique Downloads' }} >
+        {children}
+</DocLayout>

@@ -118,7 +118,7 @@ export const DocNavBar = ({ currentItemName }: Props): React.JSX.Element => {
             items.forEach(item => {
                 if (item.isCollapsible) {
                     const shouldOpen = item.defaultOpen || (item.children && hasActiveChild(item.children));
-                    initial[item.name] = shouldOpen;
+                    initial[item.name] = shouldOpen || false;
                     if (item.children) {
                         initializeDefaults(item.children);
                     }

@@ -1,0 +1,21 @@
+import { DocLayout, DocImage } from '../../../../../components';
+import Image from 'next/image'
+
+# Total Sessions
+
+### How it works
+
+As mentioned in [average-session metric](https://vexo.co/docs/average-session),
+a user's session begins with the initial event of starting to use the app and extends until the app is either closed or the screen is locked.
+
+By tracking the total number of sessions across a given timeframe you will be able to understand how much your users interact with your app.
+Combining this with the active users and session time stats you will get a clear picture of your app userbase.
+
+<DocImage src="/docs/total-sessions.png" width="1018" height="392"/>
+
+export default ({ children }) => <DocLayout
+    current="total-sessions"
+    previous={{ href: 'unique-downloads', label: 'Unique Downloads'}}
+    next={{ href: 'users-by-country', label: 'Users By Country' }} >
+        {children}
+</DocLayout>

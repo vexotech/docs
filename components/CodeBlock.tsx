@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { ClipboardIcon, ClipboardCheckIcon } from '@heroicons/react/outline';
 
 interface CodeBlockProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
 }
 
