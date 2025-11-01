@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import './globals.css'
+import { CommandPalette, SearchProvider } from '../components'
 
 export const metadata = {
   title: 'Vexo | Documentation | Next Generation Analytics',
@@ -28,7 +29,12 @@ export default function RootLayout({
       <Head>
         <script defer data-domain="vexo.co" src="https://plausible.io/js/plausible.js"></script>
       </Head>
-      <body>{children}</body>
+      <body>
+        <SearchProvider>
+          {children}
+          <CommandPalette />
+        </SearchProvider>
+      </body>
     </html>
   )
 }
