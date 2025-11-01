@@ -1,178 +1,46 @@
-import { DocLayout } from '../../../../components/DocLayout';
+import { DocLayout, DocImage } from '../../../../components';
 
-# Web Integration Guide
+# Getting Started with Vexo Web Analytics
 
-Get Vexo Analytics running on your website in under 5 minutes.
+Web analytics is now available on Vexo! You can start tracking user behavior on your website with the same powerful tools you already use for mobile — all in just a few steps.
 
-## Installation Options
+1. **Create a Web App.**
 
-### Option 1: Script Tag (Recommended)
+Head to your Vexo dashboard and create a new app. Give your app a name (e.g., your website’s name)
 
-Add this script to your HTML `<head>` section:
+2. **Add the domain of your website**
+
+Go to your app settings and update the web domain (e.g., *example.com*)
+
+3. **Add the Vexo Script**
+
+To start collecting analytics data, paste the following script into your site’s `<head>` tag:
 
 ```html
-<script>
-  (function(v,e,x,o,s,c,r,i,p,t){v.VexoObject=s;v[s]=v[s]||function(){
-  (v[s].q=v[s].q||[]).push(arguments)};v[s].l=1*new Date();c=e.createElement(x),
-  r=e.getElementsByTagName(x)[0];c.async=1;c.src=o;r.parentNode.insertBefore(c,r)
-  })(window,document,'script','https://cdn.vexo.co/vexo.js','vexo');
-
-  vexo('init', 'YOUR_API_KEY');
-</script>
+<script src="https://www.vexo.co/analytics.js" defer></script>
 ```
 
-### Option 2: NPM Package
+4. **Track custom events and identify devices (optional)**
 
-For modern web applications:
+You can enhance your analytics by tracking custom events and identifying devices:
 
-```bash
-npm install vexo-web-analytics
-# or
-yarn add vexo-web-analytics
+- Custom Event
+
+```js
+global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
 ```
 
-Then initialize in your app:
+- Identify device
 
-```javascript
-import { initVexo } from 'vexo-web-analytics';
-
-// Initialize with your API key
-initVexo('YOUR_API_KEY');
+```js
+global?.vexo?.identifyDevice('user@example.com');
 ```
 
-## Framework-Specific Integration
+That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
 
-### React Integration
-
-```jsx
-// App.js
-import { useEffect } from 'react';
-import { initVexo } from 'vexo-web-analytics';
-
-function App() {
-  useEffect(() => {
-    initVexo('YOUR_API_KEY');
-  }, []);
-
-  return (
-    <div className="App">
-      {/* Your app content */}
-    </div>
-  );
-}
-```
-
-### Vue Integration
-
-```javascript
-// main.js
-import { createApp } from 'vue';
-import { initVexo } from 'vexo-web-analytics';
-import App from './App.vue';
-
-const app = createApp(App);
-
-// Initialize Vexo Analytics
-initVexo('YOUR_API_KEY');
-
-app.mount('#app');
-```
-
-### Angular Integration
-
-```typescript
-// app.component.ts
-import { Component, OnInit } from '@angular/core';
-import { initVexo } from 'vexo-web-analytics';
-
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html'
-})
-export class AppComponent implements OnInit {
-  ngOnInit() {
-    initVexo('YOUR_API_KEY');
-  }
-}
-```
-
-## Get Your API Key
-
-1. Visit [Vexo Dashboard](https://dashboard.vexo.co)
-2. Create your account
-3. Add your website
-4. Copy your API key
-
-## Configuration Options
-
-### Basic Configuration
-
-```javascript
-vexo('init', 'YOUR_API_KEY', {
-  // Optional: Custom configuration
-  trackPageViews: true,
-  trackClicks: true,
-  enableSessionReplay: false,
-  respectDoNotTrack: true
-});
-```
-
-### Advanced Configuration
-
-```javascript
-vexo('init', 'YOUR_API_KEY', {
-  // Privacy settings
-  respectDoNotTrack: true,
-  enableCookies: false,
-
-  // Tracking settings
-  trackPageViews: true,
-  trackClicks: true,
-  trackScrollDepth: true,
-
-  // Performance settings
-  batchSize: 10,
-  flushInterval: 5000,
-
-  // Debug mode
-  debug: process.env.NODE_ENV === 'development'
-});
-```
-
-## Verification
-
-After implementing the integration:
-
-1. Visit your website
-2. Navigate through a few pages
-3. Check your [Vexo Dashboard](https://dashboard.vexo.co) for real-time data
-
-You should see:
-- Page view events
-- User session data
-- Geographic information
-- Device and browser details
-
-## Next Steps
-
-Now that tracking is set up, explore these features:
-
-- [Web Features Overview](/web-guide/web-features/overview)
-- [Dashboard Analytics](/web-guide/web-features/dashboard/introduction)
-- [Custom Events](/web-guide/web-features/custom-events)
-- [Session Replays](/web-guide/web-features/session-replays)
-
-## Troubleshooting
-
-### Not seeing data?
-- Check that your API key is correct
-- Verify the script is loading (check browser dev tools)
-- Ensure you're not blocking analytics scripts
-- Check for console errors
-
-### Need help?
-- Review our [Web Features documentation](/web-guide/web-features/overview)
-- Visit our [support center](https://support.vexo.co)
-- Join our [community forum](https://community.vexo.co)
-
-export default ({ children }) => <DocLayout current="web-integration" previous={{href: '/web-guide/get-started/introduction', label: 'Introduction'}} next={{href: '/web-guide/web-features/overview', label: 'Web Features Overview'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout
+    current="web-integration"
+    previous={{ href: 'publishing', label: 'Publishing'}}
+    next={{ href: 'active-users', label: 'Active Users' }} >
+        {children}
+</DocLayout>

@@ -61,7 +61,7 @@ There's nothing wrong on designing your apps this way but it will become harder 
 Having an independent screen that does `Loading` is a better way to go, as it isolates responsibilities from your screens, helps transitioning, and secures a better experience while loading data.
 
 export default ({ children }) => <DocLayout
-    current="session-replays"
+    current="session-replays-heatmaps"
     previous={{ href: 'sessions', label: 'Device sessions'}}
     next={{ href: 'screens', label: 'Screen & Taps' }} >
         {children}

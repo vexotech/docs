@@ -1,100 +1,32 @@
-import { DocLayout } from '../../../components/DocLayout';
+import { DocLayout, DocImage } from '../../../components';
+import Image from 'next/image';
 
-# Account Settings
+# General information
 
-Manage your personal account information and preferences.
+General information describes the high overview information of your profile.
+This is where your personal information is, and modifiable info as well, such as your e-mail, your profile and other data.
 
-## Overview
+This is where you can change your name or the e-mail that you've provided.
 
-Account Settings allow you to control your personal profile, security preferences, and account-specific configurations.
+<DocImage src="/docs/account-general-information.png" width="1049" height="620"/>
 
-## Profile Information
+# Delete Account
 
-### Personal Details
-- **Full Name**: Update your display name
-- **Email Address**: Change your primary email (requires verification)
-- **Profile Picture**: Upload or change your avatar
-- **Job Title**: Add your role for team identification
-- **Company**: Update your organization information
+Deleting your account is a feature we provide to assure every user that the data belongs to yourself.
+By deleting your app, we will delete **all the information** that relates to your account.
+This is a really sensible operation, and it is not recommended to take it lightly, this is because when deleting your account, we'll delete:
+* All of the apps you own
+* Related data from the apps you own
+* Screenshots from the apps
+* Empty all caches with your information
+* Delete all API keys
+* Block data from remnant clients that are still sending data to [Vexo](https://vexo.co)
 
-### Contact Preferences
-- **Primary Email**: Set your main contact email
-- **Secondary Email**: Add backup email for important notifications
-- **Phone Number**: Add phone for account security (optional)
-- **Communication Language**: Choose your preferred language
+This is done this way so that we assure privacy for your business and that your data is yours, only that it flows through our systems.
 
-## Security Settings
-
-### Password Management
-- **Change Password**: Update your account password
-- **Password Requirements**: Must be at least 8 characters with special characters
-- **Password History**: Cannot reuse last 5 passwords
-- **Password Expiration**: Optional 90-day password rotation
-
-### Two-Factor Authentication (2FA)
-- **Enable 2FA**: Add extra security to your account
-- **Authenticator Apps**: Use Google Authenticator, Authy, or similar
-- **Backup Codes**: Generate recovery codes for emergency access
-- **SMS Backup**: Optional SMS-based backup authentication
-
-### Account Recovery
-- **Recovery Email**: Set backup email for account recovery
-- **Security Questions**: Configure security questions
-- **Recovery Phone**: Add phone number for account recovery
-
-## Team & Permissions
-
-### Organization Membership
-- **Current Organizations**: View all organizations you belong to
-- **Role in Organization**: See your permissions level
-- **Team Invitations**: Manage pending team invitations
-
-### Access Permissions
-- **Dashboard Access**: Configure which dashboards you can view
-- **Data Export**: Set permissions for data export capabilities
-- **Admin Functions**: View administrative permissions
-- **API Access**: Manage API key generation permissions
-
-## Privacy Preferences
-
-### Data Sharing
-- **Analytics Sharing**: Control data sharing with team members
-- **Usage Statistics**: Share anonymous usage data with Vexo
-- **Marketing Communications**: Opt in/out of promotional emails
-- **Product Updates**: Receive notifications about new features
-
-### Account Visibility
-- **Profile Visibility**: Control who can see your profile
-- **Activity Status**: Show/hide when you're online
-- **Recent Activity**: Display your recent dashboard activity
-
-## Account Management
-
-### Account Status
-- **Account Type**: View your current account type (Free, Pro, Enterprise)
-- **Account Creation Date**: See when your account was created
-- **Last Login**: View your recent login activity
-- **Active Sessions**: See all active login sessions
-
-### Data Management
-- **Export Personal Data**: Download all your personal data
-- **Data Deletion**: Request deletion of personal data
-- **Account Backup**: Create backup of your account settings
-
-## Danger Zone
-
-### Account Actions
-- **Deactivate Account**: Temporarily disable your account
-- **Delete Account**: Permanently delete your account and all data
-- **Transfer Ownership**: Transfer account ownership to another user
-
-> ⚠️ **Warning**: Account deletion is permanent and cannot be undone. All your data will be permanently removed.
-
-## Need Help?
-
-If you need assistance with account settings:
-- Contact our [Support Team](mailto:support@vexo.co)
-- Visit our [Help Center](https://help.vexo.co)
-- Check our [Security Guidelines](https://vexo.co/security)
-
-export default ({ children }) => <DocLayout current="account_settings" previous={{href: '/settings/general-settings', label: 'General Settings'}} next={{href: '/settings/billing', label: 'Billing'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout
+    current="account-settings"
+    previous={{ href: 'delete-application', label: 'Delete Application'}}
+    next={{ href: 'delete-account', label: 'Delete Account' }} >
+        {children}
+</DocLayout>

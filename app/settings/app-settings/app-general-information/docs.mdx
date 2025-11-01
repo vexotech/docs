@@ -1,5 +1,4 @@
-import { DocLayout, DocImage } from '../../components';
-import Image from 'next/image';
+import { DocLayout, DocImage } from '../../../../components';
 
 # General information
 
@@ -10,9 +9,4 @@ Here you are able to change your apps properties, as the name or the icon, as we
 
 <DocImage src="/docs/app-general-information.png" width="1050" height="703"/>
 
-export default ({ children }) => <DocLayout
-    current="app-general-information"
-    previous={{ href: 'screenshots', label: 'Screenshots'}}
-    next={{ href: 'webhooks', label: 'Webhooks' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="app-general-information">{children}</DocLayout>

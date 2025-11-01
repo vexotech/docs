@@ -1,98 +1,103 @@
 import { DocLayout } from '../../../../components/DocLayout';
 
-# How Vexo Analytics Works
+# Features
 
-Understanding the technical architecture behind Vexo Analytics in React Native applications.
+**One line of code? How is this possible?**
 
-## Architecture Overview
+It's very simple! Vexo is a very lightweight advanced piece of technology that listens to React Native events, such as `AppState` changes,
+packs the data into a buffer and sends it to our servers.
+Given that it works in background with your app, there are no code dependencies and it's effortless to integrate!
 
-Vexo Analytics operates as a lightweight, background service that automatically captures user interactions and app events without impacting your app's performance.
+### Events
 
-## Event Collection
+Supported events are:
+- Opened/closed/browsing app
+- Changed screen
+- Tapped on screen
+- Started/finished typing
+- Turned phone to landscape/portrait
+- Your app sent a request for data
+- An error occurred
+- Custom events
 
-### Automatic Events
-Vexo automatically tracks:
-- **App State Changes**: Foreground/background transitions
-- **Screen Navigation**: Route changes and screen views
-- **User Interactions**: Taps, swipes, and gestures
-- **Device Events**: Orientation changes, network status
-- **Performance Metrics**: App launch time, memory usage
+### Device Identity
 
-### Custom Events
-You can also track business-specific events:
+As well as being seamless, privacy is a key focus. We don't store any PII from your devices or users, so we provide a way in which you can identify a user in order
+to be able to navigate through your dashboards in a personalized way.
+To achieve this, do the following:
 
 ```js
-import { customEvent } from 'vexo-analytics';
+import { useEffect } from 'react'
+import { View } from 'react-native'
+import { identifyDevice } from 'vexo-analytics'
 
-// Track user actions
-customEvent('button_clicked', {
-  button_name: 'purchase',
-  screen: 'product_detail'
-});
-
-// Track business metrics
-customEvent('purchase_completed', {
-  product_id: 'abc123',
-  amount: 29.99,
-  currency: 'USD'
-});
-```
-
-## Data Processing Pipeline
-
-1. **Event Capture**: Events are captured in real-time
-2. **Local Buffering**: Data is temporarily stored locally
-3. **Batch Upload**: Events are sent in optimized batches
-4. **Real-time Processing**: Data appears in dashboard within minutes
-
-## Privacy & Security
-
-### Data Protection
-- No PII (Personally Identifiable Information) collected
-- All data encrypted in transit
-- Optional user identification with your own identifiers
-
-### User Consent
-```js
-import { enableTracking, disableTracking } from 'vexo-analytics';
-
-// Respect user privacy preferences
-const handlePrivacyToggle = async (userConsent) => {
-  if (userConsent) {
-    await enableTracking();
-  } else {
-    await disableTracking();
-  }
+const LoginComponent = () => {
+    const login = async () => {
+        // your code
+        await identifyDevice('IDENTIFIER');
+    }
+    return (<View>{...}</View>);
 };
 ```
 
-## Performance Impact
+It's important to note that the identifier is a string and can be anything you want. We recommend that you identify your device with a token/hash
+that you can then map it into your users' data to be able to know which user is it.
+As an example, in SQL a unique ID as a foreign key to your users' table should suffice.
 
-- **Bundle Size**: < 50KB added to your app
-- **Memory Usage**: < 5MB additional RAM
-- **Battery Impact**: Negligible battery consumption
-- **Network Usage**: Minimal, optimized batch uploads
+In case you want to make the device anonymous, `identifyDevice` supports `null` like in the following example:
 
-## Integration with React Native
+```js
+import { useEffect } from 'react'
+import { View } from 'react-native'
+import { identifyDevice } from 'vexo-analytics'
 
-### Navigation Tracking
-Works seamlessly with popular navigation libraries:
-- React Navigation
-- React Native Navigation
-- Native Stack Navigator
+const TrackerComponent = () => {
+    const onAskedNotToTrack = async () => {
+        // your code
+        await identifyDevice(null);
+    }
+    return (<View>{...}</View>);
+};
+```
 
-### State Management
-Compatible with all state management solutions:
-- Redux
-- MobX
-- Zustand
-- Context API
+### Tracking Opt-in
 
-## Next Steps
+Today users are more and more the owners of their data, and we want to go down that road for real.
+There's opt-in methods you can call based on your users' preferences to enable or disable tracking.
 
-Now that you understand how Vexo works, explore the powerful features available:
-- [Mobile Features Overview](/react-native-guide/mobile-features/overview)
-- [Dashboard Analytics](/react-native-guide/mobile-features/dashboard/active-users)
-- [Custom Events](/react-native-guide/mobile-features/custom-events)
+```js
+import { enableTracking, disableTracking } from 'vexo-analytics'
+
+// user asked app not to track
+await disableTracking();
+// re-enable tracking, under X condition
+await enableTracking();
+```
+
+### Custom events
+
+This is where the power of out of the box analytics meets the custom needs of your business.
+You'll be able to send custom events specific to you application's needs, and that data will be enriched with the context data that we provide:
+
+```js
+import { View } from 'react-native'
+import { customEvent } from 'vexo-analytics'
+
+const SaaSPurchaseComponent = () => {
+    const onSuccessfulPurchase = (subscriptionType, amount, description) => {
+        customEvent(`sale-${subscriptionType}`, { amount, description })
+    }
+    return (<View>{...}</View>)
+}
+```
+
+We will understand the context about the event that has just happened and infer multiple axis of data, such as:
+
+- Screen it happened on
+- Device OS
+- App version
+- ... and more!
+
+For further understanding on custom events check out [the docs](https://docs.vexo.co/custom-events)
 
 export default ({ children }) => <DocLayout current="how-it-works" previous={{href: '/react-native-guide/integration/quickstart', label: 'Quickstart'}} next={{href: '/react-native-guide/mobile-features/overview', label: 'Mobile Features Overview'}}>{children}</DocLayout>
