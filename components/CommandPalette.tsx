@@ -135,15 +135,28 @@ export function CommandPalette() {
                 )}
               </Combobox>
 
-              <div className="flex flex-wrap items-center bg-gray-50 px-4 py-2.5 text-xs text-gray-700">
-                Type{' '}
-                <kbd className="mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2">
-                  ⌘
-                </kbd>{' '}
-                <kbd className="flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold">
-                  K
-                </kbd>{' '}
-                to search
+              <div className="flex flex-wrap items-center gap-4 bg-gray-50 px-4 py-2.5 text-xs text-gray-700">
+                <span className="flex items-center gap-1">
+                  <kbd className="flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold">
+                    ↑
+                  </kbd>
+                  <kbd className="flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold">
+                    ↓
+                  </kbd>
+                  to navigate
+                </span>
+                <span className="flex items-center gap-1">
+                  <kbd className="flex h-6 w-8 items-center justify-center rounded border bg-white font-semibold text-xs">
+                    ↵
+                  </kbd>
+                  to select
+                </span>
+                <span className="flex items-center gap-1">
+                  <kbd className="flex h-5 w-8 items-center justify-center rounded border bg-white font-semibold text-xs">
+                    esc
+                  </kbd>
+                  to close
+                </span>
               </div>
             </Dialog.Panel>
           </Transition.Child>

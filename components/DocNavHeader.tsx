@@ -1,7 +1,14 @@
+'use client';
+
 import Link from "next/link";
 import React from "react";
+import { SearchTrigger } from "./SearchTrigger";
+import { SearchIcon } from '@heroicons/react/outline';
+import { useSearch } from '../contexts/SearchContext';
 
 export const DocNavHeader = (): React.JSX.Element => {
+    const { openSearch } = useSearch();
+
     return <div className="w-full h-16 fixed top-0 bg-white bg-opacity-95 pl-0 sm:pl-56 md:pl-72">
         <div className="w-full h-full px-12 flex items-center justify-between">
             <div className="text-sm text-slate-600 cursor-pointer flex items-center sm:hidden">
@@ -10,7 +17,19 @@ export const DocNavHeader = (): React.JSX.Element => {
                     <span className="block font-normal text-xs uppercase tracking-wider text-blue-400">Documentation</span>
                 </div>
             </div>
-            <div className="flex justify-end w-full">
+            <div className="flex items-center gap-3 justify-end w-full">
+                <div className="hidden sm:block w-64">
+                    <SearchTrigger />
+                </div>
+                <div className="sm:hidden">
+                    <button
+                        onClick={openSearch}
+                        className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                        aria-label="Search"
+                    >
+                        <SearchIcon className="h-5 w-5" />
+                    </button>
+                </div>
                 <Link className="text-xs cursor-pointer bg-gradient-to-tr from-blue-400 to-indigo-500 text-white px-5 py-3 pr-6 rounded-md" href="https://vexo.co/login">
                     Log In
                 </Link>
