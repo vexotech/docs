@@ -10,7 +10,7 @@ Here you are able to set an endpoint to which we'll send all custom events.
 Once created, you'll see a validation token. This token will be included on every
 request send to the endpoint on the header: X-Vexo-API-Token.
 
-The request payload will be a list of custom events. Each with an id, name, timestamp 
+The request payload will be a list of custom events. Each with an id, name, timestamp
 and args. *args* will be an object containing all the custom properties attached to
 the event.
 
@@ -19,6 +19,6 @@ the event.
 export default ({ children }) => <DocLayout
     current="webhooks"
     previous={{ href: 'app-general-information', label: 'General Information'}}
-    next={{ href: 'app-tracking-information', label: 'Tracking Information' }} >
+    next={{ href: 'export-api', label: 'Export API' }} >
         {children}
 </DocLayout>

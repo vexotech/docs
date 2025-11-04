@@ -1,1 +1,5 @@
-export { default } from './docs.mdx';
+import Docs from './docs.mdx'
+
+export default function Home() {
+    return <Docs />
+}
