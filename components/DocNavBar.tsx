@@ -63,7 +63,7 @@ const CollapsibleSection = ({ item, currentItemName, isOpen, onToggle, depth = 0
                     aria-expanded={isOpen}
                     aria-controls={`section-${item.name}`}
                 >
-                    <span className={`font-bold uppercase text-xs ${isActive ? 'text-indigo-700' : 'text-slate-600'}`}>
+                    <span className={`font-light text-sm transition-colors duration-200 ${isActive ? 'text-indigo-700' : 'text-slate-600 group-hover:text-indigo-600'}`}>
                         {item.title}
                     </span>
                     {isOpen ? (

@@ -1,5 +1,5 @@
-import Docs from './docs.mdx'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return <Docs />
+  redirect('/get-started/introduction')
 }

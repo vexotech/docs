@@ -80,7 +80,7 @@ export const sidebarData: SidebarData = [
         defaultOpen: false,
         children: [
             {
-                name: 'get-started',
+                name: 'web-get-started',
                 title: 'Get Started',
                 isCollapsible: true,
                 defaultOpen: false,

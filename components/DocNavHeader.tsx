@@ -14,7 +14,7 @@ export const DocNavHeader = (): React.JSX.Element => {
             <div className="text-sm text-slate-600 cursor-pointer flex items-center sm:hidden">
                 <div className="text-gray-600 font-bold text-xs">
                     VEXO /
-                    <span className="block font-normal text-xs uppercase tracking-wider text-blue-400">Documentation</span>
+                    <span className="block font-normal text-xs tracking-wider text-blue-400">Documentation</span>
                 </div>
             </div>
             <div className="flex items-center gap-3 justify-end w-full">
