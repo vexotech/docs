@@ -1,18 +1,13 @@
-import { DocLayout } from '../../../../../components/DocLayout';
+import { DocLayout, DocImage } from '../../../../../components';
 
-# web usage
+# Web Usage
 
-Documentation for web usage coming soon.
+Web Usage is calculated by counting the total number of events that occur on your website — such as page views, clicks, and scrolls — and distributing them across the hours and days of the week.
 
-## Overview
+Events are grouped by the hour they happen (in UTC and then adjusted to your local timezone) and mapped against the days of the week. This creates a heatmap that highlights when your website activity peaks.
 
-This section will contain comprehensive information about web usage for web analytics.
+Knowing when your site is most active helps you make smarter decisions — like scheduling announcements, releases, or marketing campaigns when engagement is at its highest.
 
-## Coming Soon
-
-- Detailed implementation guides
-- Best practices and recommendations
-- Code examples and tutorials
-- Common use cases and solutions
+<DocImage src="/docs/web-usage.png" width="1018" height="392"/>
 
 export default ({ children }) => <DocLayout current="web-usage">{children}</DocLayout>

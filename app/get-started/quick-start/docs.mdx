@@ -1,154 +1,72 @@
 import { DocLayout } from '../../../components/DocLayout';
 
-# Quick Start
+# Quickstart
 
-Get up and running with Vexo Analytics in your React Native application in just a few minutes.
+## React Native
 
-## Installation
+**Prerequisites**
 
-Install the Vexo Analytics package using npm or yarn:
+- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://docs.expo.dev/router/introduction/)
 
-```bash
-npm install vexo-analytics
-```
+**Expo**
 
-or
+- ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
+- This library can't be used in the "Expo Go" app because it [requires custom native code](https://docs.expo.dev/workflow/customizing/).
 
-```bash
-yarn add vexo-analytics
-```
+**Getting started**
 
-## Basic Setup
-
-### 1. Initialize Vexo Analytics
-
-Add the following line to your app's entry point (typically `App.js` or `index.js`):
+1. Create an account [here](https://www.vexo.co/sign-up)
+2. You'll be prompted into creating a new app, give it a name (you can change it later), this will generate your API key.
+3. Run **`yarn add vexo-analytics`** or **`npm install vexo-analytics`** in your project. If you are using bare React Native, run **`pod install`** in the iOS folder.
+4. Add the following code to your app entry file (usually **`index.js`**, **`App.js`** or **`_layout.tsx`** if you're using Expo Router):
 
 ```js
-import { initVexo } from 'vexo-analytics';
+import { vexo } from 'vexo-analytics';
 
-// Initialize Vexo Analytics with your API key
-initVexo('YOUR_API_KEY');
+// You may want to wrap this with `if (!__DEV__) { ... }` to only run Vexo in production.
+vexo('YOUR_API_KEY');
+
 ```
 
-### 2. Get Your API Key
+1. Re-build and run your app (the **`vexo-analytics`** package includes native code).
+2. Go to your app's page on Vexo and your first events should appear! 🎉
 
-1. Visit the [Vexo Dashboard](https://dashboard.vexo.co)
-2. Create a new account or sign in
-3. Create a new application
-4. Copy your unique API key from the application settings
+**Wait, that's it?** Yes! That's it. With that ease of integration experience you get an incredible set of features, go check them out!
 
-### 3. Start Tracking
+## Web
 
-That's it! Vexo Analytics will automatically start tracking:
-- App sessions and user activity
-- Screen navigation
-- User interactions
-- Device information
-- Performance metrics
+**Getting started**
 
-## Example Implementation
+1. Create a Vexo account [here](https://www.vexo.co/sign-up) (skip if you already have one).
+2. **Create a Web App.**
+- On your dashboard click on **+ Add Application** create a new app.
+- Enter a name (e.g. your website)
+- Add the domain of your website (e.g., *example.com*)
 
-Here's a complete example of integrating Vexo Analytics into a React Native app:
+1. **Add the Vexo Script**
+
+To start collecting Web analytics data, paste the following script into your site’s **`<head>`** tag:
+
+```html
+<script src="https://www.vexo.co/analytics.js" defer></script>
+```
+
+1. **Track custom events and identify devices (optional)**
+
+You can enhance your analytics by tracking custom events and identifying devices:
+
+- Custom Event
 
 ```js
-// App.js
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { initVexo } from 'vexo-analytics';
-
-// Initialize Vexo Analytics
-initVexo('your-api-key-here');
-
-const Stack = createStackNavigator();
-
-function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
-
-export default App;
+global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
 ```
 
-## Verify Installation
-
-After implementing the basic setup:
-
-1. Run your React Native application
-2. Navigate through a few screens
-3. Visit your [Vexo Dashboard](https://dashboard.vexo.co)
-4. Check the "Live" section to see real-time data
-
-You should see:
-- Session data appearing within minutes
-- Screen view events
-- Basic device information
-
-## Next Steps
-
-Now that you have basic tracking set up, explore these advanced features:
-
-### Custom Events
-Track business-specific actions and conversions:
+- Identify device
 
 ```js
-import { customEvent } from 'vexo-analytics';
-
-const onPurchase = (productId, amount) => {
-  customEvent('purchase', { productId, amount });
-};
+global?.vexo?.identifyDevice('user@example.com');
 ```
 
-### User Identification
-Identify users for personalized analytics:
-
-```js
-import { identifyDevice } from 'vexo-analytics';
-
-const onUserLogin = async (userId) => {
-  await identifyDevice(userId);
-};
-```
-
-### Privacy Controls
-Implement user consent and privacy controls:
-
-```js
-import { enableTracking, disableTracking } from 'vexo-analytics';
-
-// Disable tracking if user opts out
-await disableTracking();
-
-// Re-enable when user consents
-await enableTracking();
-```
-
-## Troubleshooting
-
-### Not seeing data?
-- Check that your API key is correct
-- Ensure you're testing on a real device (not simulator)
-- Verify your internet connection
-- Check the console for any error messages
-
-### Need help?
-- Check our [comprehensive documentation](/features)
-- Visit our [support center](https://support.vexo.co)
-- Join our [community forum](https://community.vexo.co)
-
-## What's Next?
-
-Continue learning about Vexo Analytics features:
-- [Mobile Analytics](/): Comprehensive mobile tracking
-- [Features](/features): Advanced analytics capabilities
-- [Custom Events](/custom-events): Business-specific tracking
-- [Dashboard](/dashboard): Understanding your analytics data
+That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
 
 export default ({ children }) => <DocLayout current="quick-start" previous={{href: '/get-started/introduction', label: 'Introduction'}} next={{href: '/', label: 'Mobile Analytics'}}>{children}</DocLayout>

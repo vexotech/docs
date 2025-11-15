@@ -1,51 +1,43 @@
 import { DocLayout } from '../../../../components/DocLayout';
 
-# Web Features Overview
+### **Overview**
 
-Explore the comprehensive suite of web analytics features available for your website.
+These metrics are available instantly, without any additional configuration:
 
-## Core Web Analytics Features
+**1. Stats Dashboard**
 
-### 📊 Dashboard Analytics
-Get deep insights into your website's performance:
-- [Active Users](/web-guide/web-features/dashboard/active-users) - Real-time visitor tracking
-- [Session Analysis](/web-guide/web-features/dashboard/session-time) - User engagement metrics
-- [Geographic Insights](/web-guide/web-features/dashboard/geographic-insights) - Global visitor distribution
-- [Traffic Sources](/web-guide/web-features/dashboard/referrers) - Understanding visitor origins
+- Active Users - daily, weekly, and monthly active users.
+- Session Time - average time spent in the app.
+- New Users - track installs over time.
+- Total Sessions - total number of sessions across a given timeframe
+- Web Usage - total amount of events that happen in your web and distributing them over the hours of the week.
+- Device Distribution - see which platforms and operating systems your users are on.
+- OS Distribution - see which operating systems your users are on.
+- Browser Distribution -
+- Geographic Insights - discover where your users are located.
+- Referrers -
+- UTMs
+- Routes
+- Customizable:
+    - Funnels - build funnels from screens or events.
+    - Track Events - visualize and filter your custom events.
 
-### 👥 User Management
-- [People](/web-guide/web-features/people) - Individual visitor profiles and tracking
-- User identification and segmentation
-- Custom user properties and attributes
+**2. People**
 
-### 📹 Behavioral Analytics
-- [Session Replays](/web-guide/web-features/session-replays) - Visual user journey analysis
-- Click and interaction tracking
-- User flow optimization
+See users’ key info at a glance: ID, last interaction, browser, country, total sessions and total recordings.
 
-### 🎯 Custom Analytics
-- [Custom Events](/web-guide/web-features/custom-events) - Business-specific tracking
-- Conversion funnel analysis
-- Goal tracking and measurement
+If you are using Vexo for React Native and Web: Unified user profiles across React Native & Web.
 
-## Web-Specific Features
+**3. Session Replays**
 
-### Traffic Analysis
-- [Referrers](/web-guide/web-features/dashboard/referrers) - Traffic source analysis
-- [UTM Tracking](/web-guide/web-features/dashboard/utms) - Campaign performance
-- [Route Analytics](/web-guide/web-features/dashboard/routes) - Page performance
+- Session Replays - watch real user sessions to understand their interactions.
 
-### Technical Insights
-- [Browser Distribution](/web-guide/web-features/dashboard/browser-distribution) - Browser usage patterns
-- [Device Analysis](/web-guide/web-features/dashboard/device-distribution) - Device type insights
-- [OS Distribution](/web-guide/web-features/dashboard/os-distribution) - Operating system analytics
+**Custom**
 
-## Getting Started
+For deeper, product-specific insights you can:
 
-Choose a feature that matches your current needs:
+- Custom Events — track specific user actions that matter most.
 
-- **New to web analytics?** Start with [Dashboard Introduction](/web-guide/web-features/dashboard/introduction)
-- **Want to track specific actions?** Implement [Custom Events](/web-guide/web-features/custom-events)
-- **Need visual insights?** Set up [Session Replays](/web-guide/web-features/session-replays)
+- Custom Dashboards — create and personalize your dashboards for visualizing and filtering your custom events.
 
 export default ({ children }) => <DocLayout current="web-overview" previous={{href: '/web-guide/get-started/integration', label: 'Integration'}} next={{href: '/web-guide/web-features/dashboard/introduction', label: 'Dashboard Introduction'}}>{children}</DocLayout>

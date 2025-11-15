@@ -51,13 +51,13 @@ export const sidebarData: SidebarData = [
                         defaultOpen: false,
                         children: [
                             { title: 'Active Users', name: 'active-users', href: '/react-native-guide/mobile-features/dashboard/active-users' },
-                            { title: 'Average Session', name: 'average-session', href: '/react-native-guide/mobile-features/dashboard/average-session' },
+                            { title: 'Session Time', name: 'average-session', href: '/react-native-guide/mobile-features/dashboard/average-session' },
                             { title: 'Unique Downloads', name: 'unique-downloads', href: '/react-native-guide/mobile-features/dashboard/unique-downloads' },
                             { title: 'Total Sessions', name: 'total-sessions', href: '/react-native-guide/mobile-features/dashboard/total-sessions' },
                             { title: 'Users by Country', name: 'users-by-country', href: '/react-native-guide/mobile-features/dashboard/users-by-country' },
                             { title: 'Users Devices', name: 'users-devices', href: '/react-native-guide/mobile-features/dashboard/users-devices' },
                             { title: 'Version Adoption', name: 'version-adoption', href: '/react-native-guide/mobile-features/dashboard/version-adoption' },
-                            { title: 'App Intensity', name: 'app-intensity', href: '/react-native-guide/mobile-features/dashboard/app-intensity' },
+                            { title: 'App Usage', name: 'app-intensity', href: '/react-native-guide/mobile-features/dashboard/app-intensity' },
                             { title: 'Customize your Dashboard', name: 'customize-dashboard', href: '/react-native-guide/mobile-features/dashboard/customize-dashboard' },
                             { title: 'Funnels', name: 'funnels', href: '/react-native-guide/mobile-features/dashboard/funnels' },
                         ]
@@ -67,7 +67,7 @@ export const sidebarData: SidebarData = [
                     { title: 'Custom Events', name: 'custom-events', href: '/react-native-guide/mobile-features/custom-events' },
                 ]
             },
-            { title: 'Mobile Publishing (App Store & Play)', name: 'mobile-publishing', href: '/react-native-guide/mobile-publishing' },
+            { title: 'Mobile Publishing', name: 'mobile-publishing', href: '/react-native-guide/mobile-publishing' },
             { title: 'Mobile Settings', name: 'mobile-settings', href: '/react-native-guide/mobile-settings' },
             { title: 'Best Practices', name: 'best-practices', href: '/react-native-guide/best-practices' },
             { title: 'FAQs', name: 'faqs', href: '/react-native-guide/faqs' },
@@ -144,8 +144,7 @@ export const sidebarData: SidebarData = [
                     { title: 'General Information', name: 'app-general-information', href: '/settings/app-settings/app-general-information' },
                     { title: 'Webhooks', name: 'webhooks', href: '/settings/app-settings/webhooks' },
                     { title: 'Export API', name: 'export-api', href: '/settings/app-settings/export-api' },
-                    { title: 'Tracking Information', name: 'app-tracking-information', href: '/settings/app-settings/app-tracking-information' },
-                    { title: 'People', name: 'people', href: '/settings/app-settings/people' },
+                    { title: 'Team', name: 'team', href: '/settings/app-settings/team' },
                     { title: 'Delete Application', name: 'delete-application', href: '/settings/app-settings/delete-application' },
                 ]
             },

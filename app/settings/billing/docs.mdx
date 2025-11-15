@@ -2,133 +2,35 @@ import { DocLayout } from '../../../components/DocLayout';
 
 # Billing
 
-Manage your billing information, payment methods, and invoices.
+Answers to the most common questions about billing, invoices, and payments in Vexo:
 
-## Overview
+### How is billing calculated?
 
-The Billing section allows you to manage all financial aspects of your Vexo Analytics account, including payment methods, invoices, and billing history.
+Billing is based on your **total event usage across all apps and websites** under your account. You can view your monthly usage anytime in your account settings.
 
-## Current Plan
+### How do I get my invoices?
 
-### Plan Details
-- **Current Plan**: View your active subscription plan
-- **Plan Features**: See included features and limits
-- **Usage Statistics**: Monitor your current usage vs plan limits
-- **Next Billing Date**: When your next payment is due
-- **Plan Cost**: Monthly or annual billing amount
+Invoices are sent automatically by our payment provider, **Stripe**, each time a payment is processed. You’ll receive them by email and can download them directly from the link included in the email.
 
-### Usage Monitoring
-- **API Calls**: Track your API usage against plan limits
-- **Data Storage**: Monitor data storage consumption
-- **Session Replays**: Track session replay usage
-- **Custom Events**: Monitor custom event tracking usage
+If you want invoices sent to a different email, just contact us with your current Stripe billing email and the new address you’d like to use.
 
-## Payment Methods
+### What payment methods do you support?
 
-### Manage Payment Methods
-- **Primary Payment Method**: Set your default payment source
-- **Add Payment Method**: Add credit/debit cards or bank accounts
-- **Update Card Information**: Change expiration dates or billing addresses
-- **Remove Payment Methods**: Delete unused payment methods
+We accept **credit and debit cards**, **Google Pay**, and **Cash Pay**. All payments are securely processed through Stripe. At the moment, we don’t support wire transfers, manual invoicing, or cryptocurrency payments.
 
-### Supported Payment Types
-- **Credit Cards**: Visa, MasterCard, American Express, Discover
-- **Debit Cards**: Most major debit cards accepted
-- **Bank Transfers**: ACH transfers for enterprise customers
-- **Wire Transfers**: Available for large enterprise accounts
+### What happens if I exceed my monthly event limit?
 
-### Payment Security
-- **PCI Compliance**: All payments processed securely
-- **Encrypted Storage**: Payment information is encrypted
-- **Fraud Protection**: Advanced fraud detection systems
+You’ll never be charged unexpectedly. Extra usage is only billed if you’ve enabled **Overages** in your subscription settings. Otherwise, once you reach **120% of your event limit**, Vexo will stop tracking new events until you upgrade your plan.
 
-## Billing Information
+Don’t worry—your existing data and dashboards remain fully accessible while tracking is paused.
 
-### Billing Address
-- **Company Name**: Your business name for invoices
-- **Billing Address**: Street address for billing
-- **City, State, ZIP**: Complete billing location
-- **Country**: Billing country for tax calculations
-- **Tax ID/VAT**: Business tax identification numbers
+### How do I update my billing information?
 
-### Invoice Preferences
-- **Invoice Email**: Who receives billing notifications
-- **Invoice Format**: PDF or electronic format preference
-- **Purchase Order**: Add PO numbers to invoices
-- **Billing Contact**: Designated billing contact person
+To update your billing details:
 
-## Invoices & History
-
-### Recent Invoices
-- **View Invoices**: Access your recent billing statements
-- **Download PDF**: Get printable invoice copies
-- **Payment Status**: See payment confirmation status
-- **Invoice Details**: Detailed breakdown of charges
-
-### Payment History
-- **Transaction History**: Complete payment history
-- **Failed Payments**: View and retry failed transactions
-- **Refunds**: Track refund requests and status
-- **Credits**: Account credits and promotional balances
-
-### Billing Notifications
-- **Payment Confirmations**: Receive payment receipts
-- **Payment Failures**: Get notified of payment issues
-- **Invoice Reminders**: Upcoming payment notifications
-- **Plan Limit Warnings**: Usage approaching plan limits
-
-## Plan Changes
-
-### Upgrade Your Plan
-- **Compare Plans**: See available plan options
-- **Instant Upgrades**: Upgrade immediately with prorated billing
-- **Feature Comparison**: Compare features across plans
-- **Contact Sales**: Get help choosing the right plan
-
-### Downgrade Options
-- **Downgrade Process**: Steps to reduce your plan
-- **Data Retention**: Understand data retention during downgrades
-- **Feature Loss**: See which features you'll lose
-- **Effective Date**: When plan changes take effect
-
-## Tax Information
-
-### Tax Calculations
-- **Sales Tax**: Automatically calculated based on location
-- **VAT**: European VAT handling for EU customers
-- **GST**: Goods and Services Tax for applicable regions
-- **Tax Exemptions**: Upload tax exemption certificates
-
-### Tax Compliance
-- **Tax Invoices**: Compliant invoicing for business customers
-- **Tax Reports**: Annual tax summaries for accounting
-- **Regional Compliance**: Adherence to local tax regulations
-
-## Enterprise Billing
-
-### Enterprise Features
-- **Annual Billing**: Discounted annual payment options
-- **Custom Invoicing**: Tailored invoicing for large organizations
-- **Net Payment Terms**: Extended payment terms (Net 30, Net 60)
-- **Purchase Orders**: Custom PO processing
-
-### Volume Discounts
-- **Usage-Based Pricing**: Discounts for high-volume usage
-- **Multi-Year Discounts**: Savings for longer commitments
-- **Custom Pricing**: Negotiated pricing for enterprise needs
-
-## Billing Support
-
-### Get Help
-- **Billing Questions**: Contact billing support team
-- **Dispute Resolution**: Process for billing disputes
-- **Payment Issues**: Get help with payment problems
-- **Plan Guidance**: Assistance choosing the right plan
-
-### Contact Information
-- **Billing Support**: billing@vexo.co
-- **Phone Support**: Available for premium customers
-- **Live Chat**: Real-time billing assistance
-- **Help Center**: Self-service billing documentation
+1. Log into your Vexo account.
+2. Click your profile name in the top-right corner.
+3. Select **Account Settings → Subscription**.
+4. Click **Update billing info** under the *Next bill amount* section.
 
 export default ({ children }) => <DocLayout current="billing" previous={{href: '/settings/account-settings', label: 'Account Settings'}} next={{href: '/settings/subscription', label: 'Subscription'}}>{children}</DocLayout>

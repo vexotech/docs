@@ -1,7 +1,9 @@
 import { DocLayout, DocImage } from '../../../../components';
 import Image from 'next/image';
 
-# People
+# Team
+
+This are the team members that will have access your application data.
 
 It's important to see who are the users that have access to the data behind your application, and what type of access they have.
 You can change the level of access for each team member at any point in time, if you have the required permissions for it.
@@ -10,7 +12,7 @@ There are three defined levels of access:
 * __Guest:__ They only have access to read the data from your application, no modifications allowed.
 
 export default ({ children }) => <DocLayout
-    current="people"
+    current="team"
     previous={{ href: 'app-tracking-information', label: 'Tracking Information'}}
     next={{ href: 'delete-application', label: 'Delete Application' }} >
         {children}
