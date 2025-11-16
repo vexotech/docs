@@ -20,4 +20,4 @@ When you click on a user, you’ll access a detailed profile page that connects 
 
 This allows you to connect what happened (event), when it happened (session), and how it looked (replay).
 
-export default ({ children }) => <DocLayout current="people">{children}</DocLayout>
+export default ({ children }) => <DocLayout current="people" previous={{href: '/react-native-guide/mobile-features/dashboard/funnels', label: 'Funnels'}} next={{href: '/react-native-guide/mobile-features/session-replays-heatmaps', label: 'Session Replays & Heatmaps'}}>{children}</DocLayout>

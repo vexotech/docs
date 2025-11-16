@@ -30,8 +30,11 @@ export const DocNavHeader = (): React.JSX.Element => {
                         <SearchIcon className="h-5 w-5" />
                     </button>
                 </div>
-                <Link className="text-xs cursor-pointer bg-gradient-to-tr from-blue-400 to-indigo-500 text-white px-5 py-3 pr-6 rounded-md" href="https://vexo.co/login">
-                    Log In
+                <Link
+                    className="text-xs cursor-pointer bg-gradient-to-br from-violet-500 to-indigo-500 text-white hover:text-slate-100 hover:bg-indigo-500 active:bg-indigo-800 active:text-indigo-100 focus-visible:outline-indigo-600"
+                    href="https://vexo.co/login"
+                >
+                    Get Started
                 </Link>
             </div>
         </div>
