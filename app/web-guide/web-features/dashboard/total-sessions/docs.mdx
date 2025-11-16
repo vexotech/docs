@@ -1,9 +1,11 @@
-import { DocLayout } from '../../../../../components/DocLayout';
+import { DocLayout, DocImage } from '../../../../../components';
 
 # Total Sessions
 
 The total number of sessions represents how many browsing sessions were initiated on your site within a given period. Each session begins when a visitor lands on your site and ends after inactivity or closure.
 
 This metric helps you understand overall activity and returning traffic when analyzed together with **Active Users** and **Session Time**.
+
+<DocImage src="/docs/web-total-sessions.png" width="1018" height="392" size="large" />
 
 export default ({ children }) => <DocLayout current="web-total-sessions">{children}</DocLayout>

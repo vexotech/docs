@@ -19,3 +19,84 @@
 html, body {
   @apply bg-white;
 }
+
+/* VS Code Dark Theme for code blocks */
+.hljs {
+    background: #1e1e1e !important;
+    color: #d4d4d4 !important;
+    padding: 1rem;
+    border-radius: 0.375rem;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace;
+    line-height: 1.5;
+}
+
+pre code {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Keywords: const, let, var, function, class, etc. */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal,
+.hljs-section,
+.hljs-link {
+    color: #569cd6;
+    font-weight: bold;
+}
+
+/* Strings */
+.hljs-string {
+    color: #ce9178;
+}
+
+/* Comments */
+.hljs-comment,
+.hljs-quote {
+    color: #6a9955;
+    font-style: italic;
+}
+
+/* Numbers */
+.hljs-number {
+    color: #b5cea8;
+}
+
+/* Variables and attributes */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute {
+    color: #9cdcfe;
+}
+
+/* Function names */
+.hljs-function,
+.hljs-title {
+    color: #dcdcaa;
+}
+
+/* Types and built-ins */
+.hljs-type,
+.hljs-built_in,
+.hljs-class .hljs-title {
+    color: #4ec9b0;
+}
+
+/* Operators and punctuation */
+.hljs-operator {
+    color: #d4d4d4;
+}
+
+/* Additional VS Code colors */
+.hljs-params {
+    color: #9cdcfe;
+}
+
+.hljs-meta {
+    color: #569cd6;
+}
+
+.hljs-doctag {
+    color: #569cd6;
+}

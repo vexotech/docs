@@ -79,16 +79,8 @@ export const sidebarData: SidebarData = [
         isCollapsible: true,
         defaultOpen: false,
         children: [
-            {
-                name: 'web-get-started',
-                title: 'Get Started',
-                isCollapsible: true,
-                defaultOpen: false,
-                children: [
-                    { title: 'Introduction', name: 'web-introduction', href: '/web-guide/get-started/introduction' },
-                    { title: 'Integration', name: 'web-integration', href: '/web-guide/get-started/integration' },
-                ]
-            },
+            { title: 'Introduction', name: 'web-introduction', href: '/web-guide/introduction' },
+            { title: 'Integration', name: 'web-integration', href: '/web-guide/integration' },
             {
                 name: 'web-features',
                 title: 'Web Features',

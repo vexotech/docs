@@ -1,4 +1,4 @@
-import { DocLayout } from '../../../../../components/DocLayout';
+import { DocLayout, DocImage } from '../../../../../components';
 
 # Session Time
 
@@ -9,5 +9,7 @@ The average session time is calculated as:
 *average session time = total session duration / total sessions*
 
 Longer session times may indicate that visitors are exploring content, while shorter ones could suggest quick interactions or clear navigation. Use this data to evaluate engagement and optimize the flow of your pages.
+
+<DocImage src="/docs/web-session-time.png" width="1018" height="392" size="large" />
 
 export default ({ children }) => <DocLayout current="web-session-time">{children}</DocLayout>

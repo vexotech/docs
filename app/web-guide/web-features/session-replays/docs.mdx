@@ -1,4 +1,4 @@
-import { DocLayout } from '../../../../components/DocLayout';
+import { DocLayout, DocImage } from '../../../../components';
 
 # Session Replays
 
@@ -9,5 +9,9 @@ Replays are especially useful for understanding user experience issues, tracking
 Vexo prioritizes privacy and performance. You have full control over what is recorded — with options to blur sensitive content, limit video length, or restrict uploads to Wi‑Fi only. Replay files are optimized for efficiency, averaging around 200 KB per minute, and have minimal impact on site performance.
 
 This feature is ideal for observing specific user behavior, debugging issues, and validating design or content decisions based on real user interaction.
+
+<DocImage src="/docs/web-replays.png" width="1018" height="392" size="large" />
+
+<DocImage src="/docs/web-replay-detail.png" width="1018" height="392" size="large" />
 
 export default ({ children }) => <DocLayout current="web-session-replays">{children}</DocLayout>
