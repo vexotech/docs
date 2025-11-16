@@ -31,7 +31,7 @@ export const DocNavHeader = (): React.JSX.Element => {
                     </button>
                 </div>
                 <Link
-                    className="text-xs cursor-pointer bg-gradient-to-br from-violet-500 to-indigo-500 text-white hover:text-slate-100 hover:bg-indigo-500 active:bg-indigo-800 active:text-indigo-100 focus-visible:outline-indigo-600"
+                    className="text-sm font-medium cursor-pointer bg-gradient-to-br from-violet-500 to-indigo-500 text-white hover:text-slate-100 hover:bg-indigo-500 active:bg-indigo-800 active:text-indigo-100 focus-visible:outline-indigo-600 px-4 py-2 rounded-lg transition-all"
                     href="https://vexo.co/login"
                 >
                     Get Started
