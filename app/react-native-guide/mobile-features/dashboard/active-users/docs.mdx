@@ -14,9 +14,4 @@ That means that on multiple day interactions, it will count as an active user fo
 
 <DocImage src="/docs/active-users.png" size="large"/>
 
-export default ({ children }) => <DocLayout
-    current="active-users"
-    previous={{href: '/react-native-guide/mobile-features/overview', label: 'Mobile Features Overview'}}
-    next={{href: '/react-native-guide/mobile-features/dashboard/average-session', label: 'Session Time'}} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="active-users" previous={{href: '/react-native-guide/mobile-features/overview', label: 'Overview'}} next={{href: '/react-native-guide/mobile-features/dashboard/average-session', label: 'Session Time'}}>{children}</DocLayout>

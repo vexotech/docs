@@ -16,9 +16,4 @@ the event.
 
 <DocImage src="/docs/webhooks.png" width="1050" height="703" size="large" />
 
-export default ({ children }) => <DocLayout
-    current="webhooks"
-    previous={{ href: 'app-general-information', label: 'General Information'}}
-    next={{ href: 'app-tracking-information', label: 'Tracking Information' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="webhooks" previous={{href: '/settings/app-settings/app-general-information', label: 'General Information'}} next={{href: '/settings/app-settings/export-api', label: 'Export API'}}>{children}</DocLayout>

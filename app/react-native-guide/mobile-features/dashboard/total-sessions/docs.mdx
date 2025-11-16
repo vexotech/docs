@@ -13,9 +13,4 @@ Combining this with the active users and session time stats you will get a clear
 
 <DocImage src="/docs/total-sessions.png" width="1018" height="392" size="large" />
 
-export default ({ children }) => <DocLayout
-    current="total-sessions"
-    previous={{ href: 'unique-downloads', label: 'Unique Downloads'}}
-    next={{ href: 'users-by-country', label: 'Users By Country' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="total-sessions" previous={{href: '/react-native-guide/mobile-features/dashboard/unique-downloads', label: 'Unique Downloads'}} next={{href: '/react-native-guide/mobile-features/dashboard/users-by-country', label: 'Users by Country'}}>{children}</DocLayout>

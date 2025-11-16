@@ -11,9 +11,4 @@ There are three defined levels of access:
 * __Owner:__ Only one person per app can be the owner, it refers to the person who created the app and has all privileges.
 * __Guest:__ They only have access to read the data from your application, no modifications allowed.
 
-export default ({ children }) => <DocLayout
-    current="team"
-    previous={{ href: 'app-tracking-information', label: 'Tracking Information'}}
-    next={{ href: 'delete-application', label: 'Delete Application' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="team" previous={{href: '/settings/app-settings/export-api', label: 'Export API'}} next={{href: '/settings/app-settings/delete-application', label: 'Delete Application'}}>{children}</DocLayout>

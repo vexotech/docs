@@ -14,9 +14,4 @@ Our download tracking mechanism triggers upon the user's initial app launch. Thi
 
 <DocImage src="/docs/unique-downloads.png" width="1018" height="392" size="large" />
 
-export default ({ children }) => <DocLayout
-    current="unique-downloads"
-    previous={{href: '/react-native-guide/mobile-features/dashboard/average-session', label: 'Session Time'}}
-    next={{href: '/react-native-guide/mobile-features/dashboard/total-sessions', label: 'Total Sessions'}} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="unique-downloads" previous={{href: '/react-native-guide/mobile-features/dashboard/average-session', label: 'Session Time'}} next={{href: '/react-native-guide/mobile-features/dashboard/total-sessions', label: 'Total Sessions'}}>{children}</DocLayout>

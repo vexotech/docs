@@ -17,9 +17,4 @@ so we'll update those devices into the new version.
 
 <DocImage src="/docs/version-adoption.png" size="small" />
 
-export default ({ children }) => <DocLayout
-    current="version-adoption"
-    previous={{ href: 'users-devices', label: 'Users Devices' }}
-    next={{ href: 'app-intensity', label: 'App Intensity' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="version-adoption" previous={{href: '/react-native-guide/mobile-features/dashboard/users-devices', label: 'Users Devices'}} next={{href: '/react-native-guide/mobile-features/dashboard/app-intensity', label: 'App Usage'}}>{children}</DocLayout>

@@ -60,9 +60,4 @@ pretty simple right?
 There's nothing wrong on designing your apps this way but it will become harder for you to maintain, and we recommend against it.
 Having an independent screen that does `Loading` is a better way to go, as it isolates responsibilities from your screens, helps transitioning, and secures a better experience while loading data.
 
-export default ({ children }) => <DocLayout
-    current="session-replays-heatmaps"
-    previous={{href: '/react-native-guide/mobile-features/people', label: 'People'}}
-    next={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="session-replays-heatmaps" previous={{href: '/react-native-guide/mobile-features/people', label: 'People'}} next={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}}>{children}</DocLayout>

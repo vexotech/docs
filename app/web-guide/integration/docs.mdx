@@ -36,9 +36,4 @@ global?.vexo?.identifyDevice('user@example.com');
 
 That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
 
-export default ({ children }) => <DocLayout
-    current="web-integration"
-    previous={{ href: '/web-guide/introduction', label: 'Introduction'}}
-    next={{ href: '/web-guide/web-features/overview', label: 'Overview' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="web-integration" previous={{href: '/web-guide/introduction', label: 'Introduction'}} next={{href: '/web-guide/web-features/overview', label: 'Overview'}}>{children}</DocLayout>

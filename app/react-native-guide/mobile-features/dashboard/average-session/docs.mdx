@@ -19,9 +19,4 @@ However, if the average session time is high could mean that users are taking to
 
 <DocImage src="/docs/average-session.png" width="1018" height="440" size="large" />
 
-export default ({ children }) => <DocLayout
-    current="average-session"
-    previous={{href: '/react-native-guide/mobile-features/dashboard/active-users', label: 'Active Users'}}
-    next={{href: '/react-native-guide/mobile-features/dashboard/unique-downloads', label: 'Unique Downloads'}} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="average-session" previous={{href: '/react-native-guide/mobile-features/dashboard/active-users', label: 'Active Users'}} next={{href: '/react-native-guide/mobile-features/dashboard/unique-downloads', label: 'Unique Downloads'}}>{children}</DocLayout>

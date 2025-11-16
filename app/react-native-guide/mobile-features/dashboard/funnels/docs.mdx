@@ -31,10 +31,4 @@ A funnel must have at least 2 steps and can include up to 8 steps.
 
 Once saved, Vexo will start tracking users who move through the steps so you can analyze where they drop off and where they convert.
 
-export default ({ children }) => <DocLayout
-    current="funnels"
-    previous={{href: '/react-native-guide/mobile-features/dashboard/customize-dashboard', label: 'Customize your Dashboard'}}
-    next={{href: '/react-native-guide/mobile-features/people', label: 'People'}} >
-        {children}
-</DocLayout>
-
+export default ({ children }) => <DocLayout current="funnels" previous={{href: '/react-native-guide/mobile-features/dashboard/customize-dashboard', label: 'Customize your Dashboard'}} next={{href: '/react-native-guide/mobile-features/people', label: 'People'}}>{children}</DocLayout>

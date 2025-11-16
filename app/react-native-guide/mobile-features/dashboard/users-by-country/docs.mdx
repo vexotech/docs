@@ -18,9 +18,4 @@ You will be able to see in the world map that USA and India are highlighted coun
 
 <DocImage src="/docs/users-by-country.png" size="small" />
 
-export default ({ children }) => <DocLayout
-    current="users-by-country"
-    previous={{ href: 'total-sessions', label: 'Total Sessions'}}
-    next={{ href: 'users-devices', label: 'Users Devices' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="users-by-country" previous={{href: '/react-native-guide/mobile-features/dashboard/total-sessions', label: 'Total Sessions'}} next={{href: '/react-native-guide/mobile-features/dashboard/users-devices', label: 'Users Devices'}}>{children}</DocLayout>

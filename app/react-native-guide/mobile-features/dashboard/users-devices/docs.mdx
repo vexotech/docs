@@ -14,9 +14,4 @@ We count a device system name (iOS, Android, Windows phone, etc.) without counti
 
 <DocImage src="/docs/users-devices.png" width="502" height="535" size="small" />
 
-export default ({ children }) => <DocLayout
-    current="users-devices"
-    previous={{ href: 'users-by-country', label: 'Users By Country'}}
-    next={{ href: 'version-adoption', label: 'Version Adoption' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="users-devices" previous={{href: '/react-native-guide/mobile-features/dashboard/users-by-country', label: 'Users by Country'}} next={{href: '/react-native-guide/mobile-features/dashboard/version-adoption', label: 'Version Adoption'}}>{children}</DocLayout>

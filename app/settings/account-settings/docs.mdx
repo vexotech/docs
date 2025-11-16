@@ -39,9 +39,4 @@ This is a really sensible operation, and it is not recommended to take it lightl
 
 This is done this way so that we assure privacy for your business and that your data is yours, only that it flows through our systems.
 
-export default ({ children }) => <DocLayout
-    current="account-settings"
-    previous={{ href: 'delete-application', label: 'Delete Application'}}
-    next={{ href: 'delete-account', label: 'Delete Account' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="account-settings" previous={{href: '/web-guide/web-features/custom-events', label: 'Custom Events'}} next={{href: '/settings/billing', label: 'Billing'}}>{children}</DocLayout>
