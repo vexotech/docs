@@ -9,7 +9,7 @@ import { useSearch } from '../contexts/SearchContext';
 export const DocNavHeader = (): React.JSX.Element => {
     const { openSearch } = useSearch();
 
-    return <div className="w-full h-16 fixed top-0 bg-white bg-opacity-95 pl-0 sm:pl-56 md:pl-72">
+    return <div className="w-full h-16 fixed top-0 bg-white bg-opacity-95 pl-0 sm:pl-56 md:pl-72 z-20">
         <div className="w-full h-full px-12 flex items-center justify-between">
             <div className="text-sm text-slate-600 cursor-pointer flex items-center sm:hidden">
                 <div className="text-gray-600 font-bold text-xs">
