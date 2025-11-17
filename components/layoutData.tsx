@@ -17,7 +17,7 @@ export const sidebarData: SidebarData = [
         defaultOpen: true,
         children: [
             { title: 'Introduction', name: 'introduction', href: '/get-started/introduction' },
-            { title: 'Quick Start', name: 'quick-start', href: '/get-started/quick-start' },
+            { title: 'Quickstart', name: 'quick-start', href: '/get-started/quick-start' },
         ]
     },
     {
