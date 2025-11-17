@@ -50,6 +50,7 @@ export const sidebarData: SidebarData = [
                         isCollapsible: true,
                         defaultOpen: false,
                         children: [
+                            { title: 'Introduction', name: 'rn-dashboard-intro', href: '/react-native-guide/mobile-features/dashboard/introduction' },
                             { title: 'Active Users', name: 'active-users', href: '/react-native-guide/mobile-features/dashboard/active-users' },
                             { title: 'Session Time', name: 'average-session', href: '/react-native-guide/mobile-features/dashboard/average-session' },
                             { title: 'Unique Downloads', name: 'unique-downloads', href: '/react-native-guide/mobile-features/dashboard/unique-downloads' },
@@ -69,8 +70,6 @@ export const sidebarData: SidebarData = [
             },
             { title: 'Mobile Publishing', name: 'mobile-publishing', href: '/react-native-guide/mobile-publishing' },
             { title: 'Mobile Settings', name: 'mobile-settings', href: '/react-native-guide/mobile-settings' },
-            { title: 'Best Practices', name: 'best-practices', href: '/react-native-guide/best-practices' },
-            { title: 'FAQs', name: 'faqs', href: '/react-native-guide/faqs' },
         ]
     },
     {
