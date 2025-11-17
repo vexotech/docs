@@ -27,16 +27,7 @@ export const sidebarData: SidebarData = [
         defaultOpen: false,
         children: [
             { title: 'Introduction', name: 'rn-introduction', href: '/react-native-guide/introduction' },
-            {
-                name: 'integration',
-                title: 'Integration',
-                isCollapsible: true,
-                defaultOpen: false,
-                children: [
-                    { title: 'Quickstart', name: 'quickstart', href: '/react-native-guide/integration/quickstart' },
-                    { title: 'How it Works', name: 'how-it-works', href: '/react-native-guide/integration/how-it-works' },
-                ]
-            },
+            { title: 'Integration', name: 'rn-integration', href: '/react-native-guide/integration' },
             {
                 name: 'mobile-features',
                 title: 'Mobile Features',

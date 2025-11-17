@@ -21,15 +21,8 @@ To add a custom event on your website, use the following snippet:
 
 ```jsx
 global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
-
 ```
 
 You can attach any additional parameters that are relevant to your product or business.
-
-If you want to associate a user with a specific session or device, you can optionally identify them:
-
-```jsx
-global?.vexo?.identifyDevice('user@example.com');
-```
 
 export default ({ children }) => <DocLayout current="web-custom-events" previous={{href: '/web-guide/web-features/session-replays', label: 'Session Replays'}} next={{href: '/settings/account-settings', label: 'Account Settings'}}>{children}</DocLayout>

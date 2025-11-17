@@ -22,4 +22,44 @@ When you click on a user, you’ll access a detailed profile page that connects 
 
 This allows you to connect what happened (event), when it happened (session), and how it looked (replay).
 
+## Usage
+
+As well as being seamless, privacy is a key focus. We don't store any PII from your devices or users, so we provide a way in which you can identify a user in order
+to be able to navigate through your dashboards in a personalized way.
+To achieve this, do the following:
+
+```js
+import { useEffect } from 'react'
+import { View } from 'react-native'
+import { identifyDevice } from 'vexo-analytics'
+
+const LoginComponent = () => {
+    const login = async () => {
+        // your code
+        await identifyDevice('IDENTIFIER');
+    }
+    return (<View>{...}</View>);
+};
+```
+
+It's important to note that the identifier is a string and can be anything you want. We recommend that you identify your device with a token/hash
+that you can then map it into your users' data to be able to know which user is it.
+As an example, in SQL a unique ID as a foreign key to your users' table should suffice.
+
+In case you want to make the device anonymous, `identifyDevice` supports `null` like in the following example:
+
+```js
+import { useEffect } from 'react'
+import { View } from 'react-native'
+import { identifyDevice } from 'vexo-analytics'
+
+const TrackerComponent = () => {
+    const onAskedNotToTrack = async () => {
+        // your code
+        await identifyDevice(null);
+    }
+    return (<View>{...}</View>);
+};
+```
+
 export default ({ children }) => <DocLayout current="people" previous={{href: '/react-native-guide/mobile-features/dashboard/funnels', label: 'Funnels'}} next={{href: '/react-native-guide/mobile-features/session-replays-heatmaps', label: 'Session Replays & Heatmaps'}}>{children}</DocLayout>
