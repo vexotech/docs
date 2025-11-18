@@ -10,6 +10,7 @@ import { CodeBlock } from './components/CodeBlock';
 export function useMDXComponents(components: MDXComponents): MDXComponents {
     return {
         // Allows customizing built-in components, e.g. to add styling.
+        // @ts-ignore
         pre: CodeBlock,
         ...components,
     };
