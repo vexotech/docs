@@ -2,7 +2,7 @@
 
 import { SearchIcon } from '@heroicons/react/outline';
 import { useState, useEffect } from 'react';
-import { useSearch } from '../contexts/SearchContext';
+import { useSearch } from '../lib/SearchContext';
 
 export function SearchTrigger() {
   const { openSearch } = useSearch();

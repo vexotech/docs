@@ -4,7 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { SearchTrigger } from "./SearchTrigger";
 import { SearchIcon } from '@heroicons/react/outline';
-import { useSearch } from '../contexts/SearchContext';
+import { useSearch } from '../lib/SearchContext';
 
 export const DocNavHeader = (): React.JSX.Element => {
     const { openSearch } = useSearch();

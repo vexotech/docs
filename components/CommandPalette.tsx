@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useEffect, useMemo, Fragment } from 'react';
-import { Dialog, Transition, Combobox } from '@headlessui/react';
+import { Dialog, Transition, DialogPanel, TransitionChild, ComboboxOption, ComboboxOptions, Combobox, ComboboxInput } from '@headlessui/react';
 import { SearchIcon, DocumentTextIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/navigation';
 import Fuse from 'fuse.js';
 import { buildSearchIndex, SearchItem } from '../lib/searchIndex';
-import { useSearch } from '../contexts/SearchContext';
+import { useSearch } from '../lib/SearchContext';
 
 const searchOptions = {
   keys: ['title', 'keywords', 'section'],
@@ -52,7 +52,7 @@ export function CommandPalette() {
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={closeSearch}>
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -62,10 +62,10 @@ export function CommandPalette() {
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
-        </Transition.Child>
+        </TransitionChild>
 
         <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
-          <Transition.Child
+          <TransitionChild
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0 scale-95"
@@ -74,11 +74,11 @@ export function CommandPalette() {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto max-w-2xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+            <DialogPanel className="mx-auto max-w-2xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
               <Combobox onChange={handleSelect}>
                 <div className="relative">
                   <SearchIcon className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
-                  <Combobox.Input
+                  <ComboboxInput
                     className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                     placeholder="Search documentation..."
                     value={query}
@@ -87,12 +87,12 @@ export function CommandPalette() {
                 </div>
 
                 {searchResults.length > 0 && (
-                  <Combobox.Options
+                  <ComboboxOptions
                     static
                     className="max-h-80 scroll-py-2 divide-y divide-gray-100 overflow-y-auto"
                   >
                     {searchResults.map((item) => (
-                      <Combobox.Option
+                      <ComboboxOption
                         key={item.href}
                         value={item}
                         className={({ active }) =>
@@ -120,9 +120,9 @@ export function CommandPalette() {
                             </div>
                           </div>
                         )}
-                      </Combobox.Option>
+                      </ComboboxOption>
                     ))}
-                  </Combobox.Options>
+                  </ComboboxOptions>
                 )}
 
                 {query && searchResults.length === 0 && (
@@ -158,8 +158,8 @@ export function CommandPalette() {
                   to close
                 </span>
               </div>
-            </Dialog.Panel>
-          </Transition.Child>
+            </DialogPanel>
+          </TransitionChild>
         </div>
       </Dialog>
     </Transition>
