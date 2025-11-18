@@ -1,0 +1,21 @@
+import { DocLayout, DocImage } from '../../../../../components';
+
+# UTMs
+
+UTM tracking allows you to measure and compare the performance of your campaigns across different platforms. Vexo automatically captures these parameters:
+
+- **utm_source** — identifies where the traffic originated (e.g. `bing`, `newsletter`, `producthunt`)
+- **utm_medium** — shows the channel type (e.g. `paid`, `social`, `email`)
+- **utm_campaign** — tracks the specific campaign (e.g. `summer_launch`)
+- **utm_content** — distinguishes between ad versions or placements
+- **utm_term** — includes keywords or targeting terms from paid search
+
+You can filter your reports by any of these attributes to analyze campaign reach and impact. For example, you can see how many signups or sessions came from a particular email series, banner, or sponsored post.
+
+Vexo also recognizes paid ad identifiers such as `gclid` and `msclkid` from Google Ads and Microsoft Ads. These are automatically anonymized to stay GDPR‑compliant while maintaining accurate attribution.
+
+UTM data works seamlessly with **Geographic Insights**, letting you see where your campaigns perform best and refine your targeting for future promotions.
+
+<DocImage src="/docs/web-utms.png" width="1018" height="392" size="small" />
+
+export default ({ children }) => <DocLayout current="web-utms" previous={{href: '/web-guide/web-features/dashboard/referrers', label: 'Referrers'}} next={{href: '/web-guide/web-features/dashboard/routes', label: 'Routes'}}>{children}</DocLayout>

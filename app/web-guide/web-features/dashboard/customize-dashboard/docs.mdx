@@ -1,0 +1,27 @@
+import { DocLayout, Warning } from '../../../../../components';
+
+# Customize your dashboard
+
+<Warning message={(<div>This feature is for <b>premium & enterprise</b> accounts only</div>)} />
+
+### How it works
+
+Tracking custom events is one of the most powerful ways to gain insight into your product and user behavior. To make this easier, Vexo allows Premium and Enterprise users to **add custom widgets** directly to their dashboard. Each widget displays the daily usage of a selected custom event, filtered by any properties you’ve defined.
+
+Custom widgets support the same **global filters** as the rest of your dashboard, so every metric you see remains consistent and in context. You can easily compare your custom metrics alongside your main analytics data.
+
+### Usage
+
+To start tracking a custom event on your dashboard:
+
+1. Click the **Add to Dashboard** button.
+2. Enter a name for your widget.
+3. Select one of your existing custom events.
+4. (Optional) Add one or more filters based on the event’s properties — for example, filtering by plan type, country, or device.
+5. Click **Submit** to save.
+
+Once created, your widget will automatically populate with data, showing the daily usage of that event for any selected period — including historical data that occurred before the widget was added.
+
+You can find full integration steps in the Custom Events guide.
+
+export default ({ children }) => <DocLayout current="web-customize-dashboard" previous={{href: '/web-guide/web-features/dashboard/routes', label: 'Routes'}} next={{href: '/web-guide/web-features/dashboard/funnels', label: 'Funnels'}}>{children}</DocLayout>

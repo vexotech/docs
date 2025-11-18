@@ -1,0 +1,45 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Subscription
+
+Vexo offers simple, transparent plans designed to grow with your app — from early-stage projects to high-traffic products. You can switch plans or adjust event limits anytime right from your account.
+
+### How Vexo Plans Work
+
+All Vexo plans are based on your **total monthly events** across apps and websites in your account. An event includes both direct and indirect interactions with your app or site — such as taps, clicks, navigations, API calls, errors, and custom events.
+
+You can check your real-time usage anytime in **Account Settings → Subscription**.
+
+### Vexo Plan Tiers
+
+**Free** – For small apps or during development. Perfect to try Vexo out.
+
+Includes up to **100k events**, **100 session replays**, **2,000 heatmaps**, and **2 free seats**.
+
+**Premium - $16/mo annual billing ($19/mo monthly billing)**
+
+Best for teams launching their next project.
+
+Includes up to **250k events**, **1,000 session replays**, **unlimited heatmaps**, and **2 seats** with full access to all features.
+
+**Enterprise – $32/mo annual billing ($39/mo monthly billing)**
+
+Ideal for apps with a growing or large user base.
+
+Includes up to **1M events**, **4,000 session replays**, **unlimited heatmaps**, **2 seats**, and a **customizable dashboard**.
+
+Within the Enterprise plan, you can scale beyond 1M events — pricing adjusts with usage, and you can set your event cap directly in your account.
+
+### Going Over Your Monthly Event Limit
+
+You’ll never be billed unexpectedly. If **Overages** are enabled, additional events beyond your plan are billed at the specified rate. Otherwise, Vexo stops tracking new events once you reach **120% of your plan limit**, while keeping all your existing stats accessible.
+
+If higher traffic becomes consistent, you can upgrade seamlessly to the next tier or adjust your Enterprise event cap. Upgrades are **self-serve and prorated**, so you only pay for the remaining period.
+
+### Managing Your Subscription
+
+You can update your plan, switch billing frequency, or cancel anytime in **Account Settings → Subscription**.
+
+There are no contracts, hidden fees, or penalties — just flexible plans designed for growth.
+
+export default ({ children }) => <DocLayout current="subscription" previous={{href: '/settings/billing', label: 'Billing'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>

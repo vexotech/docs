@@ -1,0 +1,33 @@
+import { DocLayout, DocImage } from '../../../../components';
+
+## People
+
+The **People** feature brings together every detail about your website visitors in one place. Whether you’re analyzing your **Web traffic** alone or together with **React Native**, People provides a complete and unified view of your users — automatically, out of the box.
+
+You can:
+
+- **Sort by** last active date, number of sessions, number of replays, or user ID.
+- **Filter by** timeframe, browser, operating system, or country.
+- **Export data** to CSV for deeper analysis or sharing with your team.
+
+<DocImage src="/docs/web-people-list.png" width="1018" height="392" size="large" />
+
+## User Details
+
+When you click on a user, you’ll open a detailed profile view that connects everything that visitor has done:
+
+- A timeline of **custom events** they’ve triggered.
+- A list of their **sessions**, including all recorded events.
+- Links to **session replays** when available.
+
+This lets you connect what happened (event), when it happened (session), and how it looked (replay).
+
+## Usage 
+
+If you want to associate a user with a specific session or device, you can optionally identify them:
+
+```jsx
+global?.vexo?.identifyDevice('user@example.com');
+```
+
+export default ({ children }) => <DocLayout current="web-people" previous={{href: '/web-guide/web-features/dashboard/funnels', label: 'Funnels'}} next={{href: '/web-guide/web-features/session-replays', label: 'Session Replays'}}>{children}</DocLayout>

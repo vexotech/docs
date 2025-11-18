@@ -247,12 +247,4 @@ import Link from 'next/link'
 ### Features
 * Initial release
 
-
-
-
-export default ({ children }) => <DocLayout
-    current="new-downloads"
-    previous={{ href: 'delete-account', label: 'Delete Account'}}
-    next={{ href: '/', label: 'Quick Start' }} >
-        {children}
-</DocLayout>
+export default ({ children }) => <DocLayout current="changelog" previous={{href: '/contact-vexo', label: 'Contact Vexo'}}>{children}</DocLayout>

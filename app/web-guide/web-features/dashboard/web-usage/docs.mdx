@@ -1,0 +1,13 @@
+import { DocLayout, DocImage } from '../../../../../components';
+
+# Web Usage
+
+Web Usage is calculated by counting the total number of events that occur on your website — such as page views, clicks, and scrolls — and distributing them across the hours and days of the week.
+
+Events are grouped by the hour they happen (in UTC and then adjusted to your local timezone) and mapped against the days of the week. This creates a heatmap that highlights when your website activity peaks.
+
+Knowing when your site is most active helps you make smarter decisions — like scheduling announcements, releases, or marketing campaigns when engagement is at its highest.
+
+<DocImage src="/docs/web-usage.png" width="1018" height="392" size="large" />
+
+export default ({ children }) => <DocLayout current="web-usage" previous={{href: '/web-guide/web-features/dashboard/total-sessions', label: 'Total Sessions'}} next={{href: '/web-guide/web-features/dashboard/device-distribution', label: 'Device Distribution'}}>{children}</DocLayout>

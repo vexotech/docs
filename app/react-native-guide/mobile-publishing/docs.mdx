@@ -1,0 +1,66 @@
+import { DocLayout, DocImage } from '../../../components';
+import Image from 'next/image'
+
+# Publishing your app
+
+### Introduction
+
+Publishing your application to a store is an exciting step of the development journey. When submitting your application to
+the store you'll be asked about privacy and data collection practices. We'll guide you through the process
+on each platform.
+
+### Publishing to Apple store
+
+Apple requires you to fill out the App Privacy form when you submit your app to the App Store.
+
+When using Vexo Analytics there are some items that **must** be checked when submitting your app.
+
+#### Do you or your third-party partners collect any data from this app?
+
+
+Select **yes** when asked if a third-party partner is collecting any data. As listed above, with Vexo you are tracking 
+a lot of information out of the box.
+
+<DocImage src="/docs/apple-data-collection.png" width="502" height="440" size="small" />
+
+#### Usage Data
+
+Next, you'll be asked the data types you collect.
+Regarding Vexo the only data types you need to select is **Product Interaction** and **Usage Data**.
+
+You’ll then be asked to expand on how you use the Product Interaction data. Select **Analytics** as the answer.
+
+<DocImage src="/docs/apple-analytics.png" width="502" height="610" size="small" />
+
+Then next question is related to **User Identification**.
+We are not any personal information so you can safely select **No** for this question.
+
+Finally, they’ll explain their definition of what Tracking is and ask you to confirm if you track users.
+Apple only considers tracking when data is linked to a user’s identity and used for targeted advertising or advertising measurement purposes, which is not something we do at Vexo so you can select *No*.
+
+<DocImage src="/docs/apple-identify-device.png" width="502" height="650" size="small" />
+
+
+### Publishing to Google store
+
+When submiting to the Google store you'll need to submit information about what your app tracks. Particularly you'll need
+to select specific options on **Data collection and security** and **Data safety**
+
+
+#### Data collection and security
+
+You'll be asked if your app collects or shares any of the required user data types and if that data is encrypted. You must select 
+**yes** to both of them.
+
+<DocImage src="/docs/android-collection.jpeg" width="502" height="250" size="small" />
+
+#### Data safety
+
+Next you'll be asked about data safety. Make sure to select **Device or other IDs** since Vexo uses them.
+
+<DocImage src="/docs/android-safety.jpeg" width="520" height="230" size="small" />
+
+
+And thats it! Once your app is approved you'll enjoy all the insights Vexo provides out of the box!
+
+export default ({ children }) => <DocLayout current="mobile-publishing" previous={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}} next={{href: '/react-native-guide/mobile-settings', label: 'Mobile Settings'}}>{children}</DocLayout>

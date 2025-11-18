@@ -1,0 +1,36 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Billing
+
+Answers to the most common questions about billing, invoices, and payments in Vexo:
+
+### How is billing calculated?
+
+Billing is based on your **total event usage across all apps and websites** under your account. You can view your monthly usage anytime in your account settings.
+
+### How do I get my invoices?
+
+Invoices are sent automatically by our payment provider, **Stripe**, each time a payment is processed. You’ll receive them by email and can download them directly from the link included in the email.
+
+If you want invoices sent to a different email, just contact us with your current Stripe billing email and the new address you’d like to use.
+
+### What payment methods do you support?
+
+We accept **credit and debit cards**, **Google Pay**, and **Cash Pay**. All payments are securely processed through Stripe. At the moment, we don’t support wire transfers, manual invoicing, or cryptocurrency payments.
+
+### What happens if I exceed my monthly event limit?
+
+You’ll never be charged unexpectedly. Extra usage is only billed if you’ve enabled **Overages** in your subscription settings. Otherwise, once you reach **120% of your event limit**, Vexo will stop tracking new events until you upgrade your plan.
+
+Don’t worry—your existing data and dashboards remain fully accessible while tracking is paused.
+
+### How do I update my billing information?
+
+To update your billing details:
+
+1. Log into your Vexo account.
+2. Click your profile name in the top-right corner.
+3. Select **Account Settings → Subscription**.
+4. Click **Update billing info** under the *Next bill amount* section.
+
+export default ({ children }) => <DocLayout current="billing" previous={{href: '/settings/account-settings', label: 'Account Settings'}} next={{href: '/settings/subscription', label: 'Subscription'}}>{children}</DocLayout>

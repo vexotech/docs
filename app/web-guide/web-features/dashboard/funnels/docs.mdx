@@ -1,0 +1,24 @@
+import { DocLayout, Warning, DocImage } from '../../../../../components';
+
+# Funnels
+
+<Warning message={(<div>This feature is for <b>premium & enterprise</b> accounts only</div>)} />
+
+Funnels help you visualize how users move through a series of actions on your website. You can identify where visitors drop off and where they continue, helping you optimize flows like onboarding, checkouts, or feature adoption.
+
+<DocImage src="/docs/funnels-main.png" width="1018" height="392" size="large" />
+
+### Usage
+
+To create a funnel:
+
+1. Click on the **Add Funnel** button in your dashboard.
+2. Define your funnel steps using either **custom events** (e.g., “Clicked Sign Up”, “Completed Purchase”) or **routes** (e.g., “Visited Pricing Page”, “Viewed Checkout”).
+3. A funnel requires a minimum of two steps and can include up to eight.
+4. Save your funnel and Vexo will start tracking user progress through those steps.
+
+<DocImage src="/docs/funnels-form.png" width="1018" height="392" size="large" />
+
+You can then analyze the funnel to see how users advance, where they drop off, and where they convert — giving you clear visibility into your website’s performance and opportunities for improvement.
+
+export default ({ children }) => <DocLayout current="web-funnels" previous={{href: '/web-guide/web-features/dashboard/customize-dashboard', label: 'Customize your Dashboard'}} next={{href: '/web-guide/web-features/people', label: 'People'}}>{children}</DocLayout>

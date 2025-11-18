@@ -1,0 +1,14 @@
+import { DocLayout, DocImage } from '../../../../../components';
+import Image from 'next/image'
+
+# Total Sessions
+
+As mentioned in [session time metric](/react-native-guide/mobile-features/dashboard/average-session),
+a user's session begins with the initial event of starting to use the app and extends until the app is either closed or the screen is locked.
+
+By tracking the total number of sessions across a given timeframe you will be able to understand how much your users interact with your app.
+Combining this with the active users and session time stats you will get a clear picture of your app userbase.
+
+<DocImage src="/docs/total-sessions.png" width="1018" height="392" size="large" />
+
+export default ({ children }) => <DocLayout current="total-sessions" previous={{href: '/react-native-guide/mobile-features/dashboard/unique-downloads', label: 'Unique Downloads'}} next={{href: '/react-native-guide/mobile-features/dashboard/users-by-country', label: 'Users by Country'}}>{children}</DocLayout>

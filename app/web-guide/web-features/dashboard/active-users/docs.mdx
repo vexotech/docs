@@ -1,0 +1,13 @@
+import { DocLayout, DocImage } from '../../../../../components';
+
+# Active Users
+
+This metric helps you measure the level of engagement on your website. A user is considered active when they interact with your site **at least once,** whether that’s a page view, click, or any tracked event, within the selected timeframe.
+
+The total count increases when a new or returning visitor interacts with your site for the first time during the selected period. A visitor who returns on multiple days will count as active for each of those days, though the total unique number will remain the same.
+
+This metric gives you a clear view of your audience’s consistency and engagement trends over time.
+
+<DocImage src="/docs/web-active-users.png" width="1018" height="392" size="large" />
+
+export default ({ children }) => <DocLayout current="web-active-users" previous={{href: '/web-guide/web-features/dashboard/introduction', label: 'Introduction'}} next={{href: '/web-guide/web-features/dashboard/session-time', label: 'Session Time'}}>{children}</DocLayout>

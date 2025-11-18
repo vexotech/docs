@@ -1,0 +1,16 @@
+import { DocLayout, DocImage } from '../../../../../components';
+
+# Geographic Insights
+
+Checking out the geographic distribution of your visitors helps you prioritize and tailor your website for different audiences. 
+
+- For instance, if you notice most of your users come from Australia instead of Europe, you might consider moving your servers closer to that region for better performance or optimizing your campaigns for the areas where they’ve performed best.
+- It’s also a powerful way to **measure campaign success** across regions. By combining location data with UTM tracking, you can identify where your marketing efforts are delivering stronger results and where new opportunities exist.
+
+Whenever a session is received, Vexo determines the visitor’s approximate location by resolving their IP address using [GeoLite](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data?lang=en). This allows us to associate each session with a country or region.
+
+For example, if one visitor connects from San Francisco, USA, and another from Mumbai, India, both locations will be highlighted on your dashboard map — adding one unique visitor per region within the selected timeframe.
+
+<DocImage src="/docs/web-countries-distribution.png" width="1018" height="392" size="small" />
+
+export default ({ children }) => <DocLayout current="web-geographic-insights" previous={{href: '/web-guide/web-features/dashboard/browser-distribution', label: 'Browser Distribution'}} next={{href: '/web-guide/web-features/dashboard/referrers', label: 'Referrers'}}>{children}</DocLayout>

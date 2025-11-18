@@ -1,0 +1,17 @@
+import { DocLayout, DocImage } from '../../../../../components';
+
+# Referrers
+
+Referrers show the external websites, platforms, or apps that send visitors to your site. They help you understand where your traffic originates — whether that’s from search engines, social networks, blogs, or partner domains — so you can identify which sources drive the most valuable audiences.
+
+Vexo automatically attributes new sessions to the correct referral source and avoids counting redirects like payment gateways or authentication services. This means that if a user briefly leaves your site to complete a payment and then returns, the original source (for example, a newsletter or social post) is still credited for the visit.
+
+To keep reports clean, Vexo consolidates similar or variant sources. For example, traffic from links tagged as `instagram`, `ig`, or `instagram-ads` will be grouped under a single Instagram entry.
+
+If a visitor lands on your site from `technews.io/article/launch-review`, Vexo records the referrer as `technews.io`. This simple, privacy‑friendly approach keeps your analytics easy to interpret while still highly actionable.
+
+Referrer data helps you evaluate partnerships, outreach efforts, and the performance of organic mentions or backlinks.
+
+<DocImage src="/docs/web-referrers.png" width="1018" height="392" size="small" />
+
+export default ({ children }) => <DocLayout current="web-referrers" previous={{href: '/web-guide/web-features/dashboard/geographic-insights', label: 'Geographics Insights'}} next={{href: '/web-guide/web-features/dashboard/utms', label: 'UTMs'}}>{children}</DocLayout>

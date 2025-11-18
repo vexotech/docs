@@ -1,0 +1,60 @@
+import { DocLayout, DocImage } from '../../../../components';
+import Image from 'next/image'
+
+# Session Replays
+
+Vexo provides powerful insights into user behavior, helping you make critical business decisions. With Session Replays,
+you can gain an even deeper understanding. Engaging users with your app is one of the
+biggest challenges, and Session Replays will let you see what’s happening behind the
+scenes firsthand.
+You'll be able to view app activity enhanced by the data you’re already benefiting from.
+
+We’re big on privacy, and we make sure you have control over what’s recorded in Session Replays.
+You can blur the replay, adjust video duration, and [more](/react-native-guide/mobile-settings), so you’re always in the driver’s seat.
+Plus, we’ve put extra care into making sure replays don’t slow things down—our testing
+shows no big impact on CPU or memory use. Replay files are pretty lightweight,
+averaging around 200 KB per minute, and if you’d like, you can set them to upload
+only over WiFi to save on data.
+
+
+This feature is great to understand specific behavior from a user,
+track down bugs from your application, and understand that users are following patterns when using your app.
+
+<DocImage src="/docs/mobile-session-replays.png" width="1018" height="392" size="large" />
+
+# Heatmaps
+
+### Screens & Taps
+
+Having a heatmap of where your screen is getting more activity is essential to visualize your most interacted components.
+It can reveal unexpected user behavior that you might have slipped when designing.
+For example, if your dashboard with a list of to-do items has taps on the sides, it means that they are dragging to use the control widgets often.
+
+On every tap, we calculate `x` and `y` position in the screen and multiply it by the pixel density, so we'll have a generic representation of where
+the tap was in the screen, and then be able to show it to you in the most accurate way.
+We then aggregate this data into heat points and overlap them in your screen.
+
+We also understand the context of the tap, which means:
+- The current screen it's being tapped on
+- The current version of your app
+- The phone model the device is on
+
+You can select all of your app versions to see past heatmaps of your screen, and different models to understand different patterns across models adopting your app.
+
+<DocImage src="/docs/heatmaps.png" width="99" height="702" size="large" />
+
+### Screenshots
+
+Screenshots are the bread and butter of heatmaps. In order to be able to show you the screen with the heatmaps,
+we take screenshots of the users based on app version and model device.
+We understand this is sensible data, so we encrypt the images in the server for security, and restrict the access only to yourself,
+so you have control about what happens with them, it's yours.
+
+When taking screenshots, we check that the screenshot (by app version, and device model) hasn't been uploaded yet, and discard it if it was, or upload it otherwise,
+pretty simple right?
+
+**Note:** If you are programatically showing a loading screen inside a screen as a way of loading data, it's possible for you to see a screenshot of your loading screen.
+There's nothing wrong on designing your apps this way but it will become harder for you to maintain, and we recommend against it.
+Having an independent screen that does `Loading` is a better way to go, as it isolates responsibilities from your screens, helps transitioning, and secures a better experience while loading data.
+
+export default ({ children }) => <DocLayout current="session-replays-heatmaps" previous={{href: '/react-native-guide/mobile-features/people', label: 'People'}} next={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}}>{children}</DocLayout>

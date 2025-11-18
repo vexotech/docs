@@ -1,0 +1,28 @@
+import { DocLayout } from '../../../../components/DocLayout';
+
+# Custom Events
+
+### How it works
+
+Custom Events allow you to track specific actions that matter most to your business — beyond standard website behavior like page views or clicks. These can be anything from a product purchase to a form submission or a feature interaction.
+
+When a custom event is triggered, Vexo automatically contextualizes it with relevant data, such as the visitor’s device, browser, session, and version. This gives you a complete understanding of not only what happened, but under which conditions it occurred.
+
+For example, if you track a `purchase-completed` event, Vexo might reveal that 60% of those events come from Chrome users and that your latest site version increased conversions by 10%. This context helps you make informed product and marketing decisions.
+
+In your dashboard, custom events display two types of counts:
+
+- **Total count:** the total number of times an event occurred.
+- **Unique count:** how many individual users triggered the event (no matter how many times each one did).
+
+### Usage
+
+To add a custom event on your website, use the following snippet:
+
+```jsx
+global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
+```
+
+You can attach any additional parameters that are relevant to your product or business.
+
+export default ({ children }) => <DocLayout current="web-custom-events" previous={{href: '/web-guide/web-features/session-replays', label: 'Session Replays'}} next={{href: '/settings/account-settings', label: 'Account Settings'}}>{children}</DocLayout>

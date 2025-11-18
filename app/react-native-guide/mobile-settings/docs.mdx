@@ -1,0 +1,36 @@
+import { DocLayout, DocImage } from '../../../components';
+import Image from 'next/image';
+
+# Tracking information
+
+Tracking information describes how Vexo interacts with your app.
+
+Here you are able to change your app tracking properties such as session replays behavior and disable specfic events tracking.
+
+### Enable session replays
+
+When this option is unchecked, session replays will be disabled on all devices.
+
+### Blur session replays
+
+When this option is checked, session replays will be blurred.
+
+### Send replays only on wifi
+
+When this option is checked, devices will only send session replays over will.
+
+### Limit replays duration
+
+When this option is checked, all new session replays will be limited to 5min.
+
+### Include fetch events
+
+When this option is unchecked, all your devices fetch events will be ignored by Vexo.
+
+### Tap sampling events
+
+Only enabled for paid accounts, we allow to sample tap events based on the given percentage.
+
+<DocImage src="/docs/mobile-app-tracking.png" width="1050" height="703" size="large" />
+
+export default ({ children }) => <DocLayout current="mobile-settings" previous={{href: '/react-native-guide/mobile-publishing', label: 'Mobile Publishing'}} next={{href: '/web-guide/introduction', label: 'Web Introduction'}}>{children}</DocLayout>

@@ -1,0 +1,16 @@
+import { DocLayout, DocImage } from '../../../../../components';
+import Image from 'next/image'
+
+# App Usage
+
+App usage is calculated by counting the total amount of events that happen in your app and distributing them over the hours of the week.
+
+Events will be grouped by the hour in which they occur (in UTC and then translated to your local timezone) and then crossed out with the days of the week,
+so that we can aggregate the total events and calculate the percentage for each hour, showing at what day and time your app's activity is hotter.
+
+The time in which your app is used the most used is important so that you can provide a customizable experience for your users,
+for example, by sending notifications when you know for sure there's activity happening.
+
+<DocImage src="/docs/app-intensity.png" width="502" height="260" size="small" />
+
+export default ({ children }) => <DocLayout current="app-intensity" previous={{href: '/react-native-guide/mobile-features/dashboard/version-adoption', label: 'Version Adoption'}} next={{href: '/react-native-guide/mobile-features/dashboard/customize-dashboard', label: 'Customize your Dashboard'}}>{children}</DocLayout>

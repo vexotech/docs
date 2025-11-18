@@ -1,0 +1,72 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Quickstart
+
+## React Native
+
+**Prerequisites**
+
+- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://docs.expo.dev/router/introduction/)
+
+**Expo**
+
+- ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
+- ❌ This library can't be used in the "Expo Go" app because it [requires custom native code](https://docs.expo.dev/workflow/customizing/).
+
+**Getting started**
+
+1. Create an account [here](https://www.vexo.co/sign-up).
+2. You'll be prompted into creating a new app, give it a name (you can change it later), this will generate your API key.
+3. Run **`yarn add vexo-analytics`** or **`npm install vexo-analytics`** in your project. If you are using bare React Native, run **`pod install`** in the iOS folder.
+4. Add the following code to your app entry file (usually **`index.js`**, **`App.js`** or **`_layout.tsx`** if you're using Expo Router):
+
+```javascript
+import { vexo } from 'vexo-analytics';
+
+// You may want to wrap this with `if (!__DEV__) { ... }` to only run Vexo in production.
+vexo('YOUR_API_KEY');
+
+```
+
+1. Re-build and run your app (the **`vexo-analytics`** package includes native code).
+2. Go to your app's page on Vexo and your first events should appear! 🎉
+
+**Wait, that's it?** Yes! That's it. With that ease of integration experience you get an incredible set of features, go check them out!
+
+## Web
+
+**Getting started**
+
+1. Create an account [here](https://www.vexo.co/sign-up).
+2. Create a Web App:
+- On your dashboard click on **+ Add Application** create a new app.
+- Enter a name (e.g. your website)
+- Add the domain of your website (e.g., *example.com*)
+
+3. Add the Vexo Script
+
+To start collecting Web analytics data, paste the following script into your site’s **`<head>`** tag:
+
+```html
+<script src="https://www.vexo.co/analytics.js" defer></script>
+```
+
+4. Track custom events and identify devices (optional)
+
+You can enhance your analytics by tracking custom events and identifying devices:
+
+- Custom Event
+
+```js
+global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
+```
+
+- Identify device
+
+```js
+global?.vexo?.identifyDevice('user@example.com');
+```
+
+That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
+
+export default ({ children }) => <DocLayout current="quick-start" previous={{href: '/get-started/introduction', label: 'General Introduction'}} next={{href: '/react-native-guide/introduction', label: 'React Native Introduction'}}>{children}</DocLayout>
