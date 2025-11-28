@@ -3,16 +3,36 @@ import Image from 'next/image';
 
 # Webhooks
 
-Webhooks allow you to be notified every time a custom event is triggered.
+Webhooks allow you to be notified every time a custom event is triggered. **Note: Webhooks are ONLY triggered for custom events, not for standard tracking events.**
 
 Here you are able to set an endpoint to which we'll send all custom events.
 
 Once created, you'll see a validation token. This token will be included on every
-request send to the endpoint on the header: X-Vexo-API-Token.
+request sent to the endpoint as a Bearer token in the header: `X-Vexo-API-Token: Bearer <your-token>`.
 
-The request payload will be a list of custom events. Each with an id, name, timestamp
-and args. *args* will be an object containing all the custom properties attached to
-the event.
+## Request Format
+
+The request payload will be a JSON array of custom events with the following structure:
+
+```json
+[
+  {
+    "id": "string",
+    "name": "string", 
+    "args": {
+      // Custom properties object
+    },
+    "timestamp": number
+  }
+]
+```
+
+### Field Details
+
+- **id**: Unique identifier for the event (UUID as string)
+- **name**: The custom event name as specified when tracking the event
+- **args**: Object containing all custom properties attached to the event (internal Vexo fields are filtered out)
+- **timestamp**: Unix timestamp when the event occurred
 
 <DocImage src="/docs/webhooks.png" width="1050" height="703" size="large" />
 
