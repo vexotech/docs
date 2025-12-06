@@ -18,6 +18,28 @@ To start collecting Web analytics data, paste the following script into your sit
 <script src="https://www.vexo.co/analytics.js" defer></script>
 ```
 
+### Next.js Integration
+
+For Next.js applications, use the `Script` component with the `afterInteractive` strategy to ensure optimal loading performance. Add this to your `_app.js` or `_app.tsx` file:
+
+```jsx
+import Script from 'next/script'
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <>
+      <Script 
+        src="https://www.vexo.co/analytics.js" 
+        strategy="afterInteractive" 
+      />
+      <Component {...pageProps} />
+    </>
+  )
+}
+```
+
+The `afterInteractive` strategy ensures that analytics scripts load after the page becomes interactive, which is the recommended approach for third-party analytics according to the [Next.js Script Optimization documentation](https://nextjs.org/docs/app/building-your-application/optimizing/scripts).
+
 4. Track custom events and identify devices (optional)
 
 You can enhance your analytics by tracking custom events and identifying devices:
