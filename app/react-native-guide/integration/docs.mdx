@@ -30,7 +30,15 @@ import { vexo } from 'vexo-analytics';
 
 // You may want to wrap this with `if (!__DEV__) { ... }` to only run Vexo in production.
 vexo('YOUR_API_KEY');
+
+export default function RootLayout() {
+  return (
+    // Your layout JSX here
+  );
+}
 ```
+
+> ⚠️ **Important**: Initialize Vexo at the module level, not inside `useEffect` or component functions, to ensure proper tracking from app start.
 
 5. Re-build and run your app (the `vexo-analytics` package includes native code).
 6. Go to your app's page on Vexo and you should see your first event!
