@@ -72,12 +72,11 @@ to be able to navigate through your dashboards in a personalized way.
 To achieve this, do the following:
 
 ```js
-import { useEffect } from 'react'
 import { View } from 'react-native'
 import { identifyDevice } from 'vexo-analytics'
 
 const LoginComponent = () => {
-    const login = async () => {
+    const onLogin = async () => {
         // your code
         await identifyDevice('IDENTIFIER');
     }
@@ -92,12 +91,11 @@ As an example, in SQL a unique ID as a foreign key to your users' table should s
 In case you want to make the device anonymous, `identifyDevice` supports `null` like in the following example:
 
 ```js
-import { useEffect } from 'react'
 import { View } from 'react-native'
 import { identifyDevice } from 'vexo-analytics'
 
-const TrackerComponent = () => {
-    const onAskedNotToTrack = async () => {
+const LogoutComponent = () => {
+    const onLogout = async () => {
         // your code
         await identifyDevice(null);
     }
@@ -107,13 +105,13 @@ const TrackerComponent = () => {
 
 ### Tracking Opt-in
 
-Today users are more and more the owners of their data, and we want to go down that road for real.
-There's opt-in methods you can call based on your users' preferences to enable or disable tracking.
+You can programmatically enable or disable tracking in your app based on your business logic and requirements.
+This gives you full control over when analytics data is sent.
 
 ```js
 import { enableTracking, disableTracking } from 'vexo-analytics'
 
-// user asked app not to track
+// disable tracking
 await disableTracking();
 // re-enable tracking, under X condition
 await enableTracking();
