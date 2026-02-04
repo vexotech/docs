@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import './globals.css'
 import { CommandPalette, SearchProvider } from '../components'
+import Script from 'next/script'
 
 export const metadata = {
   title: 'Vexo | Documentation | Next Generation Analytics',
@@ -35,6 +36,10 @@ export default function RootLayout({
           <CommandPalette />
         </SearchProvider>
       </body>
+      <Script 
+        src="https://www.vexo.co/analytics.js" 
+        strategy="afterInteractive" 
+      />
     </html>
   )
 }
