@@ -50,6 +50,9 @@ export const sidebarData: SidebarData = [
                             { title: 'Users Devices', name: 'users-devices', href: '/react-native-guide/mobile-features/dashboard/users-devices' },
                             { title: 'Version Adoption', name: 'version-adoption', href: '/react-native-guide/mobile-features/dashboard/version-adoption' },
                             { title: 'App Usage', name: 'app-intensity', href: '/react-native-guide/mobile-features/dashboard/app-intensity' },
+                            { title: 'Errors', name: 'errors', href: '/react-native-guide/mobile-features/dashboard/errors' },
+                            { title: 'Network Stats', name: 'network-stats', href: '/react-native-guide/mobile-features/dashboard/network-stats' },
+                            { title: 'Retention', name: 'retention', href: '/react-native-guide/mobile-features/dashboard/retention' },
                             { title: 'Customize your Dashboard', name: 'customize-dashboard', href: '/react-native-guide/mobile-features/dashboard/customize-dashboard' },
                             { title: 'Funnels', name: 'funnels', href: '/react-native-guide/mobile-features/dashboard/funnels' },
                         ]
@@ -97,6 +100,8 @@ export const sidebarData: SidebarData = [
                             { title: 'Referrers', name: 'web-referrers', href: '/web-guide/web-features/dashboard/referrers' },
                             { title: 'UTMs', name: 'web-utms', href: '/web-guide/web-features/dashboard/utms' },
                             { title: 'Routes', name: 'web-routes', href: '/web-guide/web-features/dashboard/routes' },
+                            { title: 'Errors', name: 'web-errors', href: '/web-guide/web-features/dashboard/errors' },
+                            { title: 'Network Stats', name: 'web-network-stats', href: '/web-guide/web-features/dashboard/network-stats' },
                             { title: 'Customize your Dashboard', name: 'web-customize-dashboard', href: '/web-guide/web-features/dashboard/customize-dashboard' },
                             { title: 'Funnels', name: 'web-funnels', href: '/web-guide/web-features/dashboard/funnels' },
                         ]

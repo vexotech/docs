@@ -1,0 +1,29 @@
+import { DocLayout, DocImage } from '../../../../../components';
+
+# Errors
+
+The Errors widget gives you instant visibility into the most frequent errors happening in your app, directly on the dashboard. Instead of navigating to a separate page, you can spot critical issues at a glance during your daily monitoring flow.
+
+## How it works
+
+Vexo automatically captures errors from your React Native app and groups them by error message. Each row in the widget shows:
+
+- **Error message** — the grouped error text (truncated if long)
+- **Device count** — how many unique devices are affected
+- **Occurrence count** — the total number of times that error has occurred
+
+Errors are sorted by occurrence count (most frequent first), so the issues impacting the most users always appear at the top.
+
+<DocImage src="/docs/errors-widget.png" size="small" />
+
+## Viewing error details
+
+Click on any error row to open a detail modal with more information about that specific error, including its full message and impact metrics. This lets you quickly triage without leaving the dashboard.
+
+## Filtering
+
+The Errors widget respects all global dashboard filters — **date range**, **country**, **OS**, and **app version**. When you apply a filter at the top of the dashboard, the errors update to reflect only the matching segment.
+
+For example, you can filter by a specific app version to see if a recent release introduced new errors, or filter by country to check if errors are region-specific.
+
+export default ({ children }) => <DocLayout current="errors" previous={{href: '/react-native-guide/mobile-features/dashboard/app-intensity', label: 'App Usage'}} next={{href: '/react-native-guide/mobile-features/dashboard/network-stats', label: 'Network Stats'}}>{children}</DocLayout>
