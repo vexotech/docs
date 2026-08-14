@@ -3,6 +3,23 @@ import Link from 'next/link'
 
 # Changelog
 
+{/* Set the real release date below when 1.9.0 is published to npm. */}
+
+## 1.9.0 (unreleased)
+
+### Features
+
+* New Architecture support — the native module runs as a TurboModule, and old-architecture apps keep working unchanged
+* `VexoProvider` — explicitly wrap your navigation container when automatic attachment isn't possible
+
+### Changed
+
+* iOS minimum deployment target raised from 11.0 to 15.1 (the React Native 0.76+ default)
+* `@react-navigation/native` is now an optional peer dependency — Expo Router apps don't need to install anything extra
+* Modern packaging: CommonJS + ESM builds behind an `exports` map. Deep imports like `vexo-analytics/lib/dist/...` no longer resolve — import from the public entry points instead
+* Faster startup: the SDK no longer does any work at import time, and events are uploaded in batches
+* Trimmed vendored internals and releases published via npm Trusted Publishing with provenance attestation
+
 ## 1.8.0 (2026-08-14)
 
 ### Features

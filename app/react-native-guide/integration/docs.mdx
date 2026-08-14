@@ -9,9 +9,11 @@ Our documentation is a great place to find most answers and make sure that your 
 
 ## Quickstart
 
-**Prerequisites**
+**Requirements**
 
-- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://docs.expo.dev/router/introduction/)
+- iOS 15.1 or later as your app's minimum deployment target (the default on React Native 0.76+)
+- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://docs.expo.dev/router/introduction/). `@react-navigation/native` is an optional peer dependency — Expo Router apps don't need to install anything extra, and React Navigation apps keep working unchanged
+- Both React Native architectures are supported: on the New Architecture the native module runs as a TurboModule, and the old architecture keeps working as before
 
 **Expo**
 
@@ -39,6 +41,8 @@ export default function RootLayout() {
 ```
 
 > ⚠️ **Important**: Initialize Vexo at the module level, not inside `useEffect` or component functions, to ensure proper tracking from app start.
+
+> ℹ️ **Imports**: since SDK 1.9.0 the package ships modern CommonJS and ESM builds behind an `exports` map. Always import from the public entry points (like `vexo-analytics` above) — deep imports such as `vexo-analytics/lib/dist/...` no longer resolve.
 
 5. Re-build and run your app (the `vexo-analytics` package includes native code).
 6. Go to your app's page on Vexo and you should see your first event!
