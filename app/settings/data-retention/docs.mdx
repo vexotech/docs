@@ -1,0 +1,28 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Data Retention
+
+How long Vexo keeps your data. This policy takes effect on **November 1, 2026** — we're announcing it ahead of time so you can plan.
+
+### Retention windows
+
+| Data | Free plan | Paid |
+| --- | --- | --- |
+| Sessions, session replays & events | 60 days | 24 months |
+| Aggregated metrics (dashboard charts) | 13 months | 24 months |
+
+On the free plan, raw data — individual sessions, session replays, and events — is kept for **60 days**, while the aggregated metrics that power your dashboards are kept for **13 months**, so your charts outlive the raw events behind them. With billing enabled, **everything is kept for 24 months**.
+
+### Extended retention
+
+Need more history? Paid accounts can extend retention to **3, 4, or 5 years total** with the extended-retention add-on:
+
+- Each extra year beyond the 24-month base adds **10% of your average monthly bill** (minimum $1 per year), shown as a monthly add-on price when you select an option.
+- Manage it under **Settings → Data Retention**: pick a total retention length and confirm. The 24-month base is always included.
+- The add-on becomes available on **November 1, 2026**, alongside the policy itself.
+
+### Where to manage it
+
+Your account's retention windows — and the extended-retention options — live in **Settings → Data Retention**. Retention applies account-wide, across all of your apps and websites.
+
+export default ({ children }) => <DocLayout current="data-retention" previous={{href: '/settings/usage-limits', label: 'Usage & Limits'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>
