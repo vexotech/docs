@@ -6,7 +6,7 @@ Answers to the most common questions about billing, invoices, and payments in Ve
 
 ### How is billing calculated?
 
-Billing is based on your **total event usage across all apps and websites** under your account. You can view your monthly usage anytime in your account settings.
+Billing is **usage-based**: your **total event usage across all apps and websites** under your account, billed monthly **in arrears**. The first **500,000 events each month are free**; beyond that you pay graduated per-million rates — see [Subscription](/settings/subscription) for the full rate table. You can view your monthly usage anytime in your account settings.
 
 ### How do I get my invoices?
 
@@ -18,19 +18,22 @@ If you want invoices sent to a different email, just contact us with your curren
 
 We accept **credit and debit cards**, **Google Pay**, and **Cash Pay**. All payments are securely processed through Stripe. At the moment, we don’t support wire transfers, manual invoicing, or cryptocurrency payments.
 
-### What happens if I exceed my monthly event limit?
+### What happens if I go over the free allowance?
 
-You’ll never be charged unexpectedly. Extra usage is only billed if you’ve enabled **Overages** in your subscription settings. Otherwise, once you reach **120% of your event limit**, Vexo will stop tracking new events until you upgrade your plan.
+On the **free plan**, event collection stops once you reach 500,000 events in a month — the API responds with `406 — Free plan event limit reached. Add billing to keep collecting events.` Session replays continue to upload, and your existing data and dashboards remain fully accessible. Collection resumes at the start of the next month, or immediately once you add billing.
 
-Don’t worry—your existing data and dashboards remain fully accessible while tracking is paused.
+With **billing enabled** there is no account-wide cutoff — you simply pay for what you use. If you want a hard spending ceiling, you can set an optional per-app events cap in your app's settings; when an app reaches its cap, Vexo stops collecting new data for that app until the billing period resets.
+
+Accounts still on a **legacy tiered plan** (before the September 1, 2026 migration) keep their plan's existing limit behavior until they are migrated.
 
 ### How do I update my billing information?
 
 To update your billing details:
 
 1. Log into your Vexo account.
-2. Click your profile name in the top-right corner.
-3. Select **Account Settings → Subscription**.
-4. Click **Update billing info** under the *Next bill amount* section.
+2. Click your profile name in the top-right corner and open **Settings**.
+3. Under **Subscription Information**, click **Manage billing**.
+
+This opens the Stripe billing portal, where you can update your card, view past invoices, or cancel your subscription. If you haven't enabled billing yet, the same section shows **Add billing** instead.
 
 export default ({ children }) => <DocLayout current="billing" previous={{href: '/settings/account-settings', label: 'Account Settings'}} next={{href: '/settings/subscription', label: 'Subscription'}}>{children}</DocLayout>

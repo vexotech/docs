@@ -2,44 +2,51 @@ import { DocLayout } from '../../../components/DocLayout';
 
 # Subscription
 
-Vexo offers simple, transparent plans designed to grow with your app — from early-stage projects to high-traffic products. You can switch plans or adjust event limits anytime right from your account.
+Vexo pricing is **usage-based**: a generous free allowance every month, then you pay only for the events you actually send. There are no plans to pick, no annual contracts, and no overage toggles.
 
-### How Vexo Plans Work
+### How it works
 
-All Vexo plans are based on your **total monthly events** across apps and websites in your account. An event includes both direct and indirect interactions with your app or site — such as taps, clicks, navigations, API calls, errors, and custom events.
+- Every account includes **500,000 events per month, free** — no credit card required.
+- Beyond the free allowance, you pay per million events at graduated rates (see the table below).
+- Usage is billed monthly **in arrears**: at the end of each billing period you are charged for the events you used during it.
+- An event includes both direct and indirect interactions with your app or site — such as taps, clicks, navigations, API calls, errors, and custom events — counted across **all apps and websites** in your account.
 
-You can check your real-time usage anytime in **Account Settings → Subscription**.
+You can check your real-time usage anytime in **Settings**.
 
-### Vexo Plan Tiers
+### Rates
 
-**Free** – For small apps or during development. Perfect to try Vexo out.
+| Monthly events | Rate |
+| --- | --- |
+| First 500,000 | Free |
+| 500K – 10M | $30 per million |
+| 10M – 50M | $22 per million |
+| 50M – 150M | $16 per million |
+| Above 150M | $12 per million |
 
-Includes up to **100k events**, **100 session replays**, **2,000 heatmaps**, and **2 free seats**.
+Rates are graduated, so each rate only applies to the events that fall inside its band. For example, at **2.5M events** in a month, the first 500K are free and the remaining 2M are billed at $30 per million — **$60** for the month.
 
-**Premium - $16/mo annual billing ($19/mo monthly billing)**
+You can estimate your monthly bill with the calculator on the [pricing page](https://www.vexo.co/pricing).
 
-Best for teams launching their next project.
+### Seats
 
-Includes up to **250k events**, **1,000 session replays**, **unlimited heatmaps**, and **2 seats** with full access to all features.
+Your first **3 seats are free**. Additional seats are **$5 per seat per month**.
 
-**Enterprise – $32/mo annual billing ($39/mo monthly billing)**
+### Enabling billing
 
-Ideal for apps with a growing or large user base.
+Free accounts don't need a card. To keep collecting events beyond the free allowance:
 
-Includes up to **1M events**, **4,000 session replays**, **unlimited heatmaps**, **2 seats**, and a **customizable dashboard**.
+1. Log into your Vexo account.
+2. Click your profile name in the top-right corner and open **Settings**.
+3. Under **Subscription Information**, click **Add billing** and complete checkout.
 
-Within the Enterprise plan, you can scale beyond 1M events — pricing adjusts with usage, and you can set your event cap directly in your account.
+Once billing is enabled, the same section shows **Manage billing**, which opens the Stripe billing portal — update your card, view invoices, or cancel anytime. There are no contracts or cancellation fees.
 
-### Going Over Your Monthly Event Limit
+### Reaching the free limit
 
-You’ll never be billed unexpectedly. If **Overages** are enabled, additional events beyond your plan are billed at the specified rate. Otherwise, Vexo stops tracking new events once you reach **120% of your plan limit**, while keeping all your existing stats accessible.
+On the free plan, event collection **stops** once you reach 500,000 events in a month. The API responds with `406 — Free plan event limit reached. Add billing to keep collecting events.` Session replays continue to upload, and all of your existing data and dashboards remain fully accessible. Collection resumes at the start of the next month — or immediately once you add billing.
 
-If higher traffic becomes consistent, you can upgrade seamlessly to the next tier or adjust your Enterprise event cap. Upgrades are **self-serve and prorated**, so you only pay for the remaining period.
+### Existing accounts
 
-### Managing Your Subscription
-
-You can update your plan, switch billing frequency, or cancel anytime in **Account Settings → Subscription**.
-
-There are no contracts, hidden fees, or penalties — just flexible plans designed for growth.
+Usage-based pricing applies to all new accounts today. Accounts still on the earlier tiered plans keep their current plan until they are migrated to usage-based pricing on **September 1, 2026**.
 
 export default ({ children }) => <DocLayout current="subscription" previous={{href: '/settings/billing', label: 'Billing'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>
