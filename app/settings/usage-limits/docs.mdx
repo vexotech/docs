@@ -1,0 +1,55 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Usage & Limits
+
+Every limit in Vexo on one page: what's included, what happens when you reach a cap, and how to resolve dropped events.
+
+### Free plan allowance
+
+Every account includes **500,000 events per month, free**. On the free plan this is a hard limit: once you reach it, event collection stops and the API responds with
+
+```
+406 — Free plan event limit reached. Add billing to keep collecting events.
+```
+
+Session replays continue to upload, and all of your existing data and dashboards remain fully accessible. Collection resumes at the start of the next month — or immediately once you add billing (**Settings → Subscription Information → Add billing**). See [Subscription](/settings/subscription) for rates beyond the free allowance.
+
+### Per-app usage caps
+
+With billing enabled there is no account-wide cutoff — you pay for what you use. To avoid bill-shock, you can set optional **hard caps per billing period** for each app, separately for **events** and **session replays**, under your app's **Settings → Usage limits**.
+
+When an app reaches a cap, Vexo stops collecting new data of that kind for that app until the billing period resets. Already-collected data is never affected. Leave a cap empty for no limit; raise or remove it anytime to resume collection immediately.
+
+### Legacy plans
+
+Accounts still on the earlier tiered plans (until the **September 1, 2026** migration) stop collecting events at their plan's event limit when overages are disabled.
+
+### Dropped events
+
+If events were dropped recently, your app's dashboard shows a banner with the count of events dropped in the last 30 days and the reasons:
+
+- **Invalid events** — the event was malformed and rejected at ingestion, most commonly a custom-event payload over the size limit (see below). Fix the SDK call that produces it.
+- **Over free limit** — your account hit the 500,000 free monthly allowance. Add billing, or wait for the monthly reset.
+- **Over events cap** — the app hit its per-app events cap. Raise or remove the cap under the app's **Settings → Usage limits**.
+- **Account limit** — a legacy plan's event limit was reached. Enable usage-based billing to remove it.
+
+### Custom event limits
+
+- Every custom event needs a **name**; it can be any string.
+- The optional **args payload can be up to 65,536 characters** when serialized. Larger payloads are dropped as invalid events.
+- Custom events sent while no route/screen is known are accepted — they are attributed to the route `unknown`.
+
+### Heatmap limits
+
+- The free plan includes a quota of **2,000 heatmaps**; paid accounts have unlimited heatmaps.
+- [Heatmap segment](/react-native-guide/mobile-features/session-replays-heatmaps) values are limited to **64 characters**, and an app can have up to **20 distinct segment values** — activity beyond that is stored untagged. Each segment multiplies screenshot volume against the heatmap quota, so prefer a few coarse segments.
+
+### Seats
+
+Your first **3 seats are free**; additional seats are **$5 per seat per month**.
+
+### Export API
+
+The [Export API](/settings/app-settings/export-api) has its own request rate limits, documented on its page.
+
+export default ({ children }) => <DocLayout current="usage-limits" previous={{href: '/settings/subscription', label: 'Subscription'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>
