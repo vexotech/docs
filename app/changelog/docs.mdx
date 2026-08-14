@@ -3,6 +3,41 @@ import Link from 'next/link'
 
 # Changelog
 
+## 1.8.0 (2026-08-14)
+
+### Features
+
+* The iOS pod now ships its own privacy manifest (`PrivacyInfo.xcprivacy`) — see [App Store & Play Compliance](/react-native-guide/store-compliance)
+* ~58% smaller JavaScript bundle (removed the `moment` dependency)
+
+### Bug Fixes
+
+* Custom events fired before the first navigation are now kept and sent with the "unknown" route, instead of being dropped
+* Fix release builds in apps that also use react-native-purchases or other Google Tink dependents (R8 "Missing classes" errors)
+* `disableTracking()` now genuinely stops session replay recording, including a recording already in progress
+* Startup sync retries with backoff instead of staying disabled for the rest of the session
+* Network tracking no longer skips app URLs that resemble internal ones, such as `/api/blogs`
+
+## 1.7.0 (2026-08-14)
+
+### Changed
+
+* Dependency and security hygiene across the build and release chain
+
+## 1.6.0 (internal)
+
+### Features
+
+* Heatmap segments — split heatmaps by user segment with [setHeatmapSegment](/react-native-guide/mobile-features/session-replays-heatmaps)
+
+*1.6.0 was never published to npm on its own; heatmap segments first shipped in the 1.7.0 package.*
+
+## 1.5.8 (2026-07-06)
+
+### Bug Fixes
+
+* Improve heatmaps performance
+
 ## 1.5.7 (2026-05-26)
 
 ### Bug Fixes

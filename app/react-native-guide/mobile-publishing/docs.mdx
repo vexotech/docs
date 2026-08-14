@@ -7,7 +7,8 @@ import Image from 'next/image'
 
 Publishing your application to a store is an exciting step of the development journey. When submitting your application to
 the store you'll be asked about privacy and data collection practices. We'll guide you through the process
-on each platform.
+on each platform. For the full list of what Vexo collects — and the consent requirements for session replay — see
+[App Store & Play Compliance](/react-native-guide/store-compliance).
 
 ### Publishing to Apple store
 
@@ -23,17 +24,16 @@ a lot of information out of the box.
 
 <DocImage src="/docs/apple-data-collection.png" width="502" height="440" size="small" />
 
-#### Usage Data
+#### Data types
 
 Next, you'll be asked the data types you collect.
-Regarding Vexo the only data types you need to select is **Product Interaction** and **Usage Data**.
+For Vexo, select **Product Interaction**, **Device ID**, **Crash Data**, **Performance Data** and **Other Diagnostic Data** —
+plus **User ID** if your app calls `identifyDevice()`. These match the data types declared in the privacy manifest the SDK ships since 1.8.0.
 
-You’ll then be asked to expand on how you use the Product Interaction data. Select **Analytics** as the answer.
+You’ll then be asked to expand on how you use each data type. Select **Analytics** as the answer, and answer **yes**
+when asked if the data is linked to the user's identity.
 
 <DocImage src="/docs/apple-analytics.png" width="502" height="610" size="small" />
-
-Then next question is related to **User Identification**.
-We are not any personal information so you can safely select **No** for this question.
 
 Finally, they’ll explain their definition of what Tracking is and ask you to confirm if you track users.
 Apple only considers tracking when data is linked to a user’s identity and used for targeted advertising or advertising measurement purposes, which is not something we do at Vexo so you can select *No*.
@@ -56,7 +56,9 @@ You'll be asked if your app collects or shares any of the required user data typ
 
 #### Data safety
 
-Next you'll be asked about data safety. Make sure to select **Device or other IDs** since Vexo uses them.
+Next you'll be asked about data safety. Make sure to select **App interactions**, **Crash logs**, **Diagnostics** and
+**Device or other IDs** — plus **User IDs** if your app calls `identifyDevice()`. Declare each as collected (not shared)
+and encrypted in transit; see [App Store & Play Compliance](/react-native-guide/store-compliance) for the full mapping.
 
 <DocImage src="/docs/android-safety.jpeg" width="520" height="230" size="small" />
 
