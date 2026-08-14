@@ -45,6 +45,36 @@ export default function RootLayout() {
 
 **Wait, that's it?** Yes! That's it. With that ease of integration experience you get an incredible set of features, go [check them out](/react-native-guide/mobile-features/overview)!
 
+## Development & staging
+
+You usually don't want your own development sessions mixed into your production analytics.
+Vexo only starts when you call `vexo(...)` — nothing is collected or sent before that — so the
+recommended way to disable it is to simply make the call conditional:
+
+```js
+import { vexo } from 'vexo-analytics';
+
+if (!__DEV__) {
+  vexo('YOUR_API_KEY');
+}
+```
+
+A few things you can rely on when Vexo has not been initialized:
+
+- Not calling `vexo()` is a fully supported way to disable Vexo. There is no background work,
+  and no data leaves the device.
+- `customEvent()` calls are safely ignored: the event is dropped and a warning is logged to the
+  console. Your app's behavior is not affected, so you don't need to guard every call site.
+- `identifyDevice()`, `enableTracking()` and `disableTracking()` are safe no-ops as well.
+
+If you'd rather keep development or staging data instead of dropping it, create a separate app
+in your [dashboard](https://www.vexo.co) (for example "MyApp — Staging") and pick the API key
+by environment:
+
+```js
+vexo(__DEV__ ? 'STAGING_API_KEY' : 'PRODUCTION_API_KEY');
+```
+
 ## How it works
 
 **One line of code? How is this possible?**
