@@ -83,6 +83,8 @@ It's very simple! Vexo is a very lightweight advanced piece of technology that l
 packs the data into a buffer and sends it to our servers.
 Given that it works in background with your app, there are no code dependencies and it's effortless to integrate!
 
+Events are **batched** before they leave the device: the SDK sends a group as soon as it has **20 events**, or **5 seconds** after the first event was queued — whichever comes first. This keeps network and battery usage low without you having to think about it.
+
 ### Events
 
 Supported events are:
@@ -94,6 +96,8 @@ Supported events are:
 - Your app sent a request for data
 - An error occurred
 - Custom events
+
+Every one of these — taps, screen changes, requests, errors and your custom events — counts toward your account's monthly event total. See [Subscription](/settings/subscription) for the **500,000 events per month** free allowance and the pay-as-you-go rates beyond it.
 
 ### Device Identity
 
@@ -147,6 +151,26 @@ await disableTracking();
 await enableTracking();
 ```
 
+### Error reporting
+
+Errors that reach the top of your app are captured automatically. To report a caught exception yourself — without crashing the app — call `trackError`:
+
+```js
+import { trackError } from 'vexo-analytics'
+
+try {
+  await riskyOperation();
+} catch (err) {
+  trackError(err);
+}
+```
+
+By default the error is recorded as **handled**, so it does not count against your crash-free rate. Pass `{ handled: false }` to record it as an unhandled error instead:
+
+```js
+trackError(err, { handled: false });
+```
+
 ### Custom events
 
 This is where the power of out of the box analytics meets the custom needs of your business.
@@ -172,5 +196,13 @@ We will understand the context about the event that has just happened and infer 
 - ... and more!
 
 For further understanding on custom events check out [the docs](/react-native-guide/mobile-features/custom-events)
+
+## Troubleshooting
+
+### Scroll feels laggy after returning from the background
+
+Some apps saw a brief scroll stutter the first time a list is scrolled after the app comes back from the background to the foreground. This is fixed in `vexo-analytics` **1.8.0 and later**, so upgrading the SDK resolves it for most apps.
+
+If you still see it and don't need session replay, you can turn replay off for the app from your [dashboard](https://www.vexo.co) tracking settings. A code-level switch — `vexo('YOUR_API_KEY', { sessionReplay: false })` — is targeted for the next release (**v1.9.1**) and is not available yet. See docs issue #49 for background and `vexo-analytics` PR #95 for the upcoming option.
 
 export default ({ children }) => <DocLayout current="rn-integration" previous={{href: '/react-native-guide/introduction', label: 'Introduction'}} next={{href: '/react-native-guide/store-compliance', label: 'App Store & Play Compliance'}}>{children}</DocLayout>

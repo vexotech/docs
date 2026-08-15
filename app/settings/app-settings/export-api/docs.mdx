@@ -241,9 +241,9 @@ curl --location --request GET 'https://api.vexo.co/external/apps/your-app-id/eve
 --header 'Authorization: {AUTH_TOKEN}'
 ```
 
-## Rate Limits
+## Limits
 
-- Maximum 5 requests per application per minute
+- Requests may be rate limited to keep the service healthy, so keep polling to a reasonable frequency and handle `429` responses by backing off and retrying.
 - Maximum 10,000 events per request (default is max)
 - Authentication tokens work the same as normal login behavior
 
