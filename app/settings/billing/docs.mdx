@@ -6,7 +6,7 @@ Answers to the most common questions about billing, invoices, and payments in Ve
 
 ### How is billing calculated?
 
-Billing is **usage-based**: your **total event usage across all apps and websites** under your account, billed monthly **in arrears**. The first **500,000 events each month are free**; beyond that you pay graduated per-million rates — see [Subscription](/settings/subscription) for the full rate table. You can view your monthly usage anytime in your account settings.
+Billing is **usage-based**: your **total event usage across all apps and websites** under your account, billed monthly **in arrears**. The first **500,000 events each month are free**; beyond that you pay graduated per-million rates — see [Subscription](/settings/subscription) for the full rate table. Session replays are billed the same way, separately from events: **1,000 replays per cycle are included free**, then **$3 per 1,000** up to the replay limit you set in Settings. You can view your monthly usage anytime in your account settings.
 
 ### How do I get my invoices?
 
@@ -20,7 +20,7 @@ We accept **credit and debit cards**, **Google Pay**, and **Cash Pay**. All paym
 
 ### What happens if I go over the free allowance?
 
-On the **free plan**, event collection stops once you reach 500,000 events in a month — the API responds with `406 — Free plan event limit reached. Add billing to keep collecting events.` Session replays continue to upload, and your existing data and dashboards remain fully accessible. Collection resumes at the start of the next month, or immediately once you add billing.
+On the **free plan**, event collection stops once you reach 500,000 events in a month — the API responds with `406 — Free plan event limit reached. Add billing to keep collecting events.` Session replays continue to upload (they have their own allowance of 1,000 per cycle — see [Subscription](/settings/subscription)), and your existing data and dashboards remain fully accessible. Collection resumes at the start of the next month, or immediately once you add billing.
 
 With **billing enabled** there is no account-wide cutoff — you simply pay for what you use. If you want a hard spending ceiling, you can set an optional per-app events cap in your app's settings; when an app reaches its cap, Vexo stops collecting new data for that app until the billing period resets.
 
