@@ -15,6 +15,15 @@ Every time a user's device makes a network request, Vexo captures the route (URL
 
 <DocImage src="/docs/network-widget.png" size="small" />
 
+## What's captured
+
+Vexo records your app's outbound HTTP requests. Two kinds of traffic are excluded so they don't clutter your data:
+
+- **Vexo's own analytics requests**, matched by their host, so the SDK never reports on itself.
+- **React Native dev-server noise** — the `/symbolicate` and `/logs` endpoints, matched as exact paths.
+
+Because the dev-server filter is anchored to those exact paths, your own requests to URLs that merely contain those words (for example `/api/logs` or `/v1/symbolicate-batch`) are still captured normally.
+
 ## Sorting
 
 You can sort the network stats by different criteria using the dropdown at the top of the widget:
