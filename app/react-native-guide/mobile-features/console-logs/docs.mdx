@@ -1,0 +1,71 @@
+import { DocLayout } from '../../../../components';
+
+# Console Logs
+
+Console Logs bring your app's own `console` output into session replays. While you watch a
+replay, the Console tab shows the log, info, warning, and error messages the app printed —
+lined up with what the user was doing — so you can debug from the same timeline you're already
+watching.
+
+**Note:** Available in `vexo-analytics` 1.10.0 or later.
+
+## What gets captured
+
+Vexo mirrors the four standard console methods — `console.log`, `console.info`,
+`console.warn`, and `console.error`. Each captured entry keeps:
+
+- the **level** (log / info / warn / error),
+- the formatted **message** (all arguments joined into one string),
+- a **timestamp**, so it can be placed on the replay timeline, and
+- the **screen** (route) the user was on when it fired.
+
+Vexo's own internal logs (the `Vexo:`-prefixed ones) are skipped, so the Console tab only ever
+shows your application's output.
+
+## Where to see them
+
+Open a session replay and expand the **DevTools** panel. Next to the **Network** tab you'll
+find a **Console** tab. It shows the captured entries synced to replay time, and lets you:
+
+- **filter by level** — log, info, warning, or error,
+- **search** the message text, and
+- **click an entry to seek** the replay to the moment that log was printed.
+
+## Automatic and gated
+
+Console capture requires no code. The SDK patches `console` when you initialize Vexo and
+passes every call straight through to the real console, so your logs still print normally in
+development and to any other logging you have.
+
+Capture follows the same gating as the rest of Vexo. It flows through the same batched
+transport and **tracking gate** as every other event, so `disableTracking()` stops it, and the
+captured logs surface only inside session replays — they follow whether session replay is
+enabled for the app.
+
+## Sanitization and truncation
+
+`console.*` accepts anything, so Vexo safely converts each argument to text on-device before it
+leaves the phone:
+
+- **Errors** become their stack trace.
+- **Circular objects** render as `[Circular]` instead of throwing.
+- **Functions** render as `[Function name]`, and `undefined` / `bigint` are handled.
+- If an object can't be serialized at all, Vexo falls back to `String(value)`.
+
+Messages are capped at **4000 characters**; anything longer is cut with a `…[truncated]`
+marker. Capturing is fully guarded — if anything goes wrong while building a log entry, the
+SDK swallows the error and still prints your original `console` call. Console capture will
+never break your app's own logging.
+
+## Privacy
+
+Console Logs reflect exactly what your code passes to `console.*`. If your app logs tokens,
+credentials, or other personal data, that text will appear in the replay's Console tab. Treat
+console output as user-visible data:
+
+- Avoid logging secrets or PII, or strip/gate those logs in production builds.
+- `disableTracking()` stops console capture along with all other tracking, and turning off
+  session replay removes the Console tab from replays.
+- The SDK never captures its own `Vexo:`-prefixed internal logs.
+
+export default ({ children }) => <DocLayout current="console-logs" previous={{href: '/react-native-guide/mobile-features/session-replays-heatmaps', label: 'Session Replays & Heatmaps'}} next={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}}>{children}</DocLayout>

@@ -53,6 +53,7 @@ export const sidebarData: SidebarData = [
                             { title: 'App Usage', name: 'app-intensity', href: '/react-native-guide/mobile-features/dashboard/app-intensity' },
                             { title: 'Errors', name: 'errors', href: '/react-native-guide/mobile-features/dashboard/errors' },
                             { title: 'Network Stats', name: 'network-stats', href: '/react-native-guide/mobile-features/dashboard/network-stats' },
+                            { title: 'Performance', name: 'performance', href: '/react-native-guide/mobile-features/dashboard/performance' },
                             { title: 'Retention', name: 'retention', href: '/react-native-guide/mobile-features/dashboard/retention' },
                             { title: 'Customize your Dashboard', name: 'customize-dashboard', href: '/react-native-guide/mobile-features/dashboard/customize-dashboard' },
                             { title: 'Funnels', name: 'funnels', href: '/react-native-guide/mobile-features/dashboard/funnels' },
@@ -60,6 +61,7 @@ export const sidebarData: SidebarData = [
                     },
                     { title: 'People', name: 'people', href: '/react-native-guide/mobile-features/people' },
                     { title: 'Session Replays & Heatmaps', name: 'session-replays-heatmaps', href: '/react-native-guide/mobile-features/session-replays-heatmaps' },
+                    { title: 'Console Logs', name: 'console-logs', href: '/react-native-guide/mobile-features/console-logs' },
                     { title: 'Custom Events', name: 'custom-events', href: '/react-native-guide/mobile-features/custom-events' },
                 ]
             },
