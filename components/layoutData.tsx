@@ -28,6 +28,7 @@ export const sidebarData: SidebarData = [
         children: [
             { title: 'Introduction', name: 'rn-introduction', href: '/react-native-guide/introduction' },
             { title: 'Integration', name: 'rn-integration', href: '/react-native-guide/integration' },
+            { title: 'Upgrading to Expo SDK 58', name: 'rn-expo-sdk-58', href: '/react-native-guide/expo-sdk-58' },
             { title: 'App Store & Play Compliance', name: 'store-compliance', href: '/react-native-guide/store-compliance' },
             {
                 name: 'mobile-features',

@@ -18,6 +18,11 @@ Our documentation is a great place to find most answers and make sure that your 
 - ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
 - ❌ This library can't be used in the "Expo Go" app because it [requires custom native code](https://docs.expo.dev/workflow/customizing/).
 
+**Expo SDK 58**
+
+- Use `vexo-analytics` **1.13.0 or later** on Expo SDK 58. Earlier versions record nothing on SDK 58. See [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58) for the support table and the upgrade checklist.
+- Keep the `vexo()` call at module scope of the root layout (`app/_layout.tsx`, or `src/app/_layout.tsx` in the SDK 58 template).
+
 **Getting started**
 
 1. Create an account [here](https://www.vexo.co/sign-up)
