@@ -1,0 +1,90 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Upgrading to Expo SDK 58
+
+Expo SDK 58 changed how apps expose navigation to analytics libraries. `vexo-analytics` **1.13.0** supports SDK 58, including taps and heatmaps. Older versions of `vexo-analytics` record nothing on Expo SDK 58, with no error in production, so upgrade `vexo-analytics` when you upgrade Expo.
+
+## Support by Expo SDK
+
+| Expo SDK | `vexo('KEY')` alone (zero-config) | Explicit setup with `<VexoProvider navigationRef>` |
+|---|---|---|
+| 57 and earlier | Everything, as before (auto-attach). Unchanged. | Optional. Works. |
+| 58 or later, `vexo-analytics` 1.12.x or earlier | **Nothing is recorded.** There is no `/devices/init` call, no events, and no error in production. Upgrade. | Not available before 1.13.0. |
+| 58 or later, `vexo-analytics` 1.13.0, and your native build includes 1.13.0 | Everything: screens, sessions, crashes (including render crashes), keyboard, orientation and app-state events, performance, and taps and heatmaps. Native window-level tap capture also sees taps on native UI such as the `NativeTabs` component of SDK 58. | Everything. Recommended when you want the guaranteed path that relies on no experimental or private Expo Router APIs. |
+| 58 or later, `vexo-analytics` 1.13.0 JavaScript, but an older native build (for example, an over-the-air update onto a binary built with 1.12 or earlier) | Screens, sessions, crashes, and the rest. Taps and heatmaps use a best-effort JavaScript fallback. Rebuild the app (a new EAS build or development client) to get native tap capture. | Everything. Taps come from the provider. |
+
+## Upgrade checklist
+
+1. Upgrade `vexo-analytics` to 1.13.0 or later:
+
+   ```bash
+   npx expo install vexo-analytics
+   ```
+
+   You can also use your package manager, for example `yarn add vexo-analytics@latest`.
+2. Keep the `vexo('YOUR_API_KEY')` call at module scope of the root layout, before the layout component. That's all zero-config needs. The root layout is `app/_layout.tsx`, or `src/app/_layout.tsx` in the SDK 58 template. Expo's screen-tracking documentation requires analytics integrations to start before the root layout mounts.
+3. Rebuild the native app (an EAS build or `npx expo run:ios` / `npx expo run:android`) so that native tap capture is included. An over-the-air update through `expo-updates` can't add native changes, so taps use the JavaScript fallback until you rebuild.
+4. Optional: switch to the [explicit setup](#explicit-setup) for the path that relies on no experimental or private Expo Router APIs.
+5. Verify the setup. In development, the SDK logs a warning if no screen arrives within a few seconds of start.
+
+## Zero-config setup
+
+```tsx
+// app/_layout.tsx (src/app/_layout.tsx in the SDK 58 template)
+import { vexo } from 'vexo-analytics';
+
+vexo('YOUR_API_KEY');
+
+export default function RootLayout() { /* unchanged */ }
+```
+
+On SDK 58, zero-config uses the documented, experimental screen-tracking API of Expo Router (performance marks, `expo-router` 58.0.19 or later) and the navigation ref of Expo Router. The SDK detects both at run time and warns in development if routes stop arriving.
+
+<a id="explicit-setup"></a>
+
+## Explicit setup
+
+The explicit setup requires `vexo-analytics` 1.13.0 or later. Pass the navigation ref of Expo Router to `VexoProvider`:
+
+```tsx
+import { Slot, useNavigationContainerRef } from 'expo-router';
+import { vexo, VexoProvider } from 'vexo-analytics';
+
+vexo('YOUR_API_KEY');
+
+export default function RootLayout() {
+  const navigationRef = useNavigationContainerRef();
+  return (
+    <VexoProvider navigationRef={navigationRef}>
+      <Slot />
+    </VexoProvider>
+  );
+}
+```
+
+The explicit setup uses these props:
+
+| Prop | Description |
+|---|---|
+| `navigationRef` | The navigation container ref, for example from `useNavigationContainerRef()`. Vexo reads the current route from it. |
+| `apiKey` | Optional. Defaults to the key you passed to `vexo()`. |
+
+On SDK 57 and earlier, the explicit setup is optional and safe alongside auto-attach. Vexo doesn't track anything twice.
+
+## Apps that wait for consent
+
+If you call `vexo()` after the user consents, tracking starts without remounting your app. This works with the explicit setup (on any Expo SDK) and with zero-config on SDK 58 or later. On SDK 57 and earlier with zero-config, a late `vexo()` still remounts the screens below your navigation container, as before. See [App Store & Play Compliance](/react-native-guide/store-compliance).
+
+## Troubleshooting
+
+### No events arrive on Expo SDK 58
+
+- Check your `vexo-analytics` version. Versions 1.12.x and earlier record nothing on SDK 58. Upgrade to 1.13.0 or later.
+- Confirm that `vexo()` runs at module scope of the root layout, not inside a component or `useEffect`.
+- Look for a development warning that no screen arrived. If it appears, use the [explicit setup](#explicit-setup).
+
+### Taps and heatmaps are missing or sparse
+
+Native tap capture needs a native rebuild. If you shipped 1.13.0 only as an over-the-air update, rebuild the app. See [Heatmaps](/react-native-guide/mobile-features/session-replays-heatmaps).
+
+export default ({ children }) => <DocLayout current="rn-expo-sdk-58" previous={{href: '/react-native-guide/integration', label: 'Integration'}} next={{href: '/react-native-guide/store-compliance', label: 'App Store & Play Compliance'}}>{children}</DocLayout>
