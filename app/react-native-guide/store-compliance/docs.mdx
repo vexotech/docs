@@ -42,7 +42,7 @@ if (userHasConsented) {
 }
 ```
 
-Calling `vexo()` later, after the user consents, starts tracking without remounting your app. On Expo SDK 58 this requires `vexo-analytics` 1.13.0 or later; see [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58).
+With `vexo-analytics` 1.13.0 or later, calling `vexo()` later, after the user consents, starts tracking without remounting your app when you use the explicit setup (on any Expo SDK) or zero-config on Expo SDK 58 or later. On SDK 57 and earlier with zero-config, a late `vexo()` still remounts the screens below your navigation container, as before. See [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58).
 
 **Runtime opt-out** — `disableTracking()` stops event collection and session recording (including a recording already in progress), and the choice is persisted across launches. `enableTracking()` turns it back on; recording resumes with the next session.
 
