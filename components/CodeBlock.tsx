@@ -74,7 +74,7 @@ export const CodeBlock = ({ children, className }: CodeBlockProps) => {
     if (typeof node === 'number') {
       return node.toString();
     }
-    if (React.isValidElement(node)) {
+    if (React.isValidElement<{ children?: React.ReactNode }>(node)) {
       return getTextContent(node.props.children);
     }
     if (Array.isArray(node)) {
@@ -95,7 +95,7 @@ export const CodeBlock = ({ children, className }: CodeBlockProps) => {
   };
 
   // Check if this is a code block with language
-  const codeElement = React.isValidElement(children) && children.type === 'code' ? children : null;
+  const codeElement = React.isValidElement<{ className?: string }>(children) && children.type === 'code' ? children : null;
   const codeClassName = codeElement?.props?.className || '';
   const language = codeClassName.replace('language-', '') || '';
   const codeContent = getTextContent(children);
