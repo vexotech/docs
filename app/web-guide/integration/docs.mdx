@@ -4,19 +4,33 @@ import { DocLayout, DocImage } from '../../../components';
 
 ## Quickstart
 
-1. Create a Vexo account [here](https://www.vexo.co/sign-up) (skip if you already have one).
-2. Create a Web App:
-    - On your dashboard click on **+ Add Application** create a new app.
-    - Enter a name (e.g. your website)
-    - Add the domain of your website (e.g., *example.com*)
+1. [Create a Vexo account](https://www.vexo.co/sign-up) (skip this if you already have one).
+2. Create a web app:
+   - On your dashboard, click **+ Add Application**.
+   - Enter a name, such as your website's name.
+   - Add the domain of your website, such as *example.com*.
+3. Add the Vexo script. To start collecting web analytics data, paste this script into your site's `<head>` tag:
 
-3. Add the Vexo Script
+   ```html
+   <script src="https://www.vexo.co/analytics.js" defer></script>
+   ```
 
-To start collecting Web analytics data, paste the following script into your site’s **`<head>`** tag:
+   With Next.js, use the `Script` component instead, as shown in [Next.js integration](#nextjs-integration).
+4. Optional: track custom events and identify devices.
 
-```html
-<script src="https://www.vexo.co/analytics.js" defer></script>
-```
+   Custom event:
+
+   ```js
+   window.vexo?.customEvent('purchase-completed', { amount: 24.99 });
+   ```
+
+   Identify a device:
+
+   ```js
+   window.vexo?.identifyDevice('user@example.com');
+   ```
+
+That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
 
 ### Next.js Integration
 
@@ -39,23 +53,5 @@ export default function MyApp({ Component, pageProps }) {
 ```
 
 The `afterInteractive` strategy ensures that analytics scripts load after the page becomes interactive, which is the recommended approach for third-party analytics according to the [Next.js Script Optimization documentation](https://nextjs.org/docs/app/building-your-application/optimizing/scripts).
-
-4. Track custom events and identify devices (optional)
-
-You can enhance your analytics by tracking custom events and identifying devices:
-
-- Custom Event
-
-```js
-global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
-```
-
-- Identify device
-
-```js
-global?.vexo?.identifyDevice('user@example.com');
-```
-
-That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
 
 export default ({ children }) => <DocLayout current="web-integration" previous={{href: '/web-guide/introduction', label: 'Introduction'}} next={{href: '/web-guide/web-features/overview', label: 'Features Overview'}}>{children}</DocLayout>
