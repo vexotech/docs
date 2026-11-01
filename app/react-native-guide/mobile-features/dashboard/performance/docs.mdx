@@ -1,0 +1,95 @@
+import { DocLayout } from '../../../../../components';
+
+# Performance
+
+The Performance dashboard shows how fast your app feels to real users: how long it takes to
+start, how smoothly it renders, and how long each screen takes to appear. Vexo captures these
+signals automatically on your users' devices and trends them over time and by app version.
+
+**Note:** Available in `vexo-analytics` 1.10.0 or later.
+
+## What Vexo captures
+
+Performance monitoring is built into the SDK. Once you call `vexo(...)`, three signals are
+collected on-device and sent through the same pipeline as your other events — no extra code,
+no manual instrumentation:
+
+- **App start** — how long the app takes to become ready.
+- **Frame health** — how many frames are slow or frozen while the app is on screen.
+- **Per-screen render** — how long each screen takes to appear after a navigation.
+
+## App start
+
+Vexo reports two kinds of app-start latency:
+
+- **Cold start** — the time from the JavaScript engine loading the SDK to your first screen
+  becoming ready. Reported once per launch. It is measured from JS module load rather than the
+  native process start, which is an accurate budget for the JavaScript side of startup.
+- **Warm start** — the time to become ready again when the user brings the app back from the
+  background. Measured on each background-to-foreground transition.
+
+Both are reported in milliseconds and aggregated into percentiles on the dashboard.
+
+## Frame health (slow and frozen frames)
+
+Vexo samples the JavaScript thread frame by frame and classifies each frame by how long it
+took to render:
+
+- **Slow frame** — took longer than **16 ms** (a dropped frame at 60 fps). A high slow-frame
+  rate reads as jank or stutter.
+- **Frozen frame** — took longer than **700 ms** (a freeze the user can clearly feel). Every
+  frozen frame is also counted as a slow frame.
+
+Frames are counted per screen and reported as slow, frozen, and total counts. A window is
+flushed when the user navigates to another screen, on a periodic interval while a screen stays
+open, and when the app is sent to the background.
+
+The 16 ms / 700 ms thresholds target 60 fps displays. On 90 Hz or 120 Hz screens more frames
+naturally exceed 16 ms, so treat the slow-frame rate as a relative trend to watch across
+releases rather than an absolute pass/fail line.
+
+## Per-screen render
+
+On every navigation, Vexo measures how long the new screen takes to commit its first frame
+after the route changes — a practical proxy for time-to-interactive. This is broken out per
+route so you can see which screens are slow to appear.
+
+## Automatic and privacy-gated
+
+Performance capture requires no code. It installs when you initialize the SDK and follows the
+same gating as the rest of Vexo:
+
+- It flows through the same batched transport and **tracking gate** as every other event, so
+  `disableTracking()` stops it and `enableTracking()` resumes it.
+- It never runs in **development builds** — frame timing under a paused debugger would produce
+  meaningless "frozen" frames.
+- It is **paused while the app is backgrounded** and resumes on the next foreground.
+
+## Where to find it
+
+Open the **Performance** page in your mobile app's dashboard. It has three panels:
+
+- **App start** — a percentile toggle (p50 / p75 / p90 / p99) and a cold / warm toggle, a
+  headline latency value, and a trend chart.
+- **Frame health** — a slow-frame-rate gauge plus slow-frame and frozen-frame rate trends.
+- **Per-screen render** — a table of routes with p50 / p75 / p95 render times.
+
+Like the rest of the dashboard, every panel respects the global **date range** and **app
+version** filters, so you can confirm a new release didn't regress startup or introduce jank.
+
+## Turning it off
+
+Performance capture is on by default. To disable it for a build, pass `performance: false`
+when you initialize Vexo:
+
+```js
+import { vexo } from 'vexo-analytics';
+
+vexo('YOUR_API_KEY', { performance: false });
+```
+
+All other tracking keeps working; only performance capture is turned off. Re-running `vexo()`
+overwrites the option, and `disableTracking()` stops performance capture along with everything
+else.
+
+export default ({ children }) => <DocLayout current="performance" previous={{href: '/react-native-guide/mobile-features/dashboard/network-stats', label: 'Network Stats'}} next={{href: '/react-native-guide/mobile-features/dashboard/retention', label: 'Retention'}}>{children}</DocLayout>
