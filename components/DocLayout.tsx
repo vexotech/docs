@@ -20,7 +20,7 @@ export const DocLayout = ({ current, children, links = [], previous, next }: Pro
     return (
         <div>
             <DocNavBar currentItemName={current} />
-            <DocNavHeader />
+            <DocNavHeader currentItemName={current} />
             <DocBody next={next} previous={previous}>{children}</DocBody>
         </div>
     );

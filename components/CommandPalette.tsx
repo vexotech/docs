@@ -135,7 +135,7 @@ export function CommandPalette() {
                 )}
               </Combobox>
 
-              <div className="flex flex-wrap items-center gap-4 bg-gray-50 px-4 py-2.5 text-xs text-gray-700">
+              <div className="hidden [@media(hover:hover)_and_(pointer:fine)]:flex flex-wrap items-center gap-4 bg-gray-50 px-4 py-2.5 text-xs text-gray-700">
                 <span className="flex items-center gap-1">
                   <kbd className="flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold">
                     ↑
