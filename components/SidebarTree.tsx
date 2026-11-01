@@ -28,6 +28,7 @@ const NavItem = ({ isActive, title, href, depth = 0 }: NavItemProps): React.JSX.
     return <li className="py-0.5" style={marginStyle}>
         <a
             href={href}
+            aria-current={isActive ? 'page' : undefined}
             className={`
                 flex p-2.5 px-3 cursor-pointer rounded-sm border group transition-all duration-200
                 ${isActive

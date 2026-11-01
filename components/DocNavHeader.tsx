@@ -23,7 +23,9 @@ export const DocNavHeader = ({ currentItemName }: Props): React.JSX.Element => {
                 onClick={() => setMenuOpen(true)}
                 className="md:hidden p-2.5 -ml-2.5 rounded-md text-slate-600 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600"
                 aria-label="Open menu"
+                aria-haspopup="dialog"
                 aria-expanded={menuOpen}
+                aria-controls={menuOpen ? 'docs-menu' : undefined}
             >
                 <MenuIcon className="h-6 w-6" aria-hidden="true" />
             </button>
@@ -51,7 +53,7 @@ export const DocNavHeader = ({ currentItemName }: Props): React.JSX.Element => {
             </div>
         </div>
 
-        <Dialog open={menuOpen} onClose={setMenuOpen} className="relative z-50 md:hidden" aria-label="Documentation menu">
+        <Dialog id="docs-menu" open={menuOpen} onClose={setMenuOpen} className="relative z-50 md:hidden" aria-label="Documentation menu">
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-slate-900/30 transition-opacity duration-200 ease-out data-[closed]:opacity-0 motion-reduce:transition-none"

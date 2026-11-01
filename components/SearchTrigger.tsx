@@ -17,7 +17,7 @@ export function SearchTrigger() {
     >
       <SearchIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
       <span className="flex-1 text-left text-gray-600">Search docs...</span>
-      <kbd className="hidden [@media(pointer:fine)]:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded">
+      <kbd className="hidden [@media(hover:hover)_and_(pointer:fine)]:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded">
         {isMac ? '⌘' : 'Ctrl'}
         <span className="text-xs">K</span>
       </kbd>
