@@ -1,6 +1,6 @@
 import {ArrowLeftIcon, ArrowRightIcon} from "@heroicons/react/outline";
+import Link from "next/link";
 import React from "react";
-import {useRouter} from "next/navigation";
 
 export type DocLink = {
     href: string,
@@ -12,26 +12,24 @@ interface Props {
     next: DocLink,
 }
 
-export const DocFooter = ({ previous, next }: Props): React.JSX.Element => {
-    const router = useRouter();
+const card = "group flex flex-col justify-center gap-1 min-h-[6rem] w-full sm:w-[280px] p-4 border-2 border-gray-200 rounded-md hover:bg-indigo-50 hover:border-indigo-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600 transition-colors duration-200";
+const label = "text-indigo-600 group-hover:text-indigo-700 text-sm transition-colors duration-200";
 
-    const navigate = (href: string) => (): void => {
-        router.push(href)
-    };
-    return <div className={`w-full mt-10 pb-16 gap-9 px-12 lg:pr-80 flex justify-between`}>
-        {previous && <div onClick={navigate(previous.href)} className="h-24 hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200 col-start-1 p-4 cursor-pointer border-2 border-gray-200 rounded-md flex justify-center flex-col w-[280px] group">
-            <div className="text-slate-500 text-xs uppercase mb-1">Previous</div>
-            <div className="text-indigo-600 group-hover:text-indigo-700 text-sm transition-colors duration-200">
-                <ArrowLeftIcon className="inline w-4 h-4 mr-2" />
+export const DocFooter = ({ previous, next }: Props): React.JSX.Element => {
+    return <nav aria-label="Previous and next pages" className="w-full mt-10 pb-16 px-4 sm:px-6 md:px-12 lg:pr-80 flex flex-col sm:flex-row gap-4 sm:gap-9">
+        {previous && <Link href={previous.href} className={card}>
+            <span className="text-slate-500 text-xs uppercase">Previous</span>
+            <span className={label}>
+                <ArrowLeftIcon className="inline w-4 h-4 mr-2" aria-hidden="true" />
                 {previous.label}
-            </div>
-        </div>}
-        {next && <div onClick={navigate(next.href)} className="h-24 hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200 col-start-2 p-4 cursor-pointer border-2 border-gray-200 rounded-md flex justify-center flex-col items-end w-[280px] group">
-            <div className="text-slate-500 text-xs uppercase mb-1">Next</div>
-            <div className="text-indigo-600 group-hover:text-indigo-700 text-sm transition-colors duration-200">
+            </span>
+        </Link>}
+        {next && <Link href={next.href} className={`${card} items-end text-right sm:ml-auto`}>
+            <span className="text-slate-500 text-xs uppercase">Next</span>
+            <span className={label}>
                 {next.label}
-                <ArrowRightIcon className="inline w-4 h-4 ml-2" />
-            </div>
-        </div>}
-    </div>
+                <ArrowRightIcon className="inline w-4 h-4 ml-2" aria-hidden="true" />
+            </span>
+        </Link>}
+    </nav>
 }
