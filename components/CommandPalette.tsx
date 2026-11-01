@@ -5,29 +5,64 @@ import { Dialog, Transition, DialogPanel, TransitionChild, ComboboxOption, Combo
 import { SearchIcon, DocumentTextIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/navigation';
 import Fuse from 'fuse.js';
-import { buildSearchIndex, SearchItem } from '../lib/searchIndex';
+import type { SearchItem } from '../lib/searchIndex';
 import { useSearch } from '../lib/SearchContext';
 
 const searchOptions = {
-  keys: ['title', 'keywords', 'section'],
-  threshold: 0.3,
-  includeScore: true,
-  includeMatches: true,
+  keys: [
+    { name: 'title', weight: 2 },
+    { name: 'heading', weight: 2 },
+    { name: 'text', weight: 1 },
+  ],
+  threshold: 0.25,
+  ignoreLocation: true, // match anywhere in the body text, not only near the start
+  ignoreFieldNorm: true, // a match in a long section counts as much as in a short one; ties keep sidebar order
 };
+
+const QUICKSTART = '/get-started/quick-start';
+const INTEGRATION = '/react-native-guide/integration';
+
+// Words people search for that the pages don't use as titles. These results come first.
+const synonyms: Record<string, string[]> = {
+  install: [QUICKSTART, INTEGRATION],
+  installation: [QUICKSTART, INTEGRATION],
+  setup: [QUICKSTART, INTEGRATION],
+  'set up': [QUICKSTART, INTEGRATION],
+  expo: [QUICKSTART, INTEGRATION],
+  identify: [`${INTEGRATION}#device-identity`],
+  identifydevice: [`${INTEGRATION}#device-identity`],
+  'identify user': [`${INTEGRATION}#device-identity`],
+};
+
+const MAX_RESULTS = 8;
 
 export function CommandPalette() {
   const { isOpen, closeSearch, openSearch } = useSearch();
   const [query, setQuery] = useState('');
+  const [searchIndex, setSearchIndex] = useState<SearchItem[] | null>(null);
   const router = useRouter();
 
-  const searchIndex = useMemo(() => buildSearchIndex(), []);
-  const fuse = useMemo(() => new Fuse(searchIndex, searchOptions), [searchIndex]);
+  useEffect(() => {
+    if (!isOpen || searchIndex) return;
+    fetch('/search-index.json')
+      .then(response => response.json())
+      .then(setSearchIndex)
+      .catch(() => setSearchIndex([]));
+  }, [isOpen, searchIndex]);
+
+  const fuse = useMemo(() => new Fuse(searchIndex ?? [], searchOptions), [searchIndex]);
 
   const searchResults = useMemo(() => {
-    if (!query.trim()) {
-      return searchIndex.slice(0, 8); // Show first 8 items when no query
+    const pages = searchIndex ?? [];
+    const term = query.trim().toLowerCase();
+    if (!term) {
+      return pages.filter(item => !item.heading).slice(0, MAX_RESULTS);
     }
-    return fuse.search(query).slice(0, 8).map(result => result.item);
+    const pinned = (synonyms[term] ?? [])
+      .map(href => pages.find(item => item.href === href))
+      .filter((item): item is SearchItem => !!item);
+    const matches = fuse.search(term).map(result => result.item).filter(item => !pinned.includes(item));
+    return [...pinned, ...matches].slice(0, MAX_RESULTS);
   }, [query, fuse, searchIndex]);
 
   useEffect(() => {
@@ -110,11 +145,11 @@ export function CommandPalette() {
                             />
                             <div className="ml-3 flex-auto">
                               <div className={`text-sm font-medium ${active ? 'text-white' : 'text-gray-900'}`}>
-                                {item.title}
+                                {item.heading || item.title}
                               </div>
-                              {item.section && (
-                                <div className={`text-sm ${active ? 'text-indigo-200' : 'text-gray-500'}`}>
-                                  {item.section}
+                              {(item.heading || item.section) && (
+                                <div className={`text-sm ${active ? 'text-indigo-100' : 'text-gray-600'}`}>
+                                  {item.heading ? [item.section, item.title].filter(Boolean).join(' > ') : item.section}
                                 </div>
                               )}
                             </div>
@@ -125,11 +160,11 @@ export function CommandPalette() {
                   </ComboboxOptions>
                 )}
 
-                {query && searchResults.length === 0 && (
+                {query && searchIndex && searchResults.length === 0 && (
                   <div className="px-4 py-14 text-center sm:px-14">
-                    <DocumentTextIcon className="mx-auto h-6 w-6 text-gray-400" />
+                    <DocumentTextIcon className="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
                     <p className="mt-4 text-sm text-gray-900">
-                      No results found for &ldquo;{query}&rdquo;. Try a different search term.
+                      No results for &ldquo;{query}&rdquo;. Try a shorter term, or a function name such as customEvent.
                     </p>
                   </div>
                 )}
