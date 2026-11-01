@@ -2,20 +2,20 @@ import { DocLayout } from '../../../components/DocLayout';
 
 # Upgrading to Expo SDK 58
 
-Expo SDK 58 changed how apps expose navigation to analytics libraries. `vexo-analytics` **1.13.0** supports SDK 58, including taps and heatmaps. Older versions of `vexo-analytics` record nothing on Expo SDK 58, with no error in production, so upgrade `vexo-analytics` when you upgrade Expo.
+Expo SDK 58 changed how apps expose navigation to analytics libraries. `vexo-analytics` **1.14.0** supports SDK 58, including taps and heatmaps. Older versions of `vexo-analytics` record nothing on Expo SDK 58, with no error in production, so upgrade `vexo-analytics` when you upgrade Expo.
 
 ## Support by Expo SDK
 
 | Expo SDK | `vexo('KEY')` alone (zero-config) | Explicit setup with `<VexoProvider navigationRef>` |
 |---|---|---|
 | 57 and earlier | Everything, as before (auto-attach). Unchanged. | Optional. Works. |
-| 58 or later, `vexo-analytics` 1.12.x or earlier | **Nothing is recorded.** There is no `/devices/init` call, no events, and no error in production. Upgrade. | Not available before 1.13.0. |
-| 58 or later, `vexo-analytics` 1.13.0, and your native build includes 1.13.0 | Everything: screens, sessions, crashes (including render crashes), keyboard, orientation and app-state events, performance, and taps and heatmaps. Native window-level tap capture also sees taps on native UI such as the `NativeTabs` component of SDK 58. | Everything. Recommended when you want the guaranteed path that relies on no experimental or private Expo Router APIs. |
-| 58 or later, `vexo-analytics` 1.13.0 JavaScript, but an older native build (for example, an over-the-air update onto a binary built with 1.12 or earlier) | Screens, sessions, crashes, and the rest. Taps and heatmaps use a best-effort JavaScript fallback. Rebuild the app (a new EAS build or development client) to get native tap capture. | Everything. Taps come from the provider. |
+| 58 or later, `vexo-analytics` 1.12.x or earlier | **Nothing is recorded.** There is no `/devices/init` call, no events, and no error in production. Upgrade. | Not available before 1.14.0. |
+| 58 or later, `vexo-analytics` 1.14.0, and your native build includes 1.14.0 | Everything: screens, sessions, crashes (including render crashes), keyboard, orientation and app-state events, performance, and taps and heatmaps. Native window-level tap capture also sees taps on native UI such as the `NativeTabs` component of SDK 58. | Everything. Recommended when you want the guaranteed path that relies on no experimental or private Expo Router APIs. |
+| 58 or later, `vexo-analytics` 1.14.0 JavaScript, but an older native build (for example, an over-the-air update onto a binary built with 1.12 or earlier) | Screens, sessions, crashes, and the rest. Taps and heatmaps use a best-effort JavaScript fallback. Rebuild the app (a new EAS build or development client) to get native tap capture. | Everything. Taps come from the provider. |
 
 ## Upgrade checklist
 
-1. Upgrade `vexo-analytics` to 1.13.0 or later:
+1. Upgrade `vexo-analytics` to 1.14.0 or later:
 
    ```bash
    npx expo install vexo-analytics
@@ -44,7 +44,7 @@ On SDK 58, zero-config uses the documented, experimental screen-tracking API of 
 
 ## Explicit setup
 
-The explicit setup requires `vexo-analytics` 1.13.0 or later. Pass the navigation ref of Expo Router to `VexoProvider`:
+The explicit setup requires `vexo-analytics` 1.14.0 or later. Pass the navigation ref of Expo Router to `VexoProvider`:
 
 ```tsx
 import { Slot, useNavigationContainerRef } from 'expo-router';
@@ -79,12 +79,12 @@ If you call `vexo()` after the user consents, tracking starts without remounting
 
 ### No events arrive on Expo SDK 58
 
-- Check your `vexo-analytics` version. Versions 1.12.x and earlier record nothing on SDK 58. Upgrade to 1.13.0 or later.
+- Check your `vexo-analytics` version. Versions 1.12.x and earlier record nothing on SDK 58. Upgrade to 1.14.0 or later.
 - Confirm that `vexo()` runs at module scope of the root layout, not inside a component or `useEffect`.
 - Look for a development warning that no screen arrived. If it appears, use the [explicit setup](#explicit-setup).
 
 ### Taps and heatmaps are missing or sparse
 
-Native tap capture needs a native rebuild. If you shipped 1.13.0 only as an over-the-air update, rebuild the app. See [Heatmaps](/react-native-guide/mobile-features/session-replays-heatmaps).
+Native tap capture needs a native rebuild. If you shipped 1.14.0 only as an over-the-air update, rebuild the app. See [Heatmaps](/react-native-guide/mobile-features/session-replays-heatmaps).
 
 export default ({ children }) => <DocLayout current="rn-expo-sdk-58" previous={{href: '/react-native-guide/integration', label: 'Integration'}} next={{href: '/react-native-guide/store-compliance', label: 'App Store & Play Compliance'}}>{children}</DocLayout>
