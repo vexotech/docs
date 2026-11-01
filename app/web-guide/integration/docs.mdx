@@ -2,37 +2,11 @@ import { DocLayout, DocImage } from '../../../components';
 
 # Web Integration
 
-## Quickstart
+## Install
 
-1. [Create a Vexo account](https://www.vexo.co/sign-up) (skip this if you already have one).
-2. Create a web app:
-   - On your dashboard, click **+ Add Application**.
-   - Enter a name, such as your website's name.
-   - Add the domain of your website, such as *example.com*.
-3. Add the Vexo script. To start collecting web analytics data, paste this script into your site's `<head>` tag:
+Follow [Web](/get-started/quick-start#web) in the Quickstart to create a web app, add the script, and send custom events. This page covers framework-specific setup.
 
-   ```html
-   <script src="https://www.vexo.co/analytics.js" defer></script>
-   ```
-
-   With Next.js, use the `Script` component instead, as shown in [Next.js integration](#nextjs-integration).
-4. Optional: track custom events and identify devices.
-
-   Custom event:
-
-   ```js
-   window.vexo?.customEvent('purchase-completed', { amount: 24.99 });
-   ```
-
-   Identify a device:
-
-   ```js
-   window.vexo?.identifyDevice('user@example.com');
-   ```
-
-That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
-
-### Next.js Integration
+## Next.js integration
 
 For Next.js applications, use the `Script` component with the `afterInteractive` strategy to ensure optimal loading performance. Add this to your `_app.js` or `_app.tsx` file:
 

@@ -72,17 +72,7 @@ Check these, most common first:
 
 ### Before you ship
 
-Decide whether your development sessions should count in your analytics. To leave them out, call `vexo()` only in release builds:
-
-```javascript
-import { vexo } from 'vexo-analytics';
-
-if (!__DEV__) {
-  vexo('YOUR_API_KEY');
-}
-```
-
-To keep development data separate instead, use a staging app's key. See [Development & staging](/react-native-guide/integration#development--staging). Before you publish, check [App Store & Play Compliance](/react-native-guide/store-compliance).
+Decide whether your development sessions should count in your analytics. To leave them out, or to send them to a staging app, see [Development & staging](/react-native-guide/integration#development--staging). Before you publish, check [App Store & Play Compliance](/react-native-guide/store-compliance).
 
 ## Web
 
@@ -97,6 +87,7 @@ To keep development data separate instead, use a staging app's key. See [Develop
    <script src="https://www.vexo.co/analytics.js" defer></script>
    ```
 
+   With Next.js, use the `Script` component instead, as shown in [Next.js integration](/web-guide/integration#nextjs-integration).
 4. Optional: track custom events and identify devices.
 
    Custom event:
