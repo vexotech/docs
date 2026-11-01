@@ -114,14 +114,16 @@ export const CodeBlock = ({ children, className }: CodeBlockProps) => {
           children
         )}
         <button
+          type="button"
           onClick={handleCopy}
-          className="absolute top-3 right-3 p-2 rounded-lg bg-gray-800 hover:bg-gray-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          title={copied ? 'Copied!' : 'Copy to clipboard'}
+          className="absolute top-3 right-3 p-2 rounded-lg bg-gray-800 hover:bg-gray-700 opacity-100 [@media(hover:hover)]:opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400 transition-opacity duration-200"
+          title={copied ? 'Copied' : 'Copy code'}
+          aria-label={copied ? 'Copied' : 'Copy code'}
         >
           {copied ? (
-            <ClipboardCheckIcon className="h-4 w-4 text-green-400" />
+            <ClipboardCheckIcon className="h-4 w-4 text-green-400" aria-hidden="true" />
           ) : (
-            <ClipboardIcon className="h-4 w-4 text-gray-400" />
+            <ClipboardIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
           )}
         </button>
       </pre>

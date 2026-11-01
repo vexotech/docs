@@ -1,8 +1,12 @@
 const withMDX = require('@next/mdx')({
     extension: /\.mdx?$/,
     options: {
-        remarkPlugins: [],
-        rehypePlugins: [],
+        // Plugin names as strings so Turbopack can load them.
+        remarkPlugins: ['remark-gfm'],
+        rehypePlugins: [
+            'rehype-slug',
+            ['rehype-autolink-headings', { behavior: 'wrap', test: ['h2', 'h3'] }],
+        ],
     },
 });
 

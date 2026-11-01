@@ -1,4 +1,4 @@
-import { DocLayout } from '../../../components/DocLayout';
+import { DocLayout, Warning } from '../../../components';
 
 # Quickstart
 
@@ -6,72 +6,102 @@ import { DocLayout } from '../../../components/DocLayout';
 
 **Prerequisites**
 
-- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://docs.expo.dev/router/introduction/)
+- Using [React Navigation](https://reactnavigation.org/) or [Expo Router](https://docs.expo.dev/router/introduction/)
 
 **Expo**
 
-- ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
-- ❌ This library can't be used in the "Expo Go" app because it [requires custom native code](https://docs.expo.dev/workflow/customizing/).
+- ✅ You can use this library with [Development Builds](https://docs.expo.dev/development/introduction/). No config plugin is required.
+- ❌ This library can't be used in the "Expo Go" app because it [requires custom native code](https://docs.expo.dev/workflow/customizing/).
 
 **Expo SDK 58**
 
 - Use `vexo-analytics` **1.14.0 or later** on Expo SDK 58. Earlier versions record nothing on SDK 58. See [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58) for the support table and the upgrade checklist.
 - Keep the `vexo()` call at module scope of the root layout (`app/_layout.tsx`, or `src/app/_layout.tsx` in the SDK 58 template).
 
-**Getting started**
+### Install
 
-1. Create an account [here](https://www.vexo.co/sign-up).
-2. You'll be prompted into creating a new app, give it a name (you can change it later), this will generate your API key.
-3. Run **`yarn add vexo-analytics`** or **`npm install vexo-analytics`** in your project. If you are using bare React Native, run **`pod install`** in the iOS folder.
-4. Add the following code to your app entry file (usually **`index.js`**, **`App.js`** or **`_layout.tsx`** if you're using Expo Router):
+1. [Create an account](https://www.vexo.co/sign-up).
+2. When prompted, create an app and give it a name (you can change it later). Vexo generates the app's API key. You can copy it again later from the app's [settings](/settings/app-settings/app-general-information).
+3. Install the package.
 
-```javascript
-import { vexo } from 'vexo-analytics';
+   With Expo:
 
-// You may want to wrap this with `if (!__DEV__) { ... }` to only run Vexo in production.
-vexo('YOUR_API_KEY');
+   ```bash
+   npx expo install vexo-analytics
+   ```
 
-```
+   With bare React Native, install it with npm (or `yarn add vexo-analytics`), then install the iOS pods:
 
-1. Re-build and run your app (the **`vexo-analytics`** package includes native code).
-2. Go to your app's page on Vexo and your first events should appear! 🎉
+   ```bash
+   npm install vexo-analytics
+   cd ios && pod install
+   ```
 
-**Wait, that's it?** Yes! That's it. With that ease of integration experience you get an incredible set of features, go check them out!
+4. Call `vexo()` with your API key in your app's entry file: usually `index.js` or `App.js`, or the root layout (`app/_layout.tsx`) with Expo Router.
+
+   ```javascript
+   import { vexo } from 'vexo-analytics';
+
+   vexo('YOUR_API_KEY');
+   ```
+
+   <Warning message={(<div>Call <code>vexo()</code> at module scope, outside any component or <code>useEffect</code>, so tracking starts when the app starts.</div>)} />
+
+5. Rebuild the app, because `vexo-analytics` includes native code. A JavaScript reload or an over-the-air update isn't enough.
+   - With Expo: run `npx expo run:ios` or `npx expo run:android`, or make a new development build with `eas build --profile development`.
+   - With bare React Native: run `npx react-native run-ios` or `npx react-native run-android`.
+
+### Verify your first event
+
+1. Open the app on a device or simulator, and move between two screens.
+2. Wait about 5 seconds. The SDK sends events in batches: when it has 20 events, or 5 seconds after the first one, whichever comes first.
+3. Open your app in [Vexo](https://www.vexo.co/apps) and reload the page. Your device is listed under **People**, and the "Your app doesn't have data yet" banner is gone. (If you haven't verified your email address, the email verification banner shows there instead.) 🎉
+
+**Wait, that's it?** Yes! From here, Vexo tracks sessions, screens, taps, and errors with no more code. Go [check out the features](/react-native-guide/mobile-features/overview).
+
+### No events?
+
+Check these, most common first:
+
+- **Expo Go.** Expo Go can't load the SDK's native code. Use a development build (step 5).
+- **A `__DEV__` guard.** If you wrapped `vexo()` in `if (!__DEV__)`, a development build never calls it. Remove the guard while you test.
+- **A wrong or invalid API key.** Events sent with an invalid key are dropped. In a development build, the console shows `Vexo: API key rejected (401)`. Copy the key again from the app's [settings](/settings/app-settings/app-general-information).
+- **Native code not rebuilt.** After you install or upgrade `vexo-analytics`, rebuild the app (step 5).
+- **Simulator networking.** The simulator or emulator must be able to reach `https://api.vexo.co`. Check that it has network access and that a VPN, proxy, or firewall isn't blocking it.
+- **Expo SDK 58.** Use `vexo-analytics` 1.14.0 or later. See [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58).
+
+### Before you ship
+
+Decide whether your development sessions should count in your analytics. To leave them out, or to send them to a staging app, see [Development & staging](/react-native-guide/integration#development--staging). Before you publish, check [App Store & Play Compliance](/react-native-guide/store-compliance).
 
 ## Web
 
-**Getting started**
+1. [Create an account](https://www.vexo.co/sign-up).
+2. Create a web app:
+   - On your dashboard, click **+ Add Application**.
+   - Enter a name, such as your website's name.
+   - Add the domain of your website, such as *example.com*.
+3. Add the Vexo script. To start collecting web analytics data, paste this script into your site's `<head>` tag:
 
-1. Create an account [here](https://www.vexo.co/sign-up).
-2. Create a Web App:
-- On your dashboard click on **+ Add Application** create a new app.
-- Enter a name (e.g. your website)
-- Add the domain of your website (e.g., *example.com*)
+   ```html
+   <script src="https://www.vexo.co/analytics.js" defer></script>
+   ```
 
-3. Add the Vexo Script
+   With Next.js, use the `Script` component instead, as shown in [Next.js integration](/web-guide/integration#nextjs-integration).
+4. Optional: track custom events and identify devices.
 
-To start collecting Web analytics data, paste the following script into your site’s **`<head>`** tag:
+   Custom event:
 
-```html
-<script src="https://www.vexo.co/analytics.js" defer></script>
-```
+   ```js
+   globalThis.vexo?.customEvent('purchase-completed', { amount: 24.99 });
+   ```
 
-4. Track custom events and identify devices (optional)
+   Identify a device:
 
-You can enhance your analytics by tracking custom events and identifying devices:
+   ```js
+   globalThis.vexo?.identifyDevice('user@example.com');
+   ```
 
-- Custom Event
+That's it! Once the script is live on your site, Vexo starts capturing user sessions, session replays, custom events, and more, just like it does on mobile.
 
-```js
-global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
-```
-
-- Identify device
-
-```js
-global?.vexo?.identifyDevice('user@example.com');
-```
-
-That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
-
-export default ({ children }) => <DocLayout current="quick-start" previous={{href: '/get-started/introduction', label: 'General Introduction'}} next={{href: '/react-native-guide/introduction', label: 'React Native Introduction'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout current="quick-start" previous={{href: '/get-started/introduction', label: 'Introduction'}} next={{href: '/react-native-guide/introduction', label: 'React Native Introduction'}}>{children}</DocLayout>

@@ -2,23 +2,11 @@ import { DocLayout, DocImage } from '../../../components';
 
 # Web Integration
 
-## Quickstart
+## Install
 
-1. Create a Vexo account [here](https://www.vexo.co/sign-up) (skip if you already have one).
-2. Create a Web App:
-    - On your dashboard click on **+ Add Application** create a new app.
-    - Enter a name (e.g. your website)
-    - Add the domain of your website (e.g., *example.com*)
+Follow [Web](/get-started/quick-start#web) in the Quickstart to create a web app, add the script, and send custom events. This page covers framework-specific setup.
 
-3. Add the Vexo Script
-
-To start collecting Web analytics data, paste the following script into your site’s **`<head>`** tag:
-
-```html
-<script src="https://www.vexo.co/analytics.js" defer></script>
-```
-
-### Next.js Integration
+## Next.js integration
 
 For Next.js applications, use the `Script` component with the `afterInteractive` strategy to ensure optimal loading performance. Add this to your `_app.js` or `_app.tsx` file:
 
@@ -39,23 +27,5 @@ export default function MyApp({ Component, pageProps }) {
 ```
 
 The `afterInteractive` strategy ensures that analytics scripts load after the page becomes interactive, which is the recommended approach for third-party analytics according to the [Next.js Script Optimization documentation](https://nextjs.org/docs/app/building-your-application/optimizing/scripts).
-
-4. Track custom events and identify devices (optional)
-
-You can enhance your analytics by tracking custom events and identifying devices:
-
-- Custom Event
-
-```js
-global?.vexo?.customEvent('purchased-completed', { amount: 24.99 });
-```
-
-- Identify device
-
-```js
-global?.vexo?.identifyDevice('user@example.com');
-```
-
-That’s it! Once the script is live on your site, Vexo will start capturing user sessions, session replays, custom events, and more — just like it does on mobile.
 
 export default ({ children }) => <DocLayout current="web-integration" previous={{href: '/web-guide/introduction', label: 'Introduction'}} next={{href: '/web-guide/web-features/overview', label: 'Features Overview'}}>{children}</DocLayout>

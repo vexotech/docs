@@ -20,10 +20,12 @@ of how those events are happening. This means that if a user is sending N amount
 
 ### Usage
 
-In order to use custom events, the only pre-requisite is for you to give it a name, which can be anything.
-In addition, you can provide any optional parameters you'd like.
+To send a custom event, call `customEvent` with a name, which can be anything, and an object of properties.
+The object is required; pass `{}` if the event has no properties.
 
 ```js
+import { customEvent } from 'vexo-analytics';
+
 customEvent('cart-checkout', {
     price: 130.00,
     items: ['Kindle'],
@@ -31,23 +33,22 @@ customEvent('cart-checkout', {
 });
 ```
 
-As an example with embedded in your app:
+In a component:
 
-```js
-import { View } from 'react-native'
-import { customEvent } from 'vexo-analytics'
+```jsx
+import { Button } from 'react-native';
+import { customEvent } from 'vexo-analytics';
 
-const CheckoutComponent = () => {
-    const onSuccessfulPurchase = (items, price, description) => {
-        // ...
+export function CheckoutButton({ items, price }) {
+    const onPurchase = () => {
+        // ...complete the purchase, then:
         customEvent('cart-checkout', {
-            price, // $130.00
-            items, // ['Kindle'],
-            description, // 'Bought Kindle'
+            price, // 130.00
+            items, // ['Kindle']
+            description: 'Bought Kindle',
         });
-        // ...
-    }
-    return (<View>{...}</View>)
+    };
+    return <Button title="Check out" onPress={onPurchase} />;
 }
 ```
 

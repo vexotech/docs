@@ -20,11 +20,24 @@ html, body {
   @apply bg-white;
 }
 
+/* Headings are wrapped in a self-link by rehype-autolink-headings. */
+.prose :is(h2, h3) > a {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+
+.prose :is(h2, h3) > a:hover {
+  text-decoration: underline;
+  text-decoration-color: theme('colors.indigo.300');
+  text-underline-offset: 4px;
+}
+
 /* VS Code Dark Theme for code blocks */
 .hljs {
     background: #1e1e1e !important;
     color: #d4d4d4 !important;
-    padding: 1rem;
+    padding: 1rem 3.5rem 1rem 1rem; /* room on the right for the copy button */
     border-radius: 0.375rem;
     overflow-x: auto;
     font-family: 'Fira Code', 'Cascadia Code', Consolas, Monaco, monospace;

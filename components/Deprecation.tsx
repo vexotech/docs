@@ -8,7 +8,7 @@ interface Props {
 export const Deprecation = ({ message }: Props): React.JSX.Element => {
   return (
   <div className="w-full bg-red-50 rounded-md p-4 px-5 text-sm text-slate-700 flex items-center gap-4">
-    <ExclamationIcon className="w-5" />
+    <ExclamationIcon className="w-5 shrink-0" aria-hidden="true" />
     { message }
   </div>)
 }
@@ -16,7 +16,7 @@ export const Deprecation = ({ message }: Props): React.JSX.Element => {
 export const Warning = ({ message }: Props): React.JSX.Element => {
   return (
   <div className="w-full bg-indigo-50 rounded-md p-4 px-5 text-sm text-slate-700 flex items-center gap-4">
-    <ExclamationIcon className="w-5" />
+    <ExclamationIcon className="w-5 shrink-0" aria-hidden="true" />
     { message }
   </div>
   );
