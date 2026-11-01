@@ -21,6 +21,7 @@ const searchOptions = {
 
 const QUICKSTART = '/get-started/quick-start';
 const INTEGRATION = '/react-native-guide/integration';
+const SUBSCRIPTION = '/settings/subscription';
 
 // Words people search for that the pages don't use as titles. These results come first.
 const synonyms: Record<string, string[]> = {
@@ -32,6 +33,12 @@ const synonyms: Record<string, string[]> = {
   identify: [`${INTEGRATION}#device-identity`],
   identifydevice: [`${INTEGRATION}#device-identity`],
   'identify user': [`${INTEGRATION}#device-identity`],
+  pricing: [SUBSCRIPTION],
+  price: [SUBSCRIPTION],
+  cost: [SUBSCRIPTION],
+  plans: [SUBSCRIPTION],
+  billing: ['/settings/billing', SUBSCRIPTION],
+  seats: [`${SUBSCRIPTION}#seats`],
 };
 
 const MAX_RESULTS = 8;
@@ -40,15 +47,20 @@ export function CommandPalette() {
   const { isOpen, closeSearch, openSearch } = useSearch();
   const [query, setQuery] = useState('');
   const [searchIndex, setSearchIndex] = useState<SearchItem[] | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
   const router = useRouter();
 
+  // Fetched on first open; after a failure, "Try again" clears loadFailed and this runs again.
   useEffect(() => {
-    if (!isOpen || searchIndex) return;
+    if (!isOpen || searchIndex || loadFailed) return;
     fetch('/search-index.json')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) throw new Error(`search index: HTTP ${response.status}`);
+        return response.json();
+      })
       .then(setSearchIndex)
-      .catch(() => setSearchIndex([]));
-  }, [isOpen, searchIndex]);
+      .catch(() => setLoadFailed(true));
+  }, [isOpen, searchIndex, loadFailed]);
 
   const fuse = useMemo(() => new Fuse(searchIndex ?? [], searchOptions), [searchIndex]);
 
@@ -158,6 +170,23 @@ export function CommandPalette() {
                       </ComboboxOption>
                     ))}
                   </ComboboxOptions>
+                )}
+
+                {!searchIndex && !loadFailed && (
+                  <p className="px-4 py-6 text-sm text-gray-600">Loading search…</p>
+                )}
+
+                {loadFailed && (
+                  <div role="alert" className="px-4 py-14 text-center sm:px-14">
+                    <p className="text-sm text-gray-900">Search couldn&rsquo;t load. Check your connection and try again.</p>
+                    <button
+                      type="button"
+                      onClick={() => setLoadFailed(false)}
+                      className="mt-4 rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      Try again
+                    </button>
+                  </div>
                 )}
 
                 {query && searchIndex && searchResults.length === 0 && (
