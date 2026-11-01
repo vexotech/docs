@@ -1,4 +1,4 @@
-// Run with `npm test` (node --test; Node 24 strips the types).
+// Run with `yarn test` (node --test; Node 24 strips the types).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mdxSections } from './mdxSections.ts';
