@@ -55,7 +55,7 @@ import { DocLayout, Warning } from '../../../components';
 
 1. Open the app on a device or simulator, and move between two screens.
 2. Wait about 5 seconds. The SDK sends events in batches: when it has 20 events, or 5 seconds after the first one, whichever comes first.
-3. Open your app in the [Vexo dashboard](https://www.vexo.co) and reload the page. The "Your app doesn't have data yet" banner is gone, and your device is listed under **People**. 🎉
+3. Open your app in [Vexo](https://www.vexo.co/apps) and reload the page. Your device is listed under **People**, and the "Your app doesn't have data yet" banner is gone. (If you haven't verified your email address, the email verification banner shows there instead.) 🎉
 
 **Wait, that's it?** Yes! From here, Vexo tracks sessions, screens, taps, and errors with no more code. Go [check out the features](/react-native-guide/mobile-features/overview).
 
@@ -93,13 +93,13 @@ Decide whether your development sessions should count in your analytics. To leav
    Custom event:
 
    ```js
-   window.vexo?.customEvent('purchase-completed', { amount: 24.99 });
+   globalThis.vexo?.customEvent('purchase-completed', { amount: 24.99 });
    ```
 
    Identify a device:
 
    ```js
-   window.vexo?.identifyDevice('user@example.com');
+   globalThis.vexo?.identifyDevice('user@example.com');
    ```
 
 That's it! Once the script is live on your site, Vexo starts capturing user sessions, session replays, custom events, and more, just like it does on mobile.

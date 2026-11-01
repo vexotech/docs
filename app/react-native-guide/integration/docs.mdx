@@ -9,7 +9,7 @@ Follow the [Quickstart](/get-started/quick-start) to install the SDK and verify 
 ## Development & staging
 
 You usually don't want your own development sessions mixed into your production analytics.
-Vexo only starts when you call `vexo(...)` — nothing is collected or sent before that — so the
+Vexo only starts when you call `vexo(...)`, and nothing is sent before that, so the
 recommended way to disable it is to simply make the call conditional:
 
 ```js
@@ -26,8 +26,9 @@ A few things you can rely on when Vexo has not been initialized:
 
 - Not calling `vexo()` is a fully supported way to disable Vexo. There is no background work,
   and no data leaves the device.
-- `customEvent()` calls are safely ignored: the event is dropped and a warning is logged to the
-  console. Your app's behavior is not affected, so you don't need to guard every call site.
+- `customEvent()` calls are safe: the event is queued on the device (in memory, and saved to
+  storage) and sent only after `vexo()` is called, in this launch or a later one. If `vexo()` is
+  never called, nothing is sent. You don't need to guard every call site.
 - `identifyDevice()`, `enableTracking()` and `disableTracking()` are safe no-ops as well.
 
 If you'd rather keep development or staging data instead of dropping it, create a separate app
@@ -106,12 +107,15 @@ You can programmatically enable or disable tracking in your app based on your bu
 This gives you full control over when analytics data is sent.
 
 ```js
-import { enableTracking, disableTracking } from 'vexo-analytics'
+import { enableTracking, disableTracking } from 'vexo-analytics';
 
-// disable tracking
-await disableTracking();
-// re-enable tracking, under X condition
-await enableTracking();
+export async function setTracking(enabled) {
+  if (enabled) {
+    await enableTracking();
+  } else {
+    await disableTracking();
+  }
+}
 ```
 
 ### Error reporting
@@ -119,16 +123,18 @@ await enableTracking();
 Errors that reach the top of your app are captured automatically. To report a caught exception yourself — without crashing the app — call `trackError`:
 
 ```js
-import { trackError } from 'vexo-analytics'
+import { trackError } from 'vexo-analytics';
 
-try {
-  await riskyOperation();
-} catch (err) {
-  trackError(err);
+export async function loadData() {
+  try {
+    await riskyOperation(); // your code
+  } catch (err) {
+    trackError(err);
+  }
 }
 ```
 
-By default the error is recorded as **handled**, so it does not count against your crash-free rate. Pass `{ handled: false }` to record it as an unhandled error instead:
+By default the error is recorded as **handled**, so it does not count against your crash-free rate. To record it as an unhandled error instead, pass `{ handled: false }` in the `catch` block:
 
 ```js
 trackError(err, { handled: false });
