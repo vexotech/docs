@@ -42,6 +42,13 @@ transport and **tracking gate** as every other event, so `disableTracking()` sto
 captured logs surface only inside session replays — they follow whether session replay is
 enabled for the app.
 
+## Billing
+
+Each captured console message is an event, and it counts toward your account's monthly event total like any
+other. An app that logs a lot can send more console events than anything else. To send fewer, set **Console**
+to **Off** or **Sample** for the app in **App Settings → Mobile Tracking → Event Tracking**; Vexo drops those
+events before storing them, so they aren't billed. See [Subscription](/settings/subscription).
+
 ## Sanitization and truncation
 
 `console.*` accepts anything, so Vexo safely converts each argument to text on-device before it

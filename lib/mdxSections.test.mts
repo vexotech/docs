@@ -50,3 +50,14 @@ test('keeps prose as plain text and drops code, JSX, imports, and exports', () =
   assert.equal(dev.text, 'Wrap it in if (!__DEV__).');
   assert.equal(identity.text, 'Call identifyDevice after login. Seats Price 3 $4.90');
 });
+
+test('drops MDX comments, such as a note naming where a copied sentence comes from', () => {
+  const { sections } = mdxSections(`# Subscription
+
+### Cancelling
+
+{/* Mirrors CANCEL_AT_PERIOD_END in vexo-web src/_utils/pricing.ts. */}
+Cancel in the billing portal.
+`);
+  assert.equal(sections[1].text, 'Cancel in the billing portal.');
+});
