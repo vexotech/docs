@@ -13,6 +13,65 @@ import Link from 'next/link'
 
 *1.13.0 was tagged but never published to npm; these changes first shipped in the 1.14.0 package.*
 
+## 1.12.0 (2026-08-28)
+
+### Bug Fixes
+
+* Fix an Android crash during session replay capture ("Recording currently in progress" or `IndexOutOfBoundsException`)
+
+## 1.11.0 (2026-08-21)
+
+### Features
+
+* Network capture for axios and other `XMLHttpRequest` clients, not only `fetch`. Apps that use axios now send network events, which count toward your monthly events
+* `registerProperties()` adds properties to every event, such as an experiment group or a plan
+* The `sessionReplaySampleRate` option records session replay for a share of sessions
+* Unhandled promise rejections are reported as non-fatal errors
+* `trackScreen()` records screen views for navigation that Vexo doesn't track automatically, such as react-native-navigation
+* The `vexo-upload-sourcemaps` command uploads your source maps, so crash stack traces show your original source
+
+### Changed
+
+* React Native 0.87 support
+* Expo Router verified through Expo SDK 57. In development, the SDK warns when it can't attach to Expo Router
+
+## 1.10.1 (2026-08-20)
+
+### Changed
+
+* README updates only, with no code changes
+
+## 1.10.0 (2026-08-20)
+
+### Features
+
+* Crash and ANR reporting, with no setup. See [Error reporting](/react-native-guide/integration#error-reporting)
+* `trackError()` reports an error that you caught
+* The `sessionReplay: false` option keeps session replay off on the device
+* Performance monitoring: app start, slow and frozen frames, and screen render times, sent as `PERF` events. See [Performance](/react-native-guide/mobile-features/dashboard/performance)
+* Console capture: `console.log`, `info`, `warn`, and `error` calls, sent as `CONSOLE` events. See [Console Logs](/react-native-guide/mobile-features/console-logs)
+
+Performance and console events are on by default and count toward your monthly events. To send fewer, turn them off or sample them in your app's **Event Tracking** settings.
+
+### Bug Fixes
+
+* Fix iOS and Android builds on React Native 0.86
+
+## 1.9.0 (2026-08-14)
+
+### Features
+
+* New Architecture support: the native module is a TurboModule, and apps on the old architecture keep working
+* `VexoProvider` wraps your navigation container explicitly when automatic attachment isn't possible
+
+### Changed
+
+* The minimum iOS deployment target is now 15.1 (was 11.0)
+* `@react-navigation/native` is now an optional peer dependency, so Expo Router apps don't need to install it
+* The package ships CommonJS and ES module builds behind an `exports` map. Deep imports such as `vexo-analytics/lib/...` no longer work: import from the package's public entry points, such as `vexo-analytics`
+* Events are sent in batches of up to 20 events, or 5 seconds after the first event, instead of every 3 events
+* The SDK does no work at import time: it starts when you call `vexo()`
+
 ## 1.8.0 (2026-08-14)
 
 ### Features
