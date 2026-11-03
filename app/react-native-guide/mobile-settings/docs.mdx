@@ -1,36 +1,60 @@
-import { DocLayout, DocImage } from '../../../components';
-import Image from 'next/image';
+import { DocLayout } from '../../../components';
 
 # Tracking information
 
-Tracking information describes how Vexo interacts with your app.
+These settings control what Vexo collects from your mobile app. To change them, open your app's **Settings** page and go to **Mobile Tracking**. When you're done, select **Save tracking settings**.
 
-Here you are able to change your app tracking properties such as session replays behavior and disable specfic events tracking.
+## Session replays
 
 ### Enable session replays
 
-When this option is unchecked, session replays will be disabled on all devices.
+When this option is cleared, no device records session replays. An app that passes `sessionReplay: false` to `vexo()` never records, whatever this option says.
 
 ### Blur session replays
 
-When this option is checked, session replays will be blurred.
+When this option is selected, every frame of a session replay is blurred on the device before it's uploaded. It's on by default. The SDK can't mask individual views yet, so keep blur on if your app shows sensitive content. For more, see [App Store & Play Compliance](/react-native-guide/store-compliance#app-review-2514-session-replay-needs-consent).
 
 ### Send replays only on wifi
 
-When this option is checked, devices will only send session replays over wifi.
+When this option is selected, devices upload session replays only over Wi-Fi.
 
-### Limit replays duration
+### Replay length
 
-When this option is checked, new session replays are capped in length. The cap defaults to **5 minutes**; raising it (up to **15 minutes**) requires a paid plan.
+On a paid plan, you can set how long a replay can be:
 
-### Include fetch events
+- **Minimum**: from 0 seconds to 2 minutes. The default is 5 seconds. Replays shorter than the minimum aren't uploaded and don't count toward your replay allowance.
+- **Maximum**: from 1 to 15 minutes. The default is 15 minutes.
 
-When this option is unchecked, all your devices fetch events will be ignored by Vexo.
+On the free plan, replays record for up to 5 minutes, and you can't change the length.
 
-### Tap sampling events
+## Event Tracking
 
-Sample tap events based on a percentage you choose. Available on all plans.
+The **Event Tracking** table lists each kind of event that your app sends, how many it sent in the last 30 days, and what it powers in your dashboard. For each row, under **Keep**, choose how much of it Vexo keeps:
 
-<DocImage src="/docs/mobile-app-tracking.png" width="1050" height="703" size="large" />
+| Event | Keep | Powers |
+| --- | --- | --- |
+| App open/close | Always on | Downloads, Active users, Sessions, Retention |
+| Custom | Always on | Custom events, Cohorts, Power users, Custom dashboards |
+| Taps | On, Sample, or Off | Tap heatmaps, Replay timeline |
+| Performance | On, Sample, or Off | Performance pages |
+| Console | On, Sample, or Off | Replay timeline |
+| Screens | On or Off | Popular screens, Screen flow, Funnels, User paths, Web routes, Referrers, UTM |
+| Keyboard & rotation | On or Off | Replay timeline |
+| Errors & ANRs | On or Off | Errors, Crash-free sessions |
+| Network (fetch) | On or Off | Network stats |
+
+- **On** keeps every event of that kind.
+- **Sample** keeps the percentage that you enter, from 1% to 100%. When you switch a row from **On** to **Sample**, it starts at 50%.
+- **Off** keeps none.
+
+As you change rows, the table estimates how many events the app would have sent in the last 30 days at the new settings, for each row and in total. When you turn a row off, a warning says which dashboard pages will be empty. Lowering **Taps**, **Performance**, or **Screens** can also make sessions read shorter, because Vexo measures a session from its first event to its last. The table also shows when the settings last changed.
+
+Vexo applies these settings when it receives events, so they work with every SDK version. Events that a setting drops are never stored, so you can't recover them later. The settings apply to every event the app receives, including events from the web SDK. The exception is **Network (fetch)**: turning it off tells the SDK to stop capturing network requests on the device, which requires `vexo-analytics` 1.4.0 or later.
+
+For how these settings affect your monthly events, see [Turn off or sample event types](/settings/usage-limits#turn-off-or-sample-event-types) in Usage and Limits.
+
+## Frame health interval
+
+While your app is in the foreground, the SDK reports frame health, a performance event, every 10 seconds. To send fewer performance events, set **Report frame health every** to a longer interval, from 5 to 60 seconds. This requires `vexo-analytics` 1.14.0 or later. Earlier versions report every 10 seconds.
 
 export default ({ children }) => <DocLayout current="mobile-settings" previous={{href: '/react-native-guide/mobile-publishing', label: 'Mobile Publishing'}} next={{href: '/web-guide/introduction', label: 'Web Introduction'}}>{children}</DocLayout>
