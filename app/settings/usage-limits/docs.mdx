@@ -1,0 +1,103 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Usage and Limits
+
+This page lists the limits that apply to your account and apps, what happens when you reach one, and how to control how many events you send.
+
+## Free allowance
+
+Every account includes **500,000 events a month** for free. For the rates beyond the free allowance, see [Subscription](/settings/subscription).
+
+On the free plan, the free allowance is a hard limit. When your account reaches 500,000 events in a month, Vexo stops collecting events, and the API responds with:
+
+```
+406 Free plan event limit reached. Add billing to keep collecting events.
+```
+
+Events sent while collection is stopped aren't stored and can't be recovered. Session replays have their own allowance and keep uploading, and your existing data and dashboards stay available. Collection resumes when your next monthly period starts, or as soon as you add billing.
+
+With billing enabled, there's no account-wide limit on events. To set a ceiling, use [per-app usage caps](#per-app-usage-caps).
+
+## What counts toward your usage
+
+Every event that Vexo stores counts toward your account's monthly events, whatever its type and whichever of your apps or websites sent it. That includes the performance (`PERF`) and console (`CONSOLE`) events that `vexo-analytics` 1.10.0 and later sends by default. For what counts as an event and the rates, see [Subscription](/settings/subscription).
+
+Events that Vexo drops before storing them don't count: event types you turn off or sample out in [Event Tracking](#turn-off-or-sample-event-types), events rejected by a limit or cap on this page, and invalid events.
+
+Your account settings show your usage by event type across all your apps.
+
+## Turn off or sample event types
+
+Use **Event Tracking** to stop collecting event types you don't use, or to keep only a share of them. Open your app's **Settings** page, and then find **Event Tracking** under **Mobile Tracking**. The table shows how many events of each type the app sent in the last 30 days.
+
+| Event type | Controls | Used by |
+| --- | --- | --- |
+| App open/close | Always on | Downloads, active users, sessions, retention |
+| Custom | Always on | Custom events, cohorts, power users, custom dashboards |
+| Taps | On, Sample, Off | Tap heatmaps, replay timeline |
+| Performance | On, Sample, Off | Performance pages |
+| Console | On, Sample, Off | Replay timeline |
+| Screens | On, Off | Popular screens, screen flow, funnels, user paths, and the web dashboard's routes, referrers, and UTM |
+| Keyboard & rotation | On, Off | Replay timeline |
+| Errors & ANRs | On, Off | Errors, crash-free sessions |
+| Network (fetch) | On, Off | Network stats |
+
+**Sample** keeps the percentage of events that you choose, from 1% to 100%.
+
+Vexo applies these settings when it receives events, so they work with every SDK version, and you don't need to release a new version of your app. Turned-off and sampled-out events are dropped before they're stored: they don't count toward your usage, and they can't be recovered later. The settings apply to every event the app receives, including events from the web SDK.
+
+**Network** works differently: turning it off tells the SDK to stop capturing network requests on the device. It requires `vexo-analytics` 1.4.0 or later. Apps on older versions keep sending network events, and those events count toward your usage.
+
+To send fewer performance events without sampling them, set **Report frame health every** to a longer interval, from 5 to 60 seconds. The default is 10 seconds. This setting requires `vexo-analytics` 1.14.0 or later.
+
+## Per-app usage caps
+
+To put a ceiling on what an app can send in a billing period, set a cap on the app's **Settings** page, under **Usage Limits**:
+
+- **Events cap**: the most events that the app can send in a billing period.
+- **Session replays cap**: the most session replays that the app can record in a billing period.
+
+Leave a field empty for no limit.
+
+When an app reaches a cap, Vexo stops collecting that kind of data for the app until the next billing period starts, and the API responds with `406`. Data that you've already collected isn't affected. To resume collecting, raise or remove the cap.
+
+Keep the following in mind:
+
+- A cap counts only what the app sends while the cap is set.
+- The batch of events that crosses the cap is accepted, so an app can end the period slightly over its cap.
+- If Vexo can't check a cap because of an error, it keeps collecting rather than drop your data.
+- Vexo emails the app's owner when the app reaches 80%, 90%, and 100% of its events cap.
+- The **Usage Limits** section shows the app's usage this period, and how many events or replays the cap dropped.
+
+## Session replay limits
+
+- **Replay allowance and limit**: session replays are priced separately from events. Every account includes 1,000 replays each billing cycle, and you control an account-wide replay limit. For details, see [Session replays](/settings/subscription#session-replays) on the Subscription page.
+- **Per-app cap**: see [Per-app usage caps](#per-app-usage-caps).
+- **Replay length**: on the free plan, a replay records for up to 5 minutes. On a paid plan, a replay records for up to 15 minutes, and you can change the minimum (0 seconds to 2 minutes) and the maximum (1 to 15 minutes) under **Replay length** in your app's **Mobile Tracking** settings. Replays shorter than the minimum, 5 seconds by default, aren't uploaded or counted.
+- **Sampling**: to record replays for only a share of sessions, pass the `sessionReplaySampleRate` option to `vexo()`. This option requires `vexo-analytics` 1.11.0 or later.
+
+## Dropped events
+
+When an app has dropped events in the last 30 days, the app's dashboard shows a banner with the total. Expand the banner to see the count for each reason:
+
+| Reason | What happened | What to do |
+| --- | --- | --- |
+| **Over free plan limit — add billing** | Your account reached the free allowance on the free plan. | Add billing, or wait for your next monthly period. |
+| **Over configured events cap** | The app reached its events cap. | Raise or remove the app's [events cap](#per-app-usage-caps). |
+| **Account event limit reached** | Your account is on an earlier plan that reached its event limit, or its subscription lapsed. | Check your plan in your account settings, or [contact us](/contact-vexo). |
+| **Invalid events rejected** | Vexo rejected malformed events, most often a custom event over the [size limit](#other-limits). | Fix the SDK call that sends the event. |
+
+Events that you turn off or sample out in Event Tracking aren't counted in this banner.
+
+## Other limits
+
+| Limit | Value |
+| --- | --- |
+| Custom event size | 65,536 characters for the whole event, serialized as JSON. Larger events are rejected as invalid. |
+| Heatmap screenshots on the free plan | 2,000 for each billing period. |
+| Heatmap segments | 64 characters for each value, and 20 distinct values for each app. Other values are stored untagged. See [Segments](/react-native-guide/mobile-features/session-replays-heatmaps#segments). |
+| Seats | 2 included, then $4.90 a month for each additional seat. See [Seats](/settings/subscription#seats). |
+| Export API | 5 requests a minute for each app on the events endpoints, and up to 10,000 events for each request. Over the rate limit, the API responds with `429`. See [Export API](/settings/app-settings/export-api). |
+| Paginated API endpoints | The endpoints that return lists, such as apps, people, sessions, screens, custom events, and errors, accept at most 30 items per page (`itemsPerPage`) and 50 requests a minute for each user. Over the rate limit, the API responds with `429`. |
+
+export default ({ children }) => <DocLayout current="usage-limits" previous={{href: '/settings/subscription', label: 'Subscription'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>

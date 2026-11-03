@@ -126,6 +126,7 @@ export const sidebarData: SidebarData = [
             { title: 'Account Settings', name: 'account-settings', href: '/settings/account-settings' },
             { title: 'Billing', name: 'billing', href: '/settings/billing' },
             { title: 'Subscription', name: 'subscription', href: '/settings/subscription' },
+            { title: 'Usage and Limits', name: 'usage-limits', href: '/settings/usage-limits' },
             {
                 name: 'app-settings',
                 title: 'App Settings',
