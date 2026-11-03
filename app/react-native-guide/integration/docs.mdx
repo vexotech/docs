@@ -181,9 +181,9 @@ Work through [No events?](/get-started/quick-start#no-events) in the Quickstart.
 
 ### Scroll feels laggy after returning from the background
 
-Some apps saw a brief scroll stutter the first time a list is scrolled after the app comes back from the background to the foreground. This is fixed in `vexo-analytics` **1.8.0 and later**, so upgrading the SDK resolves it for most apps.
+Some apps see a brief scroll stutter the first time a list is scrolled after the app comes back from the background to the foreground. It comes from the session replay recorder. No published version of `vexo-analytics` fixes it yet: the fix needs a new release of the SDK's native recording engine.
 
-If you still see it and don't need session replay, turn replay off on the device with the `sessionReplay` option (`vexo-analytics` 1.10.0 and later). All other tracking keeps working:
+If you see it and don't need session replay, turn replay off on the device with the `sessionReplay` option (`vexo-analytics` 1.10.0 and later). All other tracking keeps working:
 
 ```js
 vexo('YOUR_API_KEY', { sessionReplay: false });
