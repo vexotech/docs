@@ -12,7 +12,7 @@ Billing is **usage-based**: your **total event usage across all apps and website
 
 Invoices are sent automatically by our payment provider, **Stripe**, each time a payment is processed. You’ll receive them by email and can download them directly from the link included in the email.
 
-To send invoices to more addresses, add them under **Invoice recipients** in **Settings → Billing**. Vexo emails each paid invoice to every address on the list.
+To send copies to more addresses, add them under **Invoice recipients** in **Settings → Billing**: Vexo emails a copy of each paid invoice with a charge to every address on the list. To change the email address on the invoices themselves, use **Manage billing** to open the Stripe billing portal.
 
 ### What payment methods do you support?
 
@@ -20,7 +20,7 @@ All payments are securely processed through **Stripe**, and the methods offered 
 
 ### What happens if I go over the free allowance?
 
-On the **free plan**, event collection stops once you reach 500,000 events in a month — the API responds with `406 — Free plan event limit reached. Add billing to keep collecting events.` Session replays continue to upload (they have their own allowance of 1,000 per cycle — see [Subscription](/settings/subscription)), and your existing data and dashboards remain fully accessible. Collection resumes at the start of the next month, or immediately once you add billing.
+On the **free plan**, event collection stops once you reach 500,000 events in a month — the API responds with `406 — Free plan event limit reached. Add billing to keep collecting events.` Session replays continue to upload (they have their own allowance of 1,000 per cycle — see [Subscription](/settings/subscription)), and your existing data and dashboards remain fully accessible. Collection resumes at the start of the next month, or immediately once you add billing; apps on SDK 1.10 or later start sending again the next time your users launch them.
 
 With **billing enabled** there is no account-wide cutoff — you simply pay for what you use. If you want a hard spending ceiling, you can set an optional per-app events cap in your app's settings; when an app reaches its cap, Vexo stops collecting new data for that app until the billing period resets.
 
@@ -38,6 +38,6 @@ This opens the Stripe billing portal, where you can update your card, view past 
 
 ### What happens to usage after I cancel?
 
-If you cancel, your plan stays active until the end of the billing period, and events your apps send until then are billed on your final invoice. To stop usage charges sooner, use **Stop collecting data now** next to **Manage billing**. See [Cancelling](/settings/subscription#cancelling).
+If you cancel, your plan stays active until the end of the billing period, and events your apps send until then are billed on your final invoice. To stop event charges sooner, use **Stop collecting data now** next to **Manage billing**. If you raised your replay limit, lower it to 1,000 in **Settings → Session Replays** to stop replay charges. See [Cancelling](/settings/subscription#cancelling).
 
 export default ({ children }) => <DocLayout current="billing" previous={{href: '/settings/account-settings', label: 'Account Settings'}} next={{href: '/settings/subscription', label: 'Subscription'}}>{children}</DocLayout>
