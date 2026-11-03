@@ -140,6 +140,7 @@ export const sidebarData: SidebarData = [
                     { title: 'Delete Application', name: 'delete-application', href: '/settings/app-settings/delete-application' },
                 ]
             },
+            { title: 'Data Retention', name: 'data-retention', href: '/settings/data-retention' },
         ]
     },
     { title: 'Contact Vexo', name: 'contact-vexo', href: '/contact-vexo' },
