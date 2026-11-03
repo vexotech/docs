@@ -27,7 +27,8 @@ export function mdxSections(source: string): { title: string; sections: MdxSecti
     for (const raw of source.split('\n')) {
         const line = raw.trim();
         if (line.startsWith('```')) { inFence = !inFence; continue; }
-        if (inFence || /^(import|export)\s/.test(line) || line.startsWith('<')) continue;
+        // Skip imports, exports, JSX and one-line MDX comments ({/* ... */}), none of which a reader sees.
+        if (inFence || /^(import|export)\s/.test(line) || line.startsWith('<') || /^\{\/\*.*\*\/\}$/.test(line)) continue;
 
         const heading = /^(#{1,6})\s+(.*)$/.exec(line);
         if (heading) {
