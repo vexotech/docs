@@ -77,10 +77,19 @@ Open the **Performance** page in your mobile app's dashboard. It has three panel
 Like the rest of the dashboard, every panel respects the global **date range** and **app
 version** filters, so you can confirm a new release didn't regress startup or introduce jank.
 
+## Billing
+
+Each performance sample is an event, and it counts toward your account's monthly event total like any other.
+Frame health alone reports on an interval for as long as the app is in the foreground, so performance events
+can be a large share of an app's volume. See [Subscription](/settings/subscription).
+
 ## Turning it off
 
-Performance capture is on by default. To disable it for a build, pass `performance: false`
-when you initialize Vexo:
+Performance capture is on by default. To send fewer performance events without a new build, set
+**Performance** to **Off** or **Sample** for the app in **App Settings → Mobile Tracking → Event Tracking**;
+Vexo drops those events before storing them, so they aren't billed.
+
+To disable capture in the SDK for a build, pass `performance: false` when you initialize Vexo:
 
 ```js
 import { vexo } from 'vexo-analytics';

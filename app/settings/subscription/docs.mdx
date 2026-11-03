@@ -6,10 +6,12 @@ Vexo pricing is **usage-based**: a generous free allowance every month, then you
 
 ### How it works
 
+{/* The event bullet mirrors BILLABLE_EVENTS in vexo-web src/_utils/pricing.ts; change both together. */}
+
 - Every account includes **500,000 events per month, free** — no credit card required.
 - Beyond the free allowance, you pay per million events at graduated rates (see the table below).
 - Usage is billed monthly **in arrears**: at the end of each billing period you are charged for the events you used during it.
-- An event includes both direct and indirect interactions with your app or site — such as taps, clicks, navigations, API calls, errors, and custom events — counted across **all apps and websites** in your account.
+- An event is anything the Vexo SDK records: taps, screen changes, network requests, errors, custom events and, since SDK 1.10, the **performance samples and console messages** it sends by default. **Every event counts** toward your monthly total, across **all apps and websites** in your account. To send fewer, turn an event type off or sample it for each app in **App Settings → Mobile Tracking → Event Tracking**; events it drops aren't billed.
 
 You can check your real-time usage anytime in **Settings**.
 
@@ -25,7 +27,7 @@ You can check your real-time usage anytime in **Settings**.
 
 Rates are graduated, so each rate only applies to the events that fall inside its band. For example, at **2.5M events** in a month, the first 500K are free and the remaining 2M are billed at $30 per million — **$60** for the month.
 
-You can estimate your monthly bill with the calculator on the [pricing page](https://www.vexo.co/pricing).
+You can estimate your monthly bill with the calculator in the [pricing section](https://www.vexo.co/#pricing).
 
 ### Seats
 
@@ -33,7 +35,7 @@ Your first **2 seats are included**. Each additional seat is **$4.90 per month**
 
 ### Session replays
 
-Session replays are priced separately from events, with the same shape: a flat free allowance, then pay-as-you-go.
+Session replays are priced separately from events, with the same shape: a free allowance, then pay-as-you-go.
 
 - Every account includes **1,000 session replays per billing cycle, free** — counted across all apps and websites in your account.
 - Beyond the included 1,000, replays are **$3 per 1,000** (that's $0.003 per replay), billed monthly in arrears alongside your event usage. Pay-as-you-go replays require billing to be enabled.
@@ -46,9 +48,21 @@ Free accounts don't need a card. To keep collecting events beyond the free allow
 
 1. Log into your Vexo account.
 2. Click your profile name in the top-right corner and open **Settings**.
-3. Under **Subscription Information**, click **Add billing** and complete checkout.
+3. Under **Billing**, click **Add billing** and complete checkout.
 
-Once billing is enabled, the same section shows **Manage billing**, which opens the Stripe billing portal — update your card, view invoices, or cancel anytime. There are no contracts or cancellation fees.
+Once billing is enabled, the same section shows **Manage billing**, which opens the Stripe billing portal — update your card, view invoices, or cancel. There are no contracts or cancellation fees.
+
+### Cancelling
+
+{/* Mirrors CANCEL_AT_PERIOD_END and STOP_CHARGES_SOONER in vexo-web src/_utils/pricing.ts; change both together. */}
+
+Cancel in the Stripe billing portal from **Settings → Billing → Manage billing**. If you cancel, your plan stays active until the end of the billing period, and events your apps send until then are billed on your final invoice. When the period ends, your account moves to the free plan.
+
+To stop usage charges sooner, use **Stop collecting data now** in your account's **Billing** settings, or set an app's events cap to 1 in that app's **Settings → Usage limits**. On a pay-as-you-go plan, **Stop collecting data now** appears next to **Manage billing** and sets the events cap of every app you own to 1, so each app's next batch of events is the last one collected; the data you've already collected stays available, and session replays keep their own limit. To collect again, raise or clear each app's events cap. Removing the Vexo SDK works only for future builds: installed builds keep sending events until your users update.
+
+### Events caps
+
+With billing enabled there's no account-wide cutoff, so you can set an **events cap** for each app in that app's **Settings → Usage limits** to limit what you're billed for. When an app reaches its cap, Vexo stops collecting its events until the next billing period starts, so they aren't billed. The cap counts only events sent after you set it, and the last batch an app sends can take it slightly over. If Vexo can't check the cap because of an error, it keeps collecting rather than drop your data. The events cap doesn't limit seats or session replays, and data you've already collected isn't affected. Vexo emails you when an app reaches 80%, 90% and 100% of its cap.
 
 ### Reaching the free limit
 
@@ -56,6 +70,6 @@ On the free plan, event collection **stops** once you reach 500,000 events in a 
 
 ### Existing accounts
 
-Usage-based pricing applies to all new accounts today. Accounts still on the earlier tiered plans keep their current plan until they are migrated to usage-based pricing on **September 1, 2026**.
+Usage-based pricing applies to all new accounts. Accounts still on an earlier tiered plan keep that plan's price and limits until they move to usage-based pricing.
 
 export default ({ children }) => <DocLayout current="subscription" previous={{href: '/settings/billing', label: 'Billing'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>

@@ -12,7 +12,7 @@ Billing is **usage-based**: your **total event usage across all apps and website
 
 Invoices are sent automatically by our payment provider, **Stripe**, each time a payment is processed. You’ll receive them by email and can download them directly from the link included in the email.
 
-If you want invoices sent to a different email, just contact us with your current Stripe billing email and the new address you’d like to use.
+To send invoices to more addresses, add them under **Invoice recipients** in **Settings → Billing**. Vexo emails each paid invoice to every address on the list.
 
 ### What payment methods do you support?
 
@@ -24,7 +24,7 @@ On the **free plan**, event collection stops once you reach 500,000 events in a 
 
 With **billing enabled** there is no account-wide cutoff — you simply pay for what you use. If you want a hard spending ceiling, you can set an optional per-app events cap in your app's settings; when an app reaches its cap, Vexo stops collecting new data for that app until the billing period resets.
 
-Accounts still on a **legacy tiered plan** (before the September 1, 2026 migration) keep their plan's existing limit behavior until they are migrated.
+Accounts still on a **legacy tiered plan** keep their plan's existing limit behavior until they move to usage-based pricing.
 
 ### How do I update my billing information?
 
@@ -32,8 +32,12 @@ To update your billing details:
 
 1. Log into your Vexo account.
 2. Click your profile name in the top-right corner and open **Settings**.
-3. Under **Subscription Information**, click **Manage billing**.
+3. Under **Billing**, click **Manage billing**.
 
 This opens the Stripe billing portal, where you can update your card, view past invoices, or cancel your subscription. If you haven't enabled billing yet, the same section shows **Add billing** instead.
+
+### What happens to usage after I cancel?
+
+If you cancel, your plan stays active until the end of the billing period, and events your apps send until then are billed on your final invoice. To stop usage charges sooner, use **Stop collecting data now** next to **Manage billing**. See [Cancelling](/settings/subscription#cancelling).
 
 export default ({ children }) => <DocLayout current="billing" previous={{href: '/settings/account-settings', label: 'Account Settings'}} next={{href: '/settings/subscription', label: 'Subscription'}}>{children}</DocLayout>
