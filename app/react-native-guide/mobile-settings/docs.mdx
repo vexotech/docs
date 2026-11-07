@@ -41,13 +41,15 @@ The **Event Tracking** table lists each kind of event that your app sends, how m
 | Screens | On or Off | Popular screens, Screen flow, Funnels, User paths, Web routes, Referrers, UTM |
 | Keyboard & rotation | On or Off | Replay timeline |
 | Errors & ANRs | On or Off | Errors, Crash-free sessions |
-| Network (fetch) | On or Off | Network stats |
+| Network (fetch) | On, Sample, or Off | Network stats |
 
 - **On** keeps every event of that kind.
 - **Sample** keeps the percentage that you enter, from 1% to 100%. When you switch a row from **On** to **Sample**, it starts at 50%.
 - **Off** keeps none.
 
-As you change rows, the table estimates how many events the app would have sent in the last 30 days at the new settings, for each row and in total. When you turn a row off, a warning says which dashboard pages will be empty. Lowering **Taps**, **Performance**, or **Screens** can also make sessions read shorter, because Vexo measures a session from its first event to its last. The table also shows when the settings last changed.
+For **Network (fetch)**, **Sample** applies only to successful requests. Vexo always keeps failed requests, such as a timeout or no connection, and responses with a 4xx or 5xx status, so you still see every network error. While Network is sampled, **Network stats** and the replay **Network** panel show only the requests that Vexo kept.
+
+As you change rows, the table estimates how many events the app would have sent in the last 30 days at the new settings, for each row and in total. When you turn a row off, a warning says which dashboard pages will be empty. Lowering **Taps**, **Performance**, or **Screens** can also make sessions read shorter, because Vexo measures a session from its first event to its last. For **Network (fetch)**, the estimate applies the sample rate to every request. Because Vexo keeps every failed request, the real count can be higher. The table also shows when the settings last changed.
 
 Vexo applies these settings when it receives events, so they work with every SDK version. Events that a setting drops are never stored, so you can't recover them later. The settings apply to every event the app receives, including events from the web SDK. Turning off **Network (fetch)** also tells `vexo-analytics` 1.4.0 and later to stop capturing network requests on the device.
 

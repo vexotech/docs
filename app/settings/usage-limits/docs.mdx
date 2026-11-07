@@ -40,9 +40,9 @@ Use **Event Tracking** to stop collecting event types you don't use, or to keep 
 | Screens | On, Off | Popular screens, screen flow, funnels, user paths, and the web dashboard's routes, referrers, and UTM |
 | Keyboard & rotation | On, Off | Replay timeline |
 | Errors & ANRs | On, Off | Errors, crash-free sessions |
-| Network (fetch) | On, Off | Network stats |
+| Network (fetch) | On, Sample, Off | Network stats |
 
-**Sample** keeps the percentage of events that you choose, from 1% to 100%.
+**Sample** keeps the percentage of events that you choose, from 1% to 100%. For **Network**, Vexo samples only successful requests: it always keeps failed requests and responses with a 4xx or 5xx status.
 
 Vexo applies these settings when it receives events, so they work with every SDK version, and you don't need to release a new version of your app. Turned-off and sampled-out events are dropped before they're stored: they don't count toward your usage, and they can't be recovered later. The settings apply to every event the app receives, including events from the web SDK.
 
