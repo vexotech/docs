@@ -46,7 +46,7 @@ Use **Event Tracking** to stop collecting event types you don't use, or to keep 
 
 Vexo applies these settings when it receives events, so they work with every SDK version, and you don't need to release a new version of your app. Turned-off and sampled-out events are dropped before they're stored: they don't count toward your usage, and they can't be recovered later. The settings apply to every event the app receives, including events from the web SDK.
 
-**Network** works differently: turning it off tells the SDK to stop capturing network requests on the device. It requires `vexo-analytics` 1.4.0 or later. Apps on older versions keep sending network events, and those events count toward your usage.
+Turning off **Network** also tells `vexo-analytics` 1.4.0 and later to stop capturing network requests on the device. Older versions keep sending network events, but Vexo drops them when it receives them, so they don't count toward your usage.
 
 To send fewer performance events without sampling them, set **Report frame health every** to a longer interval, from 5 to 60 seconds. The default is 10 seconds. This setting requires `vexo-analytics` 1.14.0 or later.
 
