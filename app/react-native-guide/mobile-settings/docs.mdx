@@ -49,7 +49,7 @@ The **Event Tracking** table lists each kind of event that your app sends, how m
 
 As you change rows, the table estimates how many events the app would have sent in the last 30 days at the new settings, for each row and in total. When you turn a row off, a warning says which dashboard pages will be empty. Lowering **Taps**, **Performance**, or **Screens** can also make sessions read shorter, because Vexo measures a session from its first event to its last. The table also shows when the settings last changed.
 
-Vexo applies these settings when it receives events, so they work with every SDK version. Events that a setting drops are never stored, so you can't recover them later. The settings apply to every event the app receives, including events from the web SDK. The exception is **Network (fetch)**: turning it off tells the SDK to stop capturing network requests on the device, which requires `vexo-analytics` 1.4.0 or later.
+Vexo applies these settings when it receives events, so they work with every SDK version. Events that a setting drops are never stored, so you can't recover them later. The settings apply to every event the app receives, including events from the web SDK. Turning off **Network (fetch)** also tells `vexo-analytics` 1.4.0 and later to stop capturing network requests on the device.
 
 For how these settings affect your monthly events, see [Turn off or sample event types](/settings/usage-limits#turn-off-or-sample-event-types) in Usage and Limits.
 
