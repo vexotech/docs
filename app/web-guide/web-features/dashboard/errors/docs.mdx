@@ -11,7 +11,14 @@ The Vexo script captures two kinds of errors:
 - Uncaught errors, marked **Error**.
 - Unhandled promise rejections, marked **Promise**.
 
-It doesn't capture failures to load a resource, such as an image or a script. To keep a broken page from flooding your data, the script sends the same error at most 5 times for each page load. It keeps up to 2,000 characters of each stack trace. Each error that it sends counts as an event toward your monthly usage.
+It doesn't capture:
+
+- Failures to load a resource, such as an image or a script.
+- `Script error.` reports. Browsers hide the details of an error in a script from another domain unless you load that script with the `crossorigin` attribute.
+- Errors in the Vexo script itself.
+- Errors that happen while tracking is off, for example before a visitor gives consent.
+
+To keep a broken page from flooding your data, the script sends the same error at most 5 times, and at most 50 errors in total, for each page load. It keeps up to 1,000 characters of each message and 2,000 characters of each stack trace, and it removes query strings and fragments from the URLs in them. Each error that it sends counts as an event toward your monthly usage.
 
 To stop capturing errors, see [Turn off errors or Core Web Vitals](/web-guide/integration#turn-off-errors-or-core-web-vitals).
 

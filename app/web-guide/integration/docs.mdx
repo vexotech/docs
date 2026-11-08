@@ -39,12 +39,16 @@ Each error and each measurement counts as an event toward your monthly usage.
 
 ### Turn off errors or Core Web Vitals
 
-To turn either off, set a flag before the Vexo script loads:
+To turn either off for your whole app without changing your website, open **App Settings**, and in the **Event Tracking** table, set **Web errors** or **Web vitals** to **Off**. Vexo then drops those events when they arrive, so they aren't stored and don't count toward your usage.
+
+To stop your website from sending them at all, set `window.vexoConfig` before the Vexo script loads:
 
 ```html
 <script>
-  window.__vexoDisableErrors = true;     // Don't capture errors.
-  window.__vexoDisableWebVitals = true;  // Don't capture Core Web Vitals.
+  window.vexoConfig = {
+    errors: false,       // Don't capture errors.
+    performance: false,  // Don't capture Core Web Vitals.
+  };
 </script>
 <script src="https://www.vexo.co/analytics.js"></script>
 ```
