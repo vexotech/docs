@@ -1,5 +1,11 @@
 import Link from 'next/link';
 import { ChartPieIcon } from '@heroicons/react/outline';
+import type { Metadata } from 'next';
+
+// The root layout's relative canonical would otherwise point a 404 at /_not-found.
+export const metadata: Metadata = {
+  alternates: { canonical: null },
+};
 
 export default function NotFound() {
   return (

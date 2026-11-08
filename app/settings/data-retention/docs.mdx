@@ -12,27 +12,50 @@ Data that you've already collected stays stored when Vexo stops collecting new d
 
 ## Erase a person's data
 
-To act on a person's request to erase their data, for example under the GDPR or the CCPA, erase the data of their device. Send a `DELETE` request with the app's ID and the person's device ID:
+To act on a person's request to erase their data, for example under the GDPR or the CCPA, erase the data of their device. You need write access to the app, which the app's owner has, and your email address must be verified.
+
+### Erase from the dashboard
+
+1. In the app's **People** page, open the person's page. For a mobile app, see [People](/react-native-guide/mobile-features/people); for a website, see [People](/web-guide/web-features/people).
+2. Under the person's summary card, in **Erase user data**, click **Erase user data**.
+3. In the dialog, type the identifier that it shows: the user ID that you set with `identifyDevice`, or the device ID if the person isn't identified.
+4. Click **Delete**.
+
+When the erasure finishes, the page shows an **Erasure receipt** in place of the button. Keep it as evidence of the request. The receipt shows:
+
+- **Status**: `COMPLETED`, or `COMPLETED_WITH_ERRORS` if a store couldn't be fully erased. The receipt then lists the errors, and every other store is still erased.
+- **Subject**: the user ID that was attached to the device, or the device ID.
+- **Erased by** and **Erased at**: who made the request, and when.
+- **Events / sessions**, **Replays deleted**, **Screenshots deleted**, and **Locations deleted**: what was erased from each store. **Screenshots deleted** counts the stored session replay files.
+- **Device record**: **Anonymized** when Vexo removed the device's identifiers and kept the record.
+
+### Erase with the API
+
+To erase a person's data from a script, send a `DELETE` request with the app's ID and the person's device ID:
 
 ```bash
 curl --location --request DELETE 'https://api.vexo.co/apps/{appId}/devices/{deviceId}/data' \
 --header 'Authorization: {AUTH_TOKEN}'
 ```
 
-- `AUTH_TOKEN`: the token from the login endpoint described in [Export API](/settings/app-settings/export-api#authentication). You need write access to the app, which the app's owner has, and your email address must be verified.
+- `AUTH_TOKEN`: the token from the login endpoint described in [Export API](/settings/app-settings/export-api#authentication).
 - `appId`: the ID in your browser's address bar on any of the app's pages, `/apps/{appId}/...`.
-- `deviceId`: the ID at the top of the person's page in [People](/react-native-guide/mobile-features/people).
+- `deviceId`: the device's Vexo ID. The top of the person's page shows it when the person isn't identified. For an identified person, the page shows their user ID instead, which the API doesn't accept, so erase their data from the dashboard.
 
-The request erases the following for that device:
+The response is the same receipt that the dashboard shows.
+
+### What's erased
+
+An erasure removes the following for that device:
 
 - Its events, from your mobile apps and websites.
 - Its session replays, including the recorded video.
 - Its location records.
 - The user ID that you set with `identifyDevice`, the device's own identifier, and its traits. The device record stays, without them.
 
-The response lists what was erased, and the app's **Audit Log**, in the app's **Settings**, records the erasure. You can safely send the request again.
+The app's **Audit Log**, in the app's **Settings**, records each erasure. You can safely erase the same device again.
 
-The request doesn't erase the following:
+An erasure doesn't remove the following:
 
 - Aggregated statistics that Vexo computed from the device's events, such as dashboard counts. They can still reference the device by its Vexo device ID.
 - Heatmap screenshots. Vexo captures them for each screen, not for each device.
