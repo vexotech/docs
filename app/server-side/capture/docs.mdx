@@ -175,7 +175,7 @@ Every SDK takes the same options, spelled in its language's style: `flushAt` in 
 | --- | --- | --- |
 | `host` | `https://api.vexo.co` | API base URL. |
 | `flushAt` | `100` | Send a batch when this many messages are queued (1 to 500). |
-| `flushInterval` | 10 seconds | Send whatever is queued this often. |
+| `flushInterval` | 10 seconds | Send whatever is queued this often. 0 turns the timer off, so messages go out only at `flushAt`, on flush, and on shutdown: `0` in Node.js, Python, PHP, and Ruby; `Duration.ZERO` in Java; and `TimeSpan.Zero` in .NET. In Go, where a zero field selects the default, a negative `FlushInterval` turns it off. |
 | `maxRetries` | `3` | Retries for network errors, timeouts, `429`, and `5xx` responses. |
 | `maxQueueSize` | `10000` | Messages kept in memory. Once the queue is full, new messages are dropped. |
 | `timeout` | 10 seconds | Timeout of each request. |
@@ -189,9 +189,16 @@ A few SDKs add or change an option; the language sections below say so.
 This section applies to every SDK.
 
 - **Batches.** The SDK sends a batch when the queue reaches `flushAt` messages, and whatever is queued every `flushInterval` (PHP has no timer; see [PHP](#php)). A request holds at most 500 messages and 5 MB. The SDK never splits one message across requests.
-- **Checks when you queue a message.** The SDK doesn't queue a message that has no distinct ID (or a capture without an event name), that's over 5 MB, or that arrives when the queue is full. It also drops a message that it can't encode as JSON, such as one with a circular reference, and a message with a `NaN` or infinite number anywhere in it: the API rejects a whole batch that holds one of those numbers, and sending `null` instead would change your data without telling you. The SDK reports each of these messages to your error callback, and the rest of the queue isn't affected. Go returns the error from `Capture` or `Identify` instead.
+- **Checks when you queue a message.** The SDK doesn't queue a message that has no distinct ID (or a capture without an event name), that's over 5 MB, or that arrives when the queue is full. It also drops a message that it can't encode as JSON, such as one with a circular reference, and a message with a `NaN` or infinite number, float or decimal, anywhere in it: the API rejects a whole batch that holds one of those numbers, and sending `null` instead would change your data without telling you. The SDK reports each of these messages to your error callback, and the rest of the queue isn't affected. Go returns the error from `Capture` or `Identify` instead.
+- **Values.** Every SDK sends the following values in properties and traits the same way, at any depth, so that a value reads the same in Vexo whichever SDK sent it (in Go, except a `time.Time` inside a struct; see [Go](#go)):
+  - A date-time is a string in UTC with milliseconds and `Z`, such as `2026-11-07T12:00:00.123Z`. A date-time with an offset is converted to UTC, and one without a time zone, such as Python's naive `datetime`, Java's `LocalDateTime`, or a .NET `DateTime` of kind `Unspecified`, is read as UTC.
+  - A date without a time of day, such as Python's `date`, Java's `LocalDate`, Ruby's `Date`, or .NET's `DateOnly`, is `YYYY-MM-DD`.
+  - An arbitrary-precision decimal, such as Python's `Decimal`, Java's or Ruby's `BigDecimal`, .NET's `decimal`, or PHP's `BcMath\Number`, is a string in plain decimal notation with all of its digits, never in scientific notation: `Decimal("1.5E-7")` is `"0.00000015"`. Floating-point numbers stay JSON numbers.
+  - A string that isn't valid Unicode is still sent: each invalid UTF-8 sequence (PHP, Ruby, and Go) or lone UTF-16 surrogate (Java and .NET) becomes `U+FFFD`. Node.js and Python send a lone surrogate as a `\uXXXX` escape, which JSON allows.
+  - A `NaN` or infinite number drops the message, as described in the previous item.
+  - A UUID, and other values that JSON has no type for, are sent as strings.
 - **Message IDs.** The SDK gives each message a random UUID `messageId` when you queue it, and sends the same ID and body on every retry, so Vexo stores the message once. When your code can send the same event twice, such as from a retried job, pass your own message ID, such as an order ID. Vexo keeps a message ID for 5 days.
-- **Timestamps.** The SDK sends a timestamp as integer epoch milliseconds, converted from your language's date-time type or from a number (a fraction is dropped). It defaults to the time that you call `capture`. A date-time without a time zone is read as UTC, except in [.NET](#net). The Node.js, Python, PHP, and Ruby SDKs also take a string, which they send unchanged, so it must be ISO 8601 with an offset.
+- **Timestamps.** The SDK sends a timestamp as integer epoch milliseconds, converted from your language's date-time type or from a number (a fraction is dropped). It defaults to the time that you call `capture`. A date-time without a time zone is read as UTC. The Node.js, Python, PHP, and Ruby SDKs also take a string, which they send unchanged, so it must be ISO 8601 with an offset.
 - **Retries.** The SDK retries a request that fails with a network error, a timeout, `429`, or `5xx`, up to `maxRetries` times. The wait before a retry starts at 1 second and doubles with each retry, up to 30 seconds; the SDK waits a random time between half and all of it. When the response has a `Retry-After` header, the SDK waits that many seconds instead, up to 60. The SDK doesn't retry any other `4xx`, such as `400`, `401`, `406`, or `413`: it reports the status and the batch's messages, and moves on to the next batch.
 - **Circuit breaker.** Once a batch uses up its retries, later batches get a single attempt each until a request succeeds, which restores the normal retries. An unreachable API doesn't hold up your process.
 - **Dropped and failed messages.** After a `200`, the SDK reports each message in [`dropped`](#responses) with the API's reason and never sends it again. It resends only the messages in `failed`, with the same `messageId`, the same backoff, and the same `maxRetries`, and reports them with the API's reason if they still fail.
@@ -243,7 +250,7 @@ process.on('SIGTERM', async () => {
 A script that ends on its own shuts the client down when its event loop empties. A server that stops on a signal must call `await vexo.shutdown()` first, as in the example.
 
 - `capture()` takes `distinctId`, `event`, and optionally `properties`, `timestamp`, and `messageId`. `timestamp` is a `Date`, epoch milliseconds, or an ISO 8601 string with an offset.
-- Options are in milliseconds. `flushInterval: 0` turns off the timer, so messages go out only at `flushAt`, on `flush()`, and on `shutdown()`. Use it in [edge and serverless runtimes](#edge-and-serverless-runtimes).
+- Options are in milliseconds. In [edge and serverless runtimes](#edge-and-serverless-runtimes), set `flushInterval: 0`.
 - `onError` receives an `Error` with `status`, `batch` (the messages it held), or `dropped` (a list of `{ message, reason }`). A message that `JSON.stringify` can't serialize, such as one with a `BigInt` property, is dropped when you queue it.
 - On a long-lived Deno or Bun server, use the client as you would on Node.js: the default options work, and Bun runs the exit hook like Node.js does.
 
@@ -271,7 +278,6 @@ vexo.shutdown()
 
 - `capture(distinct_id, event, properties=None, timestamp=None, message_id=None)`. `timestamp` is a `datetime` (a naive one is read as UTC), epoch milliseconds, or an ISO 8601 string with an offset.
 - Options are keyword arguments in seconds, such as `flush_interval=5.0`.
-- `Decimal`, `UUID`, and `datetime` values in properties and traits are sent as strings.
 - `on_error` receives an exception with `batch` or `dropped`; a `VexoError` also has `status`. By default, it logs to the `vexo` logger.
 - You can create the client before your server forks workers (gunicorn `--preload`, Celery prefork): each child process starts its own sending thread, and the parent sends only what it queued itself.
 
@@ -297,11 +303,11 @@ $vexo->capture('user@example.com', 'purchase_completed', ['amount' => 49.9, 'cur
 // Nothing else to do: the client sends what's queued when the script ends.
 ```
 
-PHP has no background timer or thread, so the client sends on your request's time: when a call brings the queue to `flushAt` messages, when a call finds the oldest queued message `flushInterval` seconds old, when you call `flush()`, and when the script ends (from `register_shutdown_function()`, which also runs after a fatal error) or the client goes out of scope. In a typical web request, you capture a few events and the client sends one batch at the end. Each send gives up after `shutdownTimeout` seconds, including its retries.
+PHP has no background timer or thread, so the client sends on your request's time: when a call brings the queue to `flushAt` messages, when a call finds the oldest queued message `flushInterval` seconds old (unless `flushInterval` is 0), when you call `flush()`, and when the script ends (from `register_shutdown_function()`, which also runs after a fatal error) or the client goes out of scope. In a typical web request, you capture a few events and the client sends one batch at the end. Each send gives up after `shutdownTimeout` seconds, including its retries.
 
 - `capture(?string $distinctId, ?string $event, array $properties = [], $timestamp = null, ?string $messageId = null)`. `$timestamp` is a `DateTimeInterface`, epoch milliseconds (not `time()`, which is seconds), or an ISO 8601 string with an offset.
 - Pass options as named arguments in seconds, such as `new Vexo($key, flushAt: 50)`. The constructor throws an `InvalidArgumentException` when the API key is empty.
-- Dates are sent as ISO 8601 strings, enums as their value or name, and `Stringable` objects as strings. Invalid UTF-8 is replaced with `U+FFFD`.
+- Enums are sent as their value or name, and other `Stringable` objects as strings.
 - `onError` receives a `Vexo\VexoException` with `status`, `batch`, and `dropped`. By default, it writes with `error_log()`.
 - When you fork with `pcntl_fork()`, each child starts with an empty queue.
 
@@ -417,7 +423,7 @@ The `vexo` gem works on Ruby 3.0 or later and uses only the standard library. It
 
 ```ruby
 # Gemfile
-gem "vexo"
+gem "vexo", "~> 0.1.0"
 ```
 
 Then run `bundle install`, or install the gem directly with `gem install vexo`.
@@ -438,7 +444,7 @@ vexo.shutdown
 
 - `capture(distinct_id:, event:, properties: nil, timestamp: nil, message_id: nil)`. `timestamp` is a `Time`, a `Date` (read as midnight UTC), a `DateTime`, an `ActiveSupport::TimeWithZone`, epoch milliseconds, or an ISO 8601 string with an offset.
 - Options are keyword arguments in seconds, such as `flush_interval: 5.0`. `Vexo::Client.new` raises an `ArgumentError` when the API key is missing.
-- Values that JSON can't encode are sent as their `to_s` string: a `Time` as `"2026-11-07 12:00:00 UTC"` and a `Symbol` as its name. A `BigDecimal` is sent in scientific notation (`"0.499e2"`) unless ActiveSupport is loaded, so pass `amount.to_s("F")` for `"49.9"`.
+- A `Time`, `DateTime`, or `ActiveSupport::TimeWithZone` in properties is sent as a UTC date-time string, and a `Symbol` as its name.
 - `on_error` receives a `Vexo::Error` with `status`, `batch`, and `dropped`. By default, it calls `warn`.
 - A process that ends without running `at_exit` hooks, such as on `exit!`, loses what's still queued. If your server stops workers that way, call `shutdown` from its worker-shutdown hook.
 
@@ -468,7 +474,7 @@ class RenewSubscriptionJob < ApplicationJob
     VEXO.capture(
       distinct_id: subscription.user.email,
       event: "subscription_renewed",
-      properties: { plan: subscription.plan, amount: subscription.price.to_s("F") },
+      properties: { plan: subscription.plan, amount: subscription.price },
       message_id: "renewal-#{subscription.id}-#{subscription.current_period_start.to_i}"
     )
   end
@@ -538,8 +544,8 @@ func main() {
 
 - `vexo.Capture` has `DistinctID`, `Event`, `Properties`, `Timestamp` (a `time.Time`), and `MessageID`.
 - `Capture` and `Identify` return an error, and drop the message, when they can't queue it, such as `vexo.ErrQueueFull` or `vexo.ErrClosed`. Failures after that go to `OnError`, usually as a `*vexo.Error` with `Status`, `Batch`, and `Dropped`. `OnError` runs on the client's goroutine: return quickly, and don't call `Flush` or `Close` from it.
-- A zero field of `vexo.Config` selects its default, so `FlushInterval: 0` keeps the 10-second timer; there's no option to turn it off. A negative `MaxRetries` turns off retries.
-- Values that `encoding/json` encodes as strings, such as a `time.Time` or a type that implements `encoding.TextMarshaler` (most UUID and decimal types), are sent as strings.
+- A zero field of `vexo.Config` selects its default. A negative `FlushInterval` turns off the timer, and a negative `MaxRetries` turns off retries.
+- A `time.Time` follows the shared date-time form when it's a value in `Properties` or `Traits`, or in a `map[string]any` or `[]any` inside them. Inside a struct or a typed map or slice, `encoding/json` sends it in RFC 3339 with its own offset. A type that implements `encoding.TextMarshaler` or `json.Marshaler`, such as most UUID and decimal types, is sent the way it encodes itself.
 - `Close` and `Flush` also give up when their context is done: `Close` reports what's still queued and returns the context error, and `Flush` leaves the messages queued.
 
 A server that stops on a signal closes the client after it stops serving. Don't pass the signal's context to `Close`: it's already done, so `Close` would give up at once.
@@ -617,7 +623,7 @@ vexo.close();
 
 - `capture(distinctId, event, properties, timestamp, messageId)` has overloads without the trailing arguments. `timestamp` is an `Instant`; convert other date-time types with `toInstant()`.
 - Set options on the builder, such as `.flushInterval(Duration.ofSeconds(5))`. `shutdownHook(false)` turns off the JVM shutdown hook. `Vexo.builder()` throws an `IllegalArgumentException` when the API key is null or blank.
-- `BigDecimal`, `UUID`, `java.time` types, enums, and other objects are sent as their `toString()`, and a `java.util.Date` as an ISO 8601 instant.
+- An `Instant`, `OffsetDateTime`, `ZonedDateTime`, `java.util.Date`, or `LocalDateTime` is sent as a UTC date-time string. A `UUID`, an enum, or any other object is sent as its `toString()`.
 - `onError` receives a `VexoException` with `getStatus()` (0 when there was no response), `getBatch()`, and `getDropped()`. By default, it logs a warning to the `co.vexo.server` `java.util.logging` logger.
 
 #### Kotlin
@@ -674,7 +680,7 @@ public class Handler implements RequestHandler<Map<String, Object>, String> {
 The `Vexo.Server` package works on .NET 8 or later and has no dependencies beyond it. It sends from a background task and is safe to call from many threads.
 
 ```bash
-dotnet add package Vexo.Server
+dotnet add package Vexo.Server --version 0.1.0
 ```
 
 ```csharp
@@ -692,8 +698,7 @@ vexo.Capture("user@example.com", "purchase_completed", new { amount = 49.9, curr
 If your process exits without disposing the client, the client disposes itself from `AppDomain.ProcessExit`, with the same deadline.
 
 - `Capture(distinctId, eventName, properties, timestamp, messageId)`: only `distinctId` and `eventName` are required. `properties` is a dictionary, an anonymous type, or a class. Property names of anonymous types and classes are sent in camelCase, as ASP.NET Core does; dictionary keys are sent as they are.
-- `timestamp` is a `DateTimeOffset`. A `DateTime` converts to it implicitly, but .NET reads a `DateTime` of kind `Unspecified` as local time, so pass a UTC `DateTime` or a `DateTimeOffset`.
-- Values serialize with `System.Text.Json`: a `decimal` is a JSON number, and a `Guid`, `DateTime`, or `DateTimeOffset` is a string.
+- `timestamp` is a `DateTimeOffset` or a `DateTime`. A `DateTime` of kind `Local` is converted to UTC, and one of kind `Unspecified` is read as UTC.
 - Set options with `new VexoClient(apiKey, new VexoOptions { ... })`. `VexoOptions.HttpClient` sends through an `HttpClient` that you pass, such as one from `IHttpClientFactory`; the client doesn't dispose it. The constructor throws an `ArgumentException` when the API key is missing or an option is out of range.
 - `OnError` receives a `VexoException` with `StatusCode`, `Batch`, and `Dropped`. By default, it writes to standard error.
 
@@ -733,8 +738,8 @@ public class Checkout(VexoClient vexo)
 
 A serverless function or an edge isolate has no long-lived process. The platform can freeze or stop it as soon as it returns a response, so the SDK's interval timer and exit hook might never run. Send the queue in every request, in one of two ways:
 
-- **The platform has `waitUntil()`** (Cloudflare Workers, Supabase Edge Functions, and Vercel Functions): create the Node.js client with `flushInterval: 0`, which turns off the timer, and hand `vexo.flush()` to `waitUntil()`. The platform keeps the function alive until the events are sent, without delaying the response.
-- **The platform has no `waitUntil()`** (AWS Lambda, Google Cloud Functions, Azure Functions, and Cloud Run with request-based billing): flush before you return. The flush runs on the request's time, so keep `maxRetries` and `timeout` small enough to fit your function's timeout.
+- **The platform has `waitUntil()`** (Cloudflare Workers, Supabase Edge Functions, and Vercel Functions): create the Node.js client with `flushInterval: 0`, which turns off the interval timer, and hand `vexo.flush()` to `waitUntil()`. The platform keeps the function alive until the events are sent, without delaying the response.
+- **The platform has no `waitUntil()`** (AWS Lambda, Google Cloud Functions, Azure Functions, and Cloud Run with request-based billing): flush before you return. The flush runs on the request's time, so keep `maxRetries` and `timeout` small enough to fit your function's timeout. The interval timer doesn't run while the platform freezes the function, so you can turn it off with a `flushInterval` of 0 (a negative `FlushInterval` in Go), as the Node.js example does.
 
 Create the client once, outside the handler, so that warm invocations reuse it, except on Cloudflare Workers. Don't shut the client down in a handler that the next invocation reuses: the client stops accepting messages after shutdown.
 
