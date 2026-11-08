@@ -1,29 +1,44 @@
-import { DocLayout, DocImage } from '../../../../../components';
+import { DocLayout } from '../../../../../components';
 
 # Errors
 
-The Errors widget gives you instant visibility into the most frequent JavaScript errors happening on your website, directly on the dashboard. Instead of digging through browser developer tools or external error trackers, you can spot critical issues at a glance.
+The **Errors** page lists the JavaScript errors that happen on your website, grouped so that each bug appears once. To open it, click **Errors** in the sidebar of your web dashboard. The page is available once you set your website's domain in **App Settings**.
 
-## How it works
+## What Vexo captures
 
-Vexo automatically captures JavaScript errors from your website and groups them by error message. Each row in the widget shows:
+The Vexo script captures two kinds of errors:
 
-- **Error message** — the grouped error text (truncated if long)
-- **Device count** — how many unique devices are affected
-- **Occurrence count** — the total number of times that error has occurred
+- Uncaught errors, marked **Error**.
+- Unhandled promise rejections, marked **Promise**.
 
-Errors are sorted by occurrence count (most frequent first), so the issues impacting the most users always appear at the top.
+It doesn't capture:
 
-<DocImage src="/docs/errors-widget.png" size="small" />
+- Failures to load a resource, such as an image or a script.
+- `Script error.` reports. Browsers hide the details of an error in a script from another domain unless you load that script with the `crossorigin` attribute.
+- Errors in the Vexo script itself.
+- Errors that happen while tracking is off, for example before a visitor gives consent.
 
-## Viewing error details
+To keep a broken page from flooding your data, the script sends the same error at most 5 times, and at most 50 errors in total, for each page load. It keeps up to 1,000 characters of each message and 2,000 characters of each stack trace, and it removes query strings and fragments from the URLs in them. Each error that it sends counts as an event toward your monthly usage.
 
-Click on any error row to open a detail modal with more information about that specific error, including its full message and impact metrics. This lets you quickly triage issues without leaving the dashboard.
+To stop capturing errors, see [Turn off errors or Core Web Vitals](/web-guide/integration#turn-off-errors-or-core-web-vitals).
 
-## Filtering
+## How Vexo groups errors
 
-The Errors widget respects all global dashboard filters — **date range**, **country**, **OS**, and **browser**. When you apply a filter at the top of the dashboard, the errors update to reflect only the matching segment.
+Errors with the same name, message, source file, and line form one group.
 
-For example, you can filter by a specific browser to check if errors are browser-specific, or filter by country to see if errors correlate with certain regions.
+## Find an error
+
+The list shows the error groups in the date range that you choose at the top of the page, most frequent first. Each row shows the error's message, **Occurrences**, **Affected sessions**, and when it was **Last seen**. Scroll down to load more groups.
+
+The page uses only the date range filter.
+
+## Investigate an error
+
+Click a row to open the error's page. It shows:
+
+- **Where it happens**: how many times the error happened on each route.
+- **Recent occurrences**: up to 100 of the latest occurrences, each with its stack trace and route. Click **Watch replay** to open the session's replay.
+
+Web errors don't have a status or an assignee.
 
 export default ({ children }) => <DocLayout current="web-errors" previous={{href: '/web-guide/web-features/dashboard/routes', label: 'Routes'}} next={{href: '/web-guide/web-features/dashboard/network-stats', label: 'Network Stats'}}>{children}</DocLayout>
