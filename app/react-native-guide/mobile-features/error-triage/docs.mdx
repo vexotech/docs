@@ -42,6 +42,53 @@ Only the app's owner can change a group's status or assignee. Changes save as so
 
 In **Assignee**, choose the owner or a member of the app's team. The app's [audit log](/settings/app-settings/audit-log) records each assignment.
 
+## Source maps
+
+Release builds minify your JavaScript, so their stack traces point at the bundle, for example `at t (index.android.bundle:1:452103)`. When you upload a release's source map, the **Latest stack trace** shows your original function names, files, and lines instead. The stack trace is marked **Symbolicated** when Vexo rewrote at least one frame, and **Minified** otherwise. If Vexo has no map for the release, the page says so.
+
+To upload maps, you need vexo-analytics 1.11.0 or later, which includes the `vexo-upload-sourcemaps` command.
+
+### Upload a source map
+
+1. Build your release, and keep the source map that the build writes. For a Hermes build, use the map from the native release build, which maps the Hermes bytecode back to your code. To turn on source maps for a release build, see [Debugging release builds](https://reactnative.dev/docs/debugging-release-builds) in the React Native docs.
+2. Upload the map for each platform. For example, in your release pipeline:
+
+```bash
+npx vexo-upload-sourcemaps \
+  --platform android \
+  --sourcemap path/to/index.android.bundle.map \
+  --app-version 1.4.0 \
+  --api-key "$VEXO_API_KEY"
+```
+
+When the upload works, the command prints `Uploaded path/to/index.android.bundle.map (<size> bytes) -> android 1.4.0 dist=embedded`.
+
+| Option | Value |
+| --- | --- |
+| `--platform` | Required. `ios` or `android`. |
+| `--sourcemap` | Required. The path to the source map. |
+| `--app-version` | The app version of the build: `versionName` on Android, or `CFBundleShortVersionString` on iOS. If you leave it out, the command uses `expo.version` from `app.json` or `version` from `package.json`, which might not match the build. |
+| `--api-key` | Required. The app's API key, the same key that you pass to `vexo()`. You can set the `VEXO_API_KEY` environment variable instead. |
+| `--dist` | For an over-the-air update from expo-updates, the ID of that platform's update. Defaults to `embedded`, for the code built into the app. |
+
+### How Vexo matches a map
+
+Vexo matches each error to the map with the same platform, the same app version, and the same update ID that the SDK reports for the device. Errors from the code built into the app match `embedded`.
+
+If an over-the-air update has no map of its own, Vexo uses the build's `embedded` map, which no longer matches the update's code and can point at the wrong lines. Upload a map for each update, with `--dist`.
+
+Vexo symbolicates a stack trace when you view it, so a map also works for errors that happened before you uploaded it. If someone viewed an error shortly before you uploaded its map, the error can show **Minified** until 30 minutes go by without anyone viewing it.
+
+Uploading a map for the same platform, app version, and update again replaces the earlier map.
+
+### Limits
+
+- A map can be up to 64 MB, uncompressed.
+- Vexo symbolicates iOS and Android errors. It doesn't symbolicate web errors.
+- Index maps, which contain `sections`, aren't supported.
+- Vexo doesn't check a map when you upload it. If errors still show **Minified**, check that the platform, app version, and update ID match the build.
+- If the upload fails with `Too many source map uploads in progress`, retry it.
+
 ## Crashes and handled errors
 
 A crash is an error that your app didn't handle: an error that reached the top of the app, or one that you report with `trackError(err, { handled: false })`. Crash-free sessions and crash-free users count sessions and users without a crash. Errors that you report with `trackError(err)` are handled, and don't count against them. See [Error reporting](/react-native-guide/integration#error-reporting).

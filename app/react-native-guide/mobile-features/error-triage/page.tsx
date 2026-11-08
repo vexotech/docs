@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'Error triage (React Native)',
-    description: "Find and investigate your React Native app's error groups, mark them resolved or ignored, assign them, spot regressions, and watch the replay of a crash.",
+    description: "Find and investigate your React Native app's error groups, resolve or assign them, spot regressions, and upload source maps to read original stack traces.",
 }
 
 export default function Home() {
