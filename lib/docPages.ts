@@ -13,11 +13,20 @@ export interface DocPage {
   section: string[]; // the sidebar groups above the page, outermost first
 }
 
-// Every docs page, in sidebar order.
-export function docPages(items: SidebarItem[] = sidebarData, section: string[] = []): DocPage[] {
+// Every docs page, in sidebar order. A page with a docs.mdx that isn't in the sidebar fails the
+// build, since the search index and llms.txt would leave it out.
+export function docPages(): DocPage[] {
+  const pages = sidebarPages(sidebarData, []);
+  const listed = new Set(pages.map((page) => page.href));
+  const unlisted = appRoutes().filter((route) => !listed.has(route) && fs.existsSync(path.join(APP, route, 'docs.mdx')));
+  if (unlisted.length) throw new Error(`Add ${unlisted.join(', ')} to sidebarData in components/layoutData.tsx`);
+  return pages;
+}
+
+function sidebarPages(items: SidebarItem[], section: string[]): DocPage[] {
   return items.flatMap((item) => [
     ...(item.href ? [{ href: item.href, title: item.title, section }] : []),
-    ...(item.children ? docPages(item.children, [...section, item.title]) : []),
+    ...(item.children ? sidebarPages(item.children, [...section, item.title]) : []),
   ]);
 }
 
