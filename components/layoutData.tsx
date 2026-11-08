@@ -118,6 +118,15 @@ export const sidebarData: SidebarData = [
         ]
     },
     {
+        name: 'server-side',
+        title: 'Server-side',
+        isCollapsible: true,
+        defaultOpen: false,
+        children: [
+            { title: 'Server-side capture', name: 'server-side-capture', href: '/server-side/capture' },
+        ]
+    },
+    {
         name: 'settings',
         title: 'Settings',
         isCollapsible: true,

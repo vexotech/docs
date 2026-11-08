@@ -98,6 +98,7 @@ Events that you turn off or sample out in Event Tracking aren't counted in this 
 | Heatmap segments | 64 characters for each value, and 20 distinct values for each app. Other values are stored untagged. See [Segments](/react-native-guide/mobile-features/session-replays-heatmaps#segments). |
 | Seats | 2 included, then $4.90 a month for each additional seat. See [Seats](/settings/subscription#seats). |
 | Export API | 5 requests a minute for each app on the events endpoints, and up to 10,000 events for each request. Over the rate limit, the API responds with `429`. See [Export API](/settings/app-settings/export-api). |
+| Server-side capture API | 500 messages and 5 MB for each request, and 1,200 requests a minute for each app. Over the rate limit, the API responds with `429`. See [Server-side capture](/server-side/capture#limits). |
 | Paginated API endpoints | The endpoints that return lists, such as apps, people, sessions, screens, custom events, and errors, accept at most 30 items per page (`itemsPerPage`) and 50 requests a minute for each user. Over the rate limit, the API responds with `429`. |
 
 export default ({ children }) => <DocLayout current="usage-limits" previous={{href: '/settings/subscription', label: 'Subscription'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>
