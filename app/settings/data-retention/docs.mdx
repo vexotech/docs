@@ -14,7 +14,7 @@ Vexo deletes your data once it's older than your plan's retention period:
 | Paid | 24 months | 24 months |
 | Paid, with extended retention | 3, 4, or 5 years | 3, 4, or 5 years |
 
-- **Events, sessions, replays, screenshots, and people** covers what your apps and websites capture: events, session replays and their files, heatmap screenshots, AI summaries of sessions, location history, and the people in your **People** pages. Vexo measures age from when the data was captured.
+- **Events, sessions, replays, screenshots, and people** covers what your apps and websites capture: events, session replays and their files, heatmap screenshots, AI summaries of sessions, location history, scheduled export files, and the people in your **People** pages. Vexo measures age from when the data was captured.
 - **Daily statistics** are the per-day totals behind your dashboard's charts, such as downloads, active users, sessions, and errors per day. Some of them count a person by their Vexo device ID only, without their user ID or traits.
 - Every night, starting at 04:00 UTC, Vexo deletes the data that has passed its period. It disappears from your dashboard and the API at once.
 - When a person has had no activity for the whole period, Vexo deletes them too, with their user ID, traits, and location history. If they use your app again, Vexo counts them as a new person.
@@ -87,6 +87,7 @@ The app's **Audit Log**, in the app's **Settings**, records each erasure with th
 An erasure doesn't remove the following:
 
 - Daily totals that don't identify the person, such as the number of active users per day.
+- Scheduled export files created before the erasure. They're deleted when they pass your retention period.
 - Backups, until they expire. See [Backups](#backups).
 
 ## Delete an app
