@@ -12,7 +12,7 @@ When this option is cleared, no device records session replays. An app that pass
 
 ### Blur session replays
 
-When this option is selected, every frame of a session replay is blurred on the device before it's uploaded. It's on by default. The SDK can't mask individual views yet, so keep blur on if your app shows sensitive content. For more, see [App Store & Play Compliance](/react-native-guide/store-compliance#app-review-2514-session-replay-needs-consent).
+When this option is selected, every frame of a session replay is blurred on the device before it's uploaded. It's on by default. Blur is independent of masking: with `vexo-analytics` X.Y.Z or later, the SDK also masks text inputs, images, and views you wrap in `<VexoMask>`. Keep blur on for any screen you haven't checked. For more, see [App Store & Play Compliance](/react-native-guide/store-compliance#app-review-2514-session-replay-needs-consent).
 
 ### Send replays only on wifi
 
