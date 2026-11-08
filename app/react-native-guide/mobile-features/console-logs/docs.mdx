@@ -71,6 +71,21 @@ credentials, or other personal data, that text will appear in the replay's Conso
 console output as user-visible data:
 
 - Avoid logging secrets or PII, or strip/gate those logs in production builds.
+- From `vexo-analytics` X.Y.Z, redact or drop messages on the device with `console.beforeSend`.
+  It receives each whole message (before the 4000-character cap) and its level, and returns the
+  string to capture, or `null` to drop it. If it throws or returns anything but a string, the
+  message is dropped. Your console output itself is unchanged.
+
+  ```js
+  vexo('YOUR_API_KEY', {
+    console: {
+      beforeSend: (message, level) =>
+        level === 'log' ? null : message.replace(/\S+@\S+\.\S+/g, '[email]'),
+    },
+  });
+  ```
+
+  To keep console messages from leaving the device at all, pass `beforeSend: () => null`.
 - `disableTracking()` stops console capture along with all other tracking, and turning off
   session replay removes the Console tab from replays.
 - The SDK never captures its own `Vexo:`-prefixed internal logs.
