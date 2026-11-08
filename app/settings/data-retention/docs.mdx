@@ -6,73 +6,105 @@ This page describes how long Vexo keeps the data that your apps and websites sen
 
 ## How long Vexo keeps data
 
-Vexo keeps your data until you delete it. On every plan, free and paid, there's no automatic expiry: events, sessions, session replays, heatmap screenshots, and the rest of the data that your apps and websites send stay stored.
+Vexo deletes your data once it's older than your plan's retention period:
 
-Data that you've already collected stays stored when Vexo stops collecting new data, for example when you reach the free allowance or an app reaches its usage cap.
+| Plan | Events, sessions, replays, screenshots, and people | Daily statistics |
+| --- | --- | --- |
+| Free | 60 days | 13 months |
+| Paid | 24 months | 24 months |
+| Paid, with extended retention | 3, 4, or 5 years | 3, 4, or 5 years |
+
+- **Events, sessions, replays, screenshots, and people** covers what your apps and websites capture: events, session replays and their files, heatmap screenshots, AI summaries of sessions, location history, scheduled export files, and the people in your **People** pages. Vexo measures age from when the data was captured.
+- **Daily statistics** are the per-day totals behind your dashboard's charts, such as downloads, active users, sessions, and errors per day. Some of them count a person by their Vexo device ID only, without their user ID or traits.
+- Every night, starting at 04:00 UTC, Vexo deletes the data that has passed its period. It disappears from your dashboard and the API at once.
+- When a person has had no activity for the whole period, Vexo deletes them too, with their user ID, traits, and location history. If they use your app again, Vexo counts them as a new person.
+- When a screen's heatmap screenshot passes the period, the next visit to that screen captures a new one.
+- When a paid plan ends, your apps keep the paid period for 30 more days. After that, the free plan's period applies, and Vexo deletes data older than 60 days.
+
+Data that you've already collected stays stored for its retention period when Vexo stops collecting new data, for example when you reach the free allowance or an app reaches its usage cap.
 
 ## Erase a person's data
 
-To act on a person's request to erase their data, for example under the GDPR or the CCPA, erase the data of their device. You need write access to the app, which the app's owner has, and your email address must be verified.
+To act on a person's request to erase their data, for example under the GDPR or the CCPA, erase every device that you identified as that person, or one device if you never identified them. You need write access to the app, which the app's owner has, and your email address must be verified.
 
 ### Erase from the dashboard
 
 1. In the app's **People** page, open the person's page. For a mobile app, see [People](/react-native-guide/mobile-features/people); for a website, see [People](/web-guide/web-features/people).
 2. Under the person's summary card, in **Erase user data**, click **Erase user data**.
-3. In the dialog, type the identifier that it shows: the user ID that you set with `identifyDevice`, or the device ID if the person isn't identified.
-4. Click **Delete**.
+3. In the dialog, type the identifier that it shows:
+   - For an identified person, the user ID that you set with `identifyDevice`. Vexo erases every device in the app identified with that user ID.
+   - For a person you never identified, the device ID. Vexo erases that device.
+4. Click **Erase user data**.
 
 When the erasure finishes, the page shows an **Erasure receipt** in place of the button. Keep it as evidence of the request. The receipt shows:
 
 - **Status**: `COMPLETED`, or `COMPLETED_WITH_ERRORS` if a store couldn't be fully erased. The receipt then lists the errors, and every other store is still erased.
-- **Subject**: the user ID that was attached to the device, or the device ID.
+- **Subject**: the user ID, or the device ID. **Subject hash (audit log)** is what the audit log keeps in place of the user ID.
+- **Devices erased**: how many devices had that user ID. If none had it, the receipt says there was nothing to erase, and the request is still in the audit log.
 - **Erased by** and **Erased at**: who made the request, and when.
-- **Events / sessions**, **Replays deleted**, **Screenshots deleted**, and **Locations deleted**: what was erased from each store. **Screenshots deleted** counts the stored session replay files.
-- **Device record**: **Anonymized** when Vexo removed the device's identifiers and kept the record.
+- What was erased from each store: events and sessions, replays and replay files, locations, session comments, AI summaries, share links, and heatmap screenshots.
+- **Device records**: **Anonymized** when Vexo removed the devices' identifiers and kept the records.
 
 ### Erase with the API
 
-To erase a person's data from a script, send a `DELETE` request with the app's ID and the person's device ID:
+To erase a person's data from a script, authenticate with the token from the login endpoint described in [Export API](/settings/app-settings/export-api#authentication), and use the app's ID from your browser's address bar on any of the app's pages, `/apps/{appId}/...`.
+
+To erase every device that you identified as one person, send their user ID, the value that you set with `identifyDevice`, in a `POST` request. Matching ignores case:
+
+```bash
+curl --location --request POST 'https://api.vexo.co/apps/{appId}/erasures' \
+--header 'Authorization: {AUTH_TOKEN}' \
+--header 'Content-Type: application/json' \
+--data '{"identifier": "jane@example.com"}'
+```
+
+The user ID travels in the request body, so it doesn't appear in URLs or server logs. If no device has that user ID, the request still succeeds and returns a receipt with no devices.
+
+To erase one device, for example a person you never identified, send a `DELETE` request with the device's Vexo ID, which the top of the person's page shows:
 
 ```bash
 curl --location --request DELETE 'https://api.vexo.co/apps/{appId}/devices/{deviceId}/data' \
 --header 'Authorization: {AUTH_TOKEN}'
 ```
 
-- `AUTH_TOKEN`: the token from the login endpoint described in [Export API](/settings/app-settings/export-api#authentication).
-- `appId`: the ID in your browser's address bar on any of the app's pages, `/apps/{appId}/...`.
-- `deviceId`: the device's Vexo ID. The top of the person's page shows it when the person isn't identified. For an identified person, the page shows their user ID instead, which the API doesn't accept, so erase their data from the dashboard.
-
-The response is the same receipt that the dashboard shows.
+Both requests return the same receipt that the dashboard shows, with the IDs of the erased devices.
 
 ### What's erased
 
-An erasure removes the following for that device:
+An erasure removes the following for each of the person's devices:
 
-- Its events, from your mobile apps and websites.
-- Its session replays, including the recorded video.
-- Its location records.
+- Their events, from your mobile apps and websites, and the per-session and per-device statistics computed from them.
+- Their session replays, including the recorded files.
+- AI summaries of their sessions, and the comments and share links on their sessions.
+- Their location records.
+- Heatmap screenshots taken on their device models and app versions. Vexo can't tell which device uploaded a screenshot, so this can also remove screenshots that other people's devices uploaded; the next visit to the screen on that app version captures it again.
 - The user ID that you set with `identifyDevice`, the device's own identifier, and its traits. The device record stays, without them.
 
-The app's **Audit Log**, in the app's **Settings**, records each erasure. You can safely erase the same device again.
+The erased data stops appearing in your dashboard within a few minutes. You can safely erase the same person again.
+
+The app's **Audit Log**, in the app's **Settings**, records each erasure with the erased device IDs and a SHA-256 hash of the user ID, not the user ID itself. To show that a person's data was erased, compute the SHA-256 hash of their user ID, trimmed and in lowercase, and find it in the log.
 
 An erasure doesn't remove the following:
 
-- Aggregated statistics that Vexo computed from the device's events, such as dashboard counts. They can still reference the device by its Vexo device ID.
-- Heatmap screenshots. Vexo captures them for each screen, not for each device.
-- Backups, until they're rotated out. See [Backups](#backups).
+- Daily totals that don't identify the person, such as the number of active users per day.
+- Scheduled export files created before the erasure. They're deleted when they pass your retention period.
+- Backups, until they expire. See [Backups](#backups).
 
 ## Delete an app
 
 When you delete an app from its **Settings** page, under **Danger Zone**, Vexo stops collecting its data, and the app and its data no longer appear in your dashboard. For details, see [Delete Application](/settings/app-settings/delete-application).
 
-Deleting an app doesn't erase its stored data. To erase a person's data, [erase their device's data](#erase-a-persons-data) before you delete the app. To ask for the rest of a deleted app's data to be erased, [contact us](/contact-vexo).
+Vexo keeps a deleted app's data for 14 days, in case you deleted the app by mistake: to restore it, [contact us](/contact-vexo) within those 14 days. After that, Vexo deletes all of the app's data, including its events, sessions, replays, screenshots, people, dashboards, and exports, within 30 days of the deletion. Vexo keeps the app's audit log entries, which record who did what and when.
 
 ## Delete your account
 
-When you delete your account, Vexo deletes every app that you own, as described in [Delete an app](#delete-an-app), and closes your account. As with an app, your apps' stored data isn't erased. For details, see [Account Settings](/settings/account-settings).
+When you delete your account, Vexo deletes every app that you own, as described in [Delete an app](#delete-an-app), and closes your account. Vexo deletes your apps' data within 30 days. For details, see [Account Settings](/settings/account-settings).
 
 ## Backups
 
-Vexo backs up its databases so that it can recover from a failure. Data that you erase or delete can remain in those backups until they're rotated out.
+Vexo backs up its databases so that it can recover from a failure. Data that you erase or delete, or that passes its retention period, can remain in those backups until they expire:
+
+- Events, sessions, and statistics: up to 52 days. Vexo keeps three weeks of daily backups, and then holds deleted backup files for 30 more days.
+- Accounts, apps, people, and replay records: up to 2 days.
 
 export default ({ children }) => <DocLayout current="data-retention" previous={{href: '/settings/app-settings/delete-application', label: 'Delete Application'}} next={{href: '/contact-vexo', label: 'Contact Vexo'}}>{children}</DocLayout>
