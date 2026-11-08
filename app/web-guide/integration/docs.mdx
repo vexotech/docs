@@ -28,4 +28,25 @@ export default function MyApp({ Component, pageProps }) {
 
 The `afterInteractive` strategy ensures that analytics scripts load after the page becomes interactive, which is the recommended approach for third-party analytics according to the [Next.js Script Optimization documentation](https://nextjs.org/docs/app/building-your-application/optimizing/scripts).
 
+## Errors and Core Web Vitals
+
+The Vexo script captures your website's JavaScript errors and its Core Web Vitals, with no setup:
+
+- Errors appear on the **Errors** page. See [Errors](/web-guide/web-features/dashboard/errors).
+- Core Web Vitals appear on the **Performance** page, which shows the 75th percentile of each metric and the share of measurements rated **Good**, **Needs work**, and **Poor**. The script measures Largest Contentful Paint (LCP), Cumulative Layout Shift (CLS), Interaction to Next Paint (INP), First Contentful Paint (FCP), and Time to First Byte (TTFB), with Google's [web-vitals](https://github.com/GoogleChrome/web-vitals) library.
+
+Each error and each measurement counts as an event toward your monthly usage.
+
+### Turn off errors or Core Web Vitals
+
+To turn either off, set a flag before the Vexo script loads:
+
+```html
+<script>
+  window.__vexoDisableErrors = true;     // Don't capture errors.
+  window.__vexoDisableWebVitals = true;  // Don't capture Core Web Vitals.
+</script>
+<script src="https://www.vexo.co/analytics.js"></script>
+```
+
 export default ({ children }) => <DocLayout current="web-integration" previous={{href: '/web-guide/introduction', label: 'Introduction'}} next={{href: '/web-guide/web-features/overview', label: 'Features Overview'}}>{children}</DocLayout>

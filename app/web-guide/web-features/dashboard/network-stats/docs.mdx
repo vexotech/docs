@@ -2,11 +2,13 @@ import { DocLayout, DocImage } from '../../../../../components';
 
 # Network Stats
 
-The Network Stats widget tracks all HTTP requests made by your website's visitors, giving you visibility into API performance and reliability directly from the dashboard.
+The Network Stats widget shows the HTTP requests that your website's visitors make, with their status codes and latency.
+
+The Vexo web script doesn't capture network requests, so on a website the widget shows **No network requests found**.
 
 ## How it works
 
-Every time a visitor's browser makes a network request, Vexo captures the route (URL), HTTP status code, request count, and latency. The widget groups these requests and displays them in a list, showing:
+For each request that Vexo receives, it records the route (URL), HTTP status code, and latency. The widget groups the requests and displays them in a list, showing:
 
 - **Route** — the API endpoint or URL path
 - **Status code** — color-coded HTTP status
@@ -30,9 +32,5 @@ This makes it easy to quickly find your most-used endpoints, identify slow route
 The Network Stats widget respects all global dashboard filters — **date range**, **country**, **OS**, and **browser**. Apply filters at the top of the dashboard to narrow down network performance for specific visitor segments.
 
 For example, filter by a specific browser to check if API latency varies between Chrome and Safari, or filter by country to identify regional performance issues.
-
-## Sampled requests
-
-If your app samples **Network (fetch)** in [Event Tracking](/react-native-guide/mobile-settings#event-tracking), the widget shows a note with the sample rate, and its request counts include only the requests that Vexo kept. Vexo always keeps failed requests and 4xx and 5xx responses, so error counts stay complete.
 
 export default ({ children }) => <DocLayout current="web-network-stats" previous={{href: '/web-guide/web-features/dashboard/errors', label: 'Errors'}} next={{href: '/web-guide/web-features/dashboard/customize-dashboard', label: 'Customize your Dashboard'}}>{children}</DocLayout>
