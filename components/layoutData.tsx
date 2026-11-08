@@ -143,6 +143,7 @@ export const sidebarData: SidebarData = [
                 defaultOpen: false,
                 children: [
                     { title: 'General Information', name: 'app-general-information', href: '/settings/app-settings/app-general-information' },
+                    { title: 'Email Digests', name: 'digests', href: '/settings/app-settings/digests' },
                     { title: 'Webhooks', name: 'webhooks', href: '/settings/app-settings/webhooks' },
                     { title: 'Export API', name: 'export-api', href: '/settings/app-settings/export-api' },
                     { title: 'Team', name: 'team', href: '/settings/app-settings/team' },
