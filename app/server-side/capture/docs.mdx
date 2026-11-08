@@ -1,0 +1,199 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Server-side capture
+
+Send events and identifies from your backend: purchases, renewals, refunds, background jobs, anything that your app's SDK can't see. Server events go to the same Vexo app as your mobile and web events, and they belong to the same people.
+
+You can call the HTTP API directly, or use the Node.js or Python SDK, which batch and retry for you.
+
+## How server events work
+
+- **People.** Every message names a person with a `distinctId`. Use the same ID that you pass to `identifyDevice()` in your app, such as the user's email or account ID. Vexo keeps one server device for each distinct ID in each app, identified with that ID, so server events and traits belong to the same person as the app installs identified with it. In **People**, that device shows as **Server**.
+- **Custom events.** A server event is a custom event: it appears in your custom events, dashboards, and funnels like one that `customEvent()` sends, with the route `server`.
+- **No session or location.** A server event isn't part of a session or a replay, has no location (the request comes from your server, not the user's device), and doesn't count as an online user.
+- **Mobile event store.** Server events are stored with your app's mobile events. Web dashboards don't show them yet.
+- **Billing.** Each server event that Vexo stores counts toward your [usage](/settings/usage-limits#what-counts-toward-your-usage), your app's [events cap](/settings/usage-limits#per-app-usage-caps), and the free-plan limit, exactly like an event from the SDK. Identifies don't count.
+
+## Security
+
+The capture API uses your app's API key, the same key that your app SDK embeds in every install. That key isn't a secret: anyone who has your app can read it. The capture API accepts only the kind of writes that the SDK can already send with that key, and it can't read any data, so it adds no new exposure.
+
+Anyone who has the key can send events that count toward your usage. To put a ceiling on that, set an [events cap](/settings/usage-limits#per-app-usage-caps) on the app.
+
+## HTTP API
+
+Send `POST` requests to `https://api.vexo.co` with a JSON body and these headers:
+
+- `X-Api-Key`: your app's API key. Copy it from the app's [settings](/settings/app-settings/app-general-information).
+- `Content-Type: application/json`
+
+### Capture an event
+
+**Endpoint:** `POST /v1/capture`
+
+```bash
+curl -X POST 'https://api.vexo.co/v1/capture' \
+  -H 'X-Api-Key: YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "distinctId": "user@example.com",
+    "event": "purchase_completed",
+    "properties": { "amount": 49.9, "currency": "USD" },
+    "timestamp": "2026-11-07T12:00:00Z",
+    "messageId": "5b0c8f0e-6d1e-4f62-9d55-3f1f0f6a2b71"
+  }'
+```
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `distinctId` | Yes | The person's ID, up to 200 characters. |
+| `event` | Yes | The event name. |
+| `properties` | No | A JSON object of event properties. |
+| `timestamp` | No | When the event happened: an ISO 8601 date-time with an offset (`Z` or `+02:00`), or epoch milliseconds. Defaults to the time Vexo receives it. |
+| `messageId` | No | A unique ID for the message. Send it so that a retried message is stored once. |
+
+### Identify a person
+
+Merges traits into the person. A trait set to `null` is removed.
+
+**Endpoint:** `POST /v1/identify`
+
+```bash
+curl -X POST 'https://api.vexo.co/v1/identify' \
+  -H 'X-Api-Key: YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "distinctId": "user@example.com",
+    "traits": { "plan": "pro", "company": "Acme" }
+  }'
+```
+
+| Field | Required | Description |
+| --- | --- | --- |
+| `distinctId` | Yes | The person's ID, up to 200 characters. |
+| `traits` | No | A JSON object of traits. |
+
+### Send a batch
+
+Sends up to 500 messages in one request. Each message has the fields of a capture or an identify, plus `type`: `capture` (the default) or `identify`.
+
+**Endpoint:** `POST /v1/batch`
+
+```bash
+curl -X POST 'https://api.vexo.co/v1/batch' \
+  -H 'X-Api-Key: YOUR_API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "batch": [
+      { "type": "identify", "distinctId": "user@example.com", "traits": { "plan": "pro" } },
+      { "type": "capture", "distinctId": "user@example.com", "event": "plan_upgraded", "properties": { "from": "free" } }
+    ]
+  }'
+```
+
+### Responses
+
+A request that Vexo accepts returns `200` with the result for its messages. A message that fails validation, such as an event without a name or with properties over the size limit, is dropped and listed in `dropped` with its position in the request (`index`, from 0) and the reason. Every message that isn't listed was accepted.
+
+```json
+{
+    "success": true,
+    "code": 200,
+    "message": null,
+    "data": {
+        "accepted": 1,
+        "dropped": [
+            { "index": 1, "reason": "event is required" }
+        ]
+    }
+}
+```
+
+| Status | Meaning | Retry? |
+| --- | --- | --- |
+| `200` | Accepted. Check `dropped` for messages that failed validation. | No |
+| `400` | The body isn't valid JSON of the expected shape, or the batch is empty or has more than 500 messages. | No |
+| `401` | The `X-Api-Key` header is missing or the key isn't valid. | No |
+| `406` | The app reached its events cap or your account reached its event limit. No message in the request was stored. See [Usage and Limits](/settings/usage-limits). | No |
+| `429` | The app sent more than 1,200 requests in a minute. Wait for the number of seconds in the `Retry-After` header. | Yes |
+| `5xx` | A temporary server error. | Yes, with backoff |
+
+When you retry, send the same messages with the same `messageId` values. Vexo stores a message ID once within 5 days, so a retry never double-counts.
+
+### Limits
+
+| Limit | Value |
+| --- | --- |
+| Messages per batch | 500 |
+| Requests | 1,200 a minute for each app |
+| Event size | 65,536 characters for the event's properties, serialized as JSON |
+| `distinctId` | 200 characters |
+| Future timestamps | A timestamp more than 1 hour ahead of the server's clock is set to the time Vexo receives the event. |
+
+## Node.js
+
+The `vexo-node` package works on Node.js 18 or later and has no dependencies. It queues messages, sends them in batches when 100 are queued or every 10 seconds, and retries network errors, `429`, and `5xx` responses with exponential backoff.
+
+```bash
+npm install vexo-node
+```
+
+```js
+const { Vexo } = require('vexo-node');
+
+const vexo = new Vexo(process.env.VEXO_API_KEY);
+
+vexo.identify({ distinctId: 'user@example.com', traits: { plan: 'pro' } });
+vexo.capture({
+    distinctId: 'user@example.com',
+    event: 'purchase_completed',
+    properties: { amount: 49.9, currency: 'USD' },
+});
+
+// Send everything still queued before the process exits.
+process.on('SIGTERM', async () => {
+    await vexo.shutdown();
+    process.exit(0);
+});
+```
+
+`capture()` and `identify()` only queue the message, so they never slow down your request handlers. A script that ends on its own sends its queue before it exits; a server that stops on a signal must call `await vexo.shutdown()` first.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `flushAt` | `100` | Send a batch when this many messages are queued (1 to 500). |
+| `flushInterval` | `10000` | Send whatever is queued every this many milliseconds. |
+| `maxRetries` | `3` | Retries for network errors, `429`, and `5xx` responses. |
+| `onError` | `console.error` | Called with send failures and with the messages that Vexo dropped. |
+
+## Python
+
+The `vexo-python` package works on Python 3.8 or later and uses only the standard library. It sends batches from a background thread when 100 messages are queued or every 10 seconds, retries network errors, `429`, and `5xx` responses with exponential backoff, and sends its queue when the interpreter exits.
+
+```bash
+pip install vexo-python
+```
+
+```python
+import os
+from vexo import Vexo
+
+vexo = Vexo(os.environ["VEXO_API_KEY"])
+
+vexo.identify("user@example.com", {"plan": "pro"})
+vexo.capture("user@example.com", "purchase_completed", {"amount": 49.9, "currency": "USD"})
+
+# Optional: send everything still queued now. It also runs when the interpreter exits.
+vexo.shutdown()
+```
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `flush_at` | `100` | Send a batch when this many messages are queued (1 to 500). |
+| `flush_interval` | `10.0` | Send whatever is queued every this many seconds. |
+| `max_retries` | `3` | Retries for network errors, `429`, and `5xx` responses. |
+| `on_error` | Log to the `vexo` logger | Called with send failures and with the messages that Vexo dropped. |
+
+Both SDKs give every message a `messageId`, so a retried batch is stored once, and never raise an error from `capture()` or `identify()`: failures go to the error callback.
+
+export default ({ children }) => <DocLayout current="server-side-capture" previous={{href: '/web-guide/web-features/custom-events', label: 'Custom Events'}} next={{href: '/settings/account-settings', label: 'Account Settings'}}>{children}</DocLayout>
