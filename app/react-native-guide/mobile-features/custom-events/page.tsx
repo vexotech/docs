@@ -2,7 +2,7 @@ import Docs from './docs.mdx'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Custom Events | Vexo Documentation',
+    title: 'Custom Events',
 }
 
 export default function Home() {

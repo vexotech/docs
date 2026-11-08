@@ -2,7 +2,7 @@ import Docs from './docs.mdx'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-    title: 'Account information | Vexo Documentation',
+    title: 'Account information',
 }
 
 export default function Home() {

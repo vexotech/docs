@@ -3,7 +3,10 @@ import './globals.css'
 import { CommandPalette, SearchProvider } from '../components'
 
 export const metadata = {
-  title: 'Vexo | Documentation | Next Generation Analytics',
+  title: {
+    template: '%s | Vexo Documentation',
+    default: 'Vexo | Documentation | Next Generation Analytics',
+  },
   description: 'Out of the box insights for your React Native applications',
   openGraph: {
     title: 'Vexo | Documentation | Next Generation Analytics',
