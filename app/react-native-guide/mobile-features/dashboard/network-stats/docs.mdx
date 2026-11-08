@@ -24,6 +24,16 @@ Vexo records your app's outbound HTTP requests. Two kinds of traffic are exclude
 
 Because the dev-server filter is anchored to those exact paths, your own requests to URLs that merely contain those words (for example `/api/logs` or `/v1/symbolicate-batch`) are still captured normally.
 
+### Query strings stay on the device
+
+From `vexo-analytics` X.Y.Z, the SDK records each request's URL with its origin and path only: it drops the query string and the fragment on the device, so tokens, emails, and IDs in them never reach Vexo. For example, `https://api.example.com/users/42?email=a@b.com` is recorded as `https://api.example.com/users/42`, and requests that differ only in their query string are counted under one route. Credentials in a URL (`user:password@`) are never recorded. Headers and request and response bodies are never captured. IDs in the path itself are kept, so keep personal data out of your URL paths.
+
+To record query strings and fragments too, pass `network: { captureQueryParams: true }`. Turn it on only if your URLs carry no personal data or secrets:
+
+```js
+vexo('YOUR_API_KEY', { network: { captureQueryParams: true } });
+```
+
 ## Sorting
 
 You can sort the network stats by different criteria using the dropdown at the top of the widget:
