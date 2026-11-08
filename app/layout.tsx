@@ -1,22 +1,21 @@
 import Head from 'next/head'
+import type { Metadata } from 'next'
 import './globals.css'
 import { CommandPalette, SearchProvider } from '../components'
 
-export const metadata = {
-  title: 'Vexo | Documentation | Next Generation Analytics',
-  description: 'Out of the box insights for your React Native applications',
-  openGraph: {
-    title: 'Vexo | Documentation | Next Generation Analytics',
-    description: 'Out of the box insights for your React Native applications',
-    images: {
-      url: 'https://www.vexo.co/vexo-04.png'
-    } 
+// Pages set their own title and description; Open Graph and Twitter tags inherit them.
+// The relative canonical resolves against each page's path, so every page points at itself.
+export const metadata: Metadata = {
+  metadataBase: new URL('https://docs.vexo.co'),
+  title: {
+    template: '%s | Vexo Docs',
+    default: 'Vexo Docs: React Native and web analytics',
   },
-  twitter: {
-    title: 'Vexo | Documentation | Next Generation Analytics',
-    description: 'Out of the box insights for your React Native applications',
-    images: ['https://www.vexo.co/vexo-04.png']
-  }
+  description: 'Learn how to add Vexo analytics to React Native, Expo, and web apps, with guides to dashboards, session replays, heatmaps, settings, billing, and the API.',
+  alternates: { canonical: './' },
+  openGraph: {
+    images: { url: 'https://www.vexo.co/vexo-04.png' },
+  },
 }
 
 export default function RootLayout({
