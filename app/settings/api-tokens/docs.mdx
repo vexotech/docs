@@ -1,0 +1,43 @@
+import { DocLayout } from '../../../components';
+
+# Personal access tokens
+
+A personal access token authenticates you to the Vexo read API and the [MCP server](/settings/mcp-server) without a password. A token acts as you, with your access to apps, and it's read-only: it works only for requests that read data.
+
+You manage tokens in your account settings: click **My Account** at the bottom of the sidebar, and go to **API tokens**.
+
+## Create a token
+
+Your email address must be verified.
+
+1. In **API tokens**, enter a **New token name**, for example the tool that will use it.
+2. Click **Generate token**.
+3. Copy the token, and click **Done**.
+
+Vexo shows the full token only once. If you lose it, rotate the token or create a new one.
+
+Send the token in the `Authorization` header:
+
+```bash
+curl 'https://api.vexo.co/external/apps/{appId}/events' \
+--header 'Authorization: Bearer vexo_pat_...'
+```
+
+For the endpoints that you can call, see [Export API](/settings/app-settings/export-api).
+
+## Limits
+
+- You can have up to 5 tokens at a time.
+- A token doesn't expire. It works until you rotate or revoke it.
+- A token has no scopes. It can read every app that you can read through the read API, and the apps that you own through the MCP server.
+- A token doesn't ask for a [two-factor authentication](/settings/two-factor-authentication) code, so treat it like a password.
+- The **Last used** column updates at most once a minute.
+
+## Rotate or revoke a token
+
+To replace a token without downtime, create a second token, switch your tools to it, and then revoke the first.
+
+- To replace a token in one step, click **Rotate**, and then click **Yes**. The old token stops working, and Vexo shows a new token with the same name.
+- To delete a token, click **Revoke**, and then click **Yes**. The token stops working.
+
+export default ({ children }) => <DocLayout current="api-tokens" previous={{href: '/settings/two-factor-authentication', label: 'Two-Factor Authentication'}} next={{href: '/settings/mcp-server', label: 'MCP Server'}}>{children}</DocLayout>

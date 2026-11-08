@@ -1,0 +1,71 @@
+import { DocLayout } from '../../../components';
+
+# MCP server
+
+Vexo runs a [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server, so you can ask an AI tool, such as Claude Code, Claude Desktop, or Cursor, questions about your app's analytics. The server is read-only, and it can see only the apps that you own. Apps that other people share with you through their team aren't available.
+
+The server URL is `https://api.vexo.co/mcp`. It uses the Streamable HTTP transport.
+
+## Connect Claude Code
+
+Install the Vexo plugin, which adds the server for you:
+
+```
+/plugin marketplace add vexotech/vexo-mcp-plugin
+/plugin install vexo@vexo
+```
+
+Then sign in:
+
+1. Run `/mcp`.
+2. Select **vexo**, and choose **Authenticate**.
+3. In the browser window that opens, sign in to Vexo. If you sign in with GitHub, sign in to the [Vexo dashboard](https://www.vexo.co) first, and then choose **Authenticate**.
+4. On **Authorize access**, click **Approve**.
+
+To list your apps and see example prompts, run `/vexo:connect`.
+
+## Connect another client
+
+For a client that takes a static configuration, such as Claude Desktop or Cursor, use a [personal access token](/settings/api-tokens):
+
+1. Create a personal access token.
+2. Add the server to your client's MCP configuration, and replace `YOUR_VEXO_TOKEN` with your token:
+
+```json
+{
+  "mcpServers": {
+    "vexo": {
+      "type": "http",
+      "url": "https://api.vexo.co/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_VEXO_TOKEN"
+      }
+    }
+  }
+}
+```
+
+A client that supports MCP authorization can sign in with OAuth instead of a token. The server publishes its OAuth metadata at `https://api.vexo.co/.well-known/oauth-protected-resource`.
+
+## Tools
+
+| Tool | What it does |
+| --- | --- |
+| `list_apps` | Lists the ID and name of each app that you own. |
+| `query_events` | Answers a plain-language question about one app's events, for example "top 10 screens by errors last week". It returns the matching rows and the SQL that it ran. |
+| `get_stats` | Returns an app's total events, distinct users, and distinct sessions for a time window. It counts events from your mobile app only. |
+
+`query_events` and `get_stats` take an `app_id` from `list_apps`, and an optional time window as `from` and `to` in milliseconds since the Unix epoch. The window defaults to the last 28 days. `query_events` returns up to 100 rows unless you ask for more, and at most 1,000.
+
+## Limits
+
+`query_events` uses AI, so Vexo limits how often each user can call it:
+
+- 60 questions an hour.
+- 90 questions a day, or 240 a day when the owner of the app has set up billing. The daily count resets at 00:00 UTC.
+
+`list_apps` and `get_stats` have no limit of their own.
+
+To answer a question, Vexo sends its text to OpenAI, which turns it into a query. Vexo runs the query on your data and limits it to the app and time window that you asked about.
+
+export default ({ children }) => <DocLayout current="mcp-server" previous={{href: '/settings/api-tokens', label: 'API Tokens'}} next={{href: '/settings/billing', label: 'Billing'}}>{children}</DocLayout>

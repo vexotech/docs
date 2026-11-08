@@ -1,0 +1,48 @@
+import { DocLayout } from '../../../../components';
+
+# Ask Vexo and AI summaries
+
+Vexo uses AI in two places for mobile apps: **Ask Vexo** answers questions about your metrics, and **AI Summary** describes what happened in a session. Both use OpenAI, and neither is available for websites.
+
+## Ask Vexo
+
+**Ask Vexo** turns a question in plain English into a chart of one of your app's metrics.
+
+1. Open your app's **Dashboard**, and find the **Ask Vexo** card.
+2. Type a question, for example "How many active users last week?", or click one of the example questions.
+3. Click **Ask**.
+
+Vexo shows how it understood the question, the answer, and a chart or a top-10 list.
+
+You can ask about these metrics:
+
+- Active users and new users
+- Total events, sessions, and average session time
+- Top screens
+- Users by country or by city
+- Custom events
+- Errors
+- Retention: D1, D7, D14, or D30
+
+Ask Vexo takes the time period from your question, up to the last 365 days. If the question doesn't name one, Vexo uses the last 28 days. The dashboard's date filter doesn't apply. Ask Vexo doesn't answer questions about revenue, individual users, or SQL. If it can't match your question to a metric, it suggests how to rephrase it.
+
+### Limits and data
+
+- Each app can answer 60 questions an hour, shared by everyone on its team. The count resets at the start of each hour, in UTC.
+- Vexo reads up to 500 characters of each question.
+- Vexo sends only the question's text to OpenAI, which picks the metric and the time period. The numbers come from your Vexo data, and Vexo doesn't send them to OpenAI.
+
+## AI session summaries
+
+An **AI Summary** describes a session in 2 to 4 sentences, and lists its highlights, such as the screens visited, errors, failed or slow network requests, signs of frustration like repeated taps, and where the user left.
+
+You see the summary when you open a session:
+
+- In **People**, open a person, and click one of their sessions.
+- In **Session Replays**, open a replay. The summary appears above the **Timeline**.
+
+Vexo generates the summary the first time that someone opens the session, and keeps it for 7 days. To generate a new one, click **Regenerate**.
+
+To write the summary, Vexo sends OpenAI the session's events, up to 2,000 of them: the device model, OS, app version, and city and country; the screens visited, and bursts of 3 or more taps within 2 seconds; error messages; custom event names and properties; failed requests and requests that took 3 seconds or more, with their URLs; and when the app moved to the background or foreground. Vexo cuts each error message and custom event property to 200 characters.
+
+export default ({ children }) => <DocLayout current="ask-vexo" previous={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}} next={{href: '/react-native-guide/mobile-publishing', label: 'Mobile Publishing'}}>{children}</DocLayout>
