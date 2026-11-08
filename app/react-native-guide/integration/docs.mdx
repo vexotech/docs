@@ -103,6 +103,26 @@ export function LogoutButton() {
 }
 ```
 
+#### User traits
+
+To attach properties such as a name, plan, or company to a user, pass a traits object as the second argument to `identifyDevice`. Traits require vexo-analytics X.Y.Z or later.
+
+```js
+import { identifyDevice } from 'vexo-analytics';
+
+await identifyDevice(userId, { name: 'Ada', plan: 'pro', company: 'Acme' });
+```
+
+- Trait values are strings, numbers, or booleans.
+- Traits merge across calls. A key that you send again replaces its earlier value, and keys that you leave out keep theirs. Calling `identifyDevice(userId)` without traits keeps them all.
+- To remove a trait, send its key with the value `null`, for example `{ plan: null }`. `identifyDevice(null)` removes the identifier but keeps the traits, so to clear both when a user signs out, send `identifyDevice(null, { name: null, plan: null, company: null })`.
+- The person's page in [People](/react-native-guide/mobile-features/people) lists the traits. The reserved keys `name`, `email`, and `plan` come first, in that order, followed by the other keys as you sent them.
+- Vexo stores up to 50 traits for each device. After that, new keys are ignored, and existing keys still update. String values longer than 1,024 characters are cut to 1,024.
+- If you call `identifyDevice` more than once before the SDK finishes starting, it sends only the last call's identifier and traits.
+- Traits are sent from iOS and Android. In a React Native web build, `identifyDevice` sends only the identifier.
+
+Traits can contain personal data. Send only the properties that your users agreed to share, as with the identifier. To erase a person's traits along with the rest of their data, see [Erase a person's data](/settings/data-retention#erase-a-persons-data).
+
 ### Tracking Opt-in
 
 You can programmatically enable or disable tracking in your app based on your business logic and requirements.
