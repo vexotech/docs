@@ -1,0 +1,80 @@
+import { DocLayout } from '../../../../components';
+
+# Alerts and anomaly detection
+
+Alerts tell you when an app's metrics need attention. Vexo has two kinds:
+
+- **Threshold alerts** fire when a metric crosses a value that you set, for example 500 errors in an hour.
+- **Anomaly alerts** fire when a daily metric moves away from its own recent normal range, so you don't need to pick a value.
+
+Every alert is off until you turn it on. You set alerts for each app, in its **App Settings**, and only the app's owner can change them.
+
+## Set up threshold alerts
+
+1. In the app's **App Settings**, go to **Alerts**.
+2. Turn on an alert, and enter its **Threshold**.
+3. Click **Save** on that alert. Turning an alert on doesn't save it.
+
+| Alert | Fires when | Default threshold |
+| --- | --- | --- |
+| **Error spike** | Your mobile app reports at least this many errors in the last hour. | 500 errors |
+| **Crash-free sessions drop** | The share of crash-free sessions in the last 24 hours falls below this percentage. | 99% |
+| **D1 retention falloff** | D1 retention, over the last 30 days of new users, falls below this percentage. | 20% |
+
+### Custom event alerts
+
+A custom event alert fires when a [custom event](/react-native-guide/mobile-features/custom-events) is sent at least a set number of times in an hour. You can watch as many events as you like, one alert for each event.
+
+1. Under **Custom event alerts**, click **Add alert**.
+2. In **Event to watch**, select the event. If it hasn't been sent yet, click **Event not listed yet? Type it manually**, and enter its name exactly. Names are case-sensitive.
+3. Turn the alert on, enter the **Threshold**, which must be at least 1, and click **Save**.
+
+**Recent custom event alerts** lists the custom event alerts that fired in the last 30 days.
+
+## Set up anomaly alerts
+
+Vexo compares yesterday's value of each metric, in UTC, with its daily values over the previous 28 days. An alert fires when yesterday is further from the average than the sensitivity that you set, measured in standard deviations.
+
+1. In the app's **App Settings**, go to **Anomaly alerts & digests**.
+2. Turn on an alert, and enter its **Sensitivity**. A lower number is more sensitive. The minimum is 1.
+3. Click **Save** on that alert.
+
+| Alert | Fires when the metric | Default sensitivity |
+| --- | --- | --- |
+| **Event volume anomaly** | Rises or drops | 3 |
+| **Active users anomaly** | Rises or drops | 3 |
+| **Crash-free rate anomaly** | Drops | 2.5 |
+| **Error rate anomaly** | Rises | 3 |
+
+An anomaly alert needs at least 7 days of data before yesterday, so it can't fire for a new app. Days without data don't count toward the baseline, so an app that stops sending data entirely doesn't trigger an alert. A metric that never changes doesn't trigger one either.
+
+**Recent anomalies** lists the anomaly alerts that fired in the last 30 days, with the value and its usual average.
+
+## How Vexo sends alerts
+
+Vexo checks alerts every hour, on the hour. After an alert fires, it waits 6 hours before it sends that alert again. When an alert fires, Vexo sends it to:
+
+- The app owner's email address, with the subject *Vexo alert: alert name — app name*. Other team members don't get the email.
+- Every Slack channel that you chose for the app. See [Slack](/settings/app-settings/integrations#slack).
+- The app's Microsoft Teams channel, if you connected one. See [Microsoft Teams](/settings/app-settings/integrations#microsoft-teams).
+- Each webhook in the app's **Webhook** settings whose **Delivers** is set to **Alerts (threshold & anomaly)**.
+
+A webhook receives the alert as JSON:
+
+```json
+{
+  "event": "alert",
+  "alertType": "ERROR_SPIKE",
+  "label": "Error spike",
+  "appId": "...",
+  "appName": "My App",
+  "unit": "errors",
+  "triggeredAt": "2026-11-07T14:00:00Z",
+  "value": 612,
+  "threshold": 500
+}
+```
+
+A custom event alert also has `eventName`. An anomaly alert has `baseline`, the usual daily average, and `zScore`, the number of standard deviations from it, in place of `threshold`.
+
+export default ({ children }) => <DocLayout current="alerts" previous={{href: '/settings/app-settings/export-api', label: 'Export API'}} next={{href: '/settings/app-settings/integrations', label: 'Integrations'}}>{children}</DocLayout>

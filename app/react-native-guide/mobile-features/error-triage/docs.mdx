@@ -1,0 +1,55 @@
+import { DocLayout } from '../../../../components';
+
+# Error triage
+
+The **Errors** page groups your app's errors so that each bug appears once, and lets you track each group until it's fixed. To open it, click **Errors** in the sidebar.
+
+## How Vexo groups errors
+
+Errors with the same name, the same message, and the same top stack frame form one group. Vexo ignores numbers, hexadecimal values, and quoted text in the message, so `Timeout after 3000ms` and `Timeout after 5000ms` are one group.
+
+## Find an error
+
+The list shows the error groups seen in the date range that you choose at the top of the page, most recently seen first. Use the **Version**, **OS**, and **Country** filters to narrow it, the status buttons to show **All**, **Open**, **Regressed**, **Resolved**, or **Ignored** groups, and **Filter by assignee** to show the groups assigned to a person or **Unassigned** ones.
+
+Each row shows:
+
+- The error's message and name, when it was last seen, and the app versions that it appeared in.
+- How many times it happened, split into crashes and handled errors.
+- The share of users who hit it.
+
+The list shows the 50 most recently seen groups. To find an older group, shorten the date range.
+
+## Investigate a group
+
+Click a row to open the group's page. It shows:
+
+- **Status** and **Assignee**, and counts of occurrences, devices, crashes, handled errors, and fatal errors.
+- **Latest stack trace**: the newest occurrence, with the app version that it happened on. Click **Watch replay** to open the session replay at the moment of the error, or **Go to session** to see the session's events.
+- How many occurrences followed a tap, within 3 seconds.
+- **Sessions with this error**: up to 50 sessions, each with when it last hit the error.
+- **Occurrences over time**: a daily chart.
+
+In the replay, the **Network** and **Console** tabs show the requests and console messages from that session. See [Session Replays & Heatmaps](/react-native-guide/mobile-features/session-replays-heatmaps).
+
+## Triage a group
+
+Only the app's owner can change a group's status or assignee. Changes save as soon as you make them.
+
+- **Open**: the status of every new group.
+- **Resolved**: the bug is fixed. If the error happens again after you resolve it, in any app version, the group shows **Regressed**, along with the version that you resolved it in and the version where it came back. To clear **Regressed**, resolve the group again.
+- **Ignored**: a label for errors that you don't plan to fix. Ignored groups still appear under **All**, and still count toward crash-free sessions and alerts.
+
+In **Assignee**, choose the owner or a member of the app's team. The app's [audit log](/settings/app-settings/audit-log) records each assignment.
+
+## Crashes and handled errors
+
+A crash is an error that your app didn't handle: an error that reached the top of the app, or one that you report with `trackError(err, { handled: false })`. Crash-free sessions and crash-free users count sessions and users without a crash. Errors that you report with `trackError(err)` are handled, and don't count against them. See [Error reporting](/react-native-guide/integration#error-reporting).
+
+Vexo's SDK reports JavaScript errors. It doesn't capture native crashes, but you can import them from Firebase Crashlytics. See [Crashlytics](/settings/app-settings/integrations#crashlytics). When the JavaScript thread stops responding for 5 seconds or more, the SDK records it in the session's timeline, not on the **Errors** page.
+
+## Get notified
+
+Vexo doesn't notify you about new or regressed groups. To hear about error spikes and crash-free drops, turn on **Error spike**, **Crash-free sessions drop**, **Crash-free rate anomaly**, or **Error rate anomaly** in [Alerts](/settings/app-settings/alerts). To file a Jira issue from the replay of an error, see [Jira](/settings/app-settings/integrations#jira).
+
+export default ({ children }) => <DocLayout current="error-triage" previous={{href: '/react-native-guide/mobile-features/locations', label: 'Locations'}} next={{href: '/react-native-guide/mobile-features/session-replays-heatmaps', label: 'Session Replays & Heatmaps'}}>{children}</DocLayout>
