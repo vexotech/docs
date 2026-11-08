@@ -48,7 +48,18 @@ With `vexo-analytics` 1.14.0 or later, calling `vexo()` later, after the user co
 
 **Visual indication** — the SDK does not render a recording indicator, so show your own persistent indicator while tracking is enabled.
 
-**Masking** — captured screenshots are blurred by default (the blur setting in your dashboard, on by default). There is currently no API to mask or exclude an individual view, so keep blurring on for any screen that can show sensitive content.
+**Masking** — with `vexo-analytics` X.Y.Z or later (native engine 0.12.0), the SDK paints a solid block over masked views in every replay frame, on the device, before the frame is blurred, encoded, or uploaded. Text inputs and images are masked by default, and password and secure inputs are always masked. Wrap other sensitive views in `<VexoMask>`, and opt a view back out with `<VexoUnmask>`:
+
+```jsx
+import { VexoMask, VexoUnmask } from 'vexo-analytics';
+
+<VexoMask>
+  <CreditCardForm />
+  <VexoUnmask><Text>Last 4: 1234</Text></VexoUnmask>
+</VexoMask>
+```
+
+The `masking` option of `vexo()` changes the defaults: `maskAllTextInputs` and `maskAllImages` (on by default), and `maskAllText` (off by default). Masking needs a native rebuild: an over-the-air JavaScript update doesn't turn it on. Heatmap screenshots aren't masked; the SDK always blurs them on the device. Masks are bounding boxes, so keep the blur setting in your dashboard on for any screen you haven't checked. For the full list of what masking doesn't cover, see the [`vexo-analytics` README on npm](https://www.npmjs.com/package/vexo-analytics#masking).
 
 ## Google Play Data safety form
 
