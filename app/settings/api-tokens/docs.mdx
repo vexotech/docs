@@ -29,7 +29,7 @@ For the endpoints that you can call, see [Export API](/settings/app-settings/exp
 
 - You can have up to 5 tokens at a time.
 - A token doesn't expire. It works until you rotate or revoke it.
-- A token has no scopes. It can read every app that you can read through the read API, and the apps that you own through the MCP server.
+- A token has no scopes. It can read every app that you can read, through the read API and the MCP server. It can't call the MCP server's write tools; for those, sign in with OAuth and the `mcp:write` scope (see [Allow changes](/settings/mcp-server#allow-changes)).
 - A token doesn't ask for a [two-factor authentication](/settings/two-factor-authentication) code, so treat it like a password.
 - The **Last used** column updates at most once a minute.
 
