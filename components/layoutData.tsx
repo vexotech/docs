@@ -150,6 +150,7 @@ export const sidebarData: SidebarData = [
                 ]
             },
             { title: 'Data Retention', name: 'data-retention', href: '/settings/data-retention' },
+            { title: 'SSO and Team Security', name: 'team-security', href: '/settings/team-security' },
         ]
     },
     { title: 'Contact Vexo', name: 'contact-vexo', href: '/contact-vexo' },

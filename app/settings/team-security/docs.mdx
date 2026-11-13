@@ -1,0 +1,73 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# SSO and Team Security
+
+This page describes how to sign in to Vexo through your company's identity provider, and how to set what everyone you share apps with must use to sign in.
+
+You manage both in the dashboard's **Settings**, under **Security**, in the **Team security** card. The settings apply to your account: you, the people on your team, and anyone you've given access to one of your apps.
+
+## Require two-factor authentication
+
+When you turn on **Require two-factor authentication**, everyone you share apps with must use two-factor authentication (2FA). Turn on 2FA for your own account first: Vexo doesn't let you require it of others until you use it yourself.
+
+A member who doesn't use 2FA can still sign in, but can't open your apps. Each of your apps shows them **Turn on two-factor authentication to open this app**, with a link to their own **Security** settings. Once they turn it on, your apps open again. If a member later turns 2FA off, your apps close to them again.
+
+This setting is available on every plan.
+
+## Single sign-on (SSO)
+
+With SSO, the people on your team sign in to Vexo through your identity provider, such as Okta, Microsoft Entra ID, or Google Workspace, with SAML or OpenID Connect (OIDC). Vexo connects to your identity provider through WorkOS.
+
+SSO is part of the Business plan. To get it, [contact us](mailto:hello@vexo.co?subject=Vexo%20Enterprise).
+
+### Set up SSO
+
+1. In **Settings** > **Security** > **Team security**, click **Verify domain**. Vexo opens the WorkOS Admin Portal, which asks you to add a DNS TXT record to your email domain, for example `example.com`. When the domain is verified, the portal returns you to Vexo, and the domain shows **Verified**.
+2. Click **Set up SSO**. In the Admin Portal, choose your identity provider and follow its steps to connect it. When you finish, the card shows **Identity provider connected**.
+
+Admin Portal links work for five minutes. If a link expires, click the button again.
+
+### Sign in with SSO
+
+1. On the Vexo sign-in page, click **Continue with SSO**.
+2. Enter your work email, and then click **Continue**. Vexo sends you to your identity provider.
+3. Sign in to your identity provider. It sends you back to Vexo, signed in.
+
+If your Vexo account uses two-factor authentication, Vexo asks for your code after your identity provider signs you in.
+
+Start from the Vexo sign-in page. Sign-in that starts from your identity provider's app dashboard (IdP-initiated sign-in) isn't supported.
+
+### New members join when they first sign in
+
+When someone signs in with SSO for the first time and has no Vexo account, Vexo creates one for them, as long as their email address is in one of your verified domains. The new member:
+
+- Takes one of your account's seats. When every seat is in use, Vexo refuses the sign-in until you add a seat or remove a member.
+- Joins your team with read access to your apps. To give them write access, change their permission in the app's **Team** settings. For more information, see [Team](/settings/app-settings/team).
+
+Vexo never creates an account for an email address outside your verified domains.
+
+### Existing Vexo accounts
+
+When someone signs in with SSO and already has a Vexo account with the same email address, Vexo links SSO to that account only if the account already belongs to your team: it's yours, a team member's, or it holds access to one of your apps. Otherwise, Vexo refuses the sign-in. To add that person, invite them to your team first, and then have them sign in with SSO.
+
+After the first sign-in, Vexo recognizes the person by their identity provider account, not by their email address.
+
+## Require SSO
+
+When you turn on **Require SSO**, the people you share apps with can sign in only with SSO. For them:
+
+- Password sign-in stops working.
+- **Continue with GitHub** stops working.
+- Password reset stops working.
+
+Turning on **Require SSO** signs them out of Vexo. They sign in again with SSO.
+
+You can turn it on only after a domain is verified and your identity provider is connected.
+
+### Owner access when your identity provider is down
+
+The requirement doesn't apply to you, the account owner. You can always sign in with your password and two-factor authentication, so a broken or misconfigured identity provider can't lock you out of your account. Because your password is that fallback, Vexo requires you to use two-factor authentication before you can require SSO.
+
+To recover from an identity provider problem, sign in with your password, and then turn off **Require SSO**. Your members can then sign in with their passwords again. A member who has never had a password, because Vexo created their account at their first SSO sign-in, can set one with **Forgot password?** on the sign-in page.
+
+export default ({ children }) => <DocLayout current="team-security" previous={{href: '/settings/data-retention', label: 'Data Retention'}} next={{href: '/contact-vexo', label: 'Contact Vexo'}}>{children}</DocLayout>
