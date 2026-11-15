@@ -2,7 +2,9 @@ import { DocLayout } from '../../../components';
 
 # MCP server
 
-Vexo runs a [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server, so you can ask an AI tool, such as Claude Code, Claude Desktop, or Cursor, questions about your app's analytics. The server is read-only, and it can see only the apps that you own. Apps that other people share with you through their team aren't available.
+Vexo runs a [Model Context Protocol](https://modelcontextprotocol.io) (MCP) server, so you can ask an AI tool, such as Claude Code, Claude Desktop, or Cursor, about your app's analytics, session replays, and errors. The server can see the apps that you can access: the apps that you own and the apps that a team shares with you, with the same access you have in the dashboard.
+
+Every connection can read. To let a connection change data, such as resolving an error, grant it the `mcp:write` scope. See [Allow changes](#allow-changes).
 
 The server URL is `https://api.vexo.co/mcp`. It uses the Streamable HTTP transport.
 
@@ -23,6 +25,20 @@ Then sign in:
 4. On **Authorize access**, click **Approve**.
 
 To list your apps and see example prompts, run `/vexo:connect`.
+
+The plugin's connection is read-only.
+
+## Allow changes
+
+The write tools, `set_error_group_status` and `add_session_comment`, need an OAuth token with the `mcp:write` scope. Claude Code asks for the scopes in a server's `oauth.scopes` setting, so add a write-enabled server for your user:
+
+```
+claude mcp add-json --scope user vexo-write '{"type":"http","url":"https://api.vexo.co/mcp","oauth":{"scopes":"mcp mcp:write"}}'
+```
+
+Then run `/mcp`, select **vexo-write**, and choose **Authenticate**. The **Authorize access** screen says that the connection can make changes.
+
+A client that doesn't ask for a scope gets read access (`mcp`). A write tool called without `mcp:write` returns JSON-RPC error `-32003`, with `requiredScope` set to `mcp:write` in the error's `data`.
 
 ## Connect another client
 
@@ -45,17 +61,71 @@ For a client that takes a static configuration, such as Claude Desktop or Cursor
 }
 ```
 
-A client that supports MCP authorization can sign in with OAuth instead of a token. The server publishes its OAuth metadata at `https://api.vexo.co/.well-known/oauth-protected-resource`.
+A personal access token is read-only: it can call every read tool, and no write tool.
 
-## Tools
+A client that supports MCP authorization can sign in with OAuth instead of a token. The server publishes its OAuth metadata at `https://api.vexo.co/.well-known/oauth-protected-resource`, with the scopes `mcp` (read) and `mcp:write`.
 
-| Tool | What it does |
+## Tool reference
+
+Every tool except `list_apps` takes an `app_id` from `list_apps`. Ids chain from one tool to the next: for example, `list_replays` and `get_error_group` return the `deviceId` and session id that `get_session_timeline` takes.
+
+Tools that read a time window take these parameters:
+
+| Parameter | Description |
 | --- | --- |
-| `list_apps` | Lists the ID and name of each app that you own. |
-| `query_events` | Answers a plain-language question about one app's events, for example "top 10 screens by errors last week". It returns the matching rows and the SQL that it ran. |
-| `get_stats` | Returns an app's total events, distinct users, and distinct sessions for a time window. It counts events from your mobile app only. |
+| `from` | Window start, in milliseconds since the Unix epoch. Defaults to 28 days ago. |
+| `to` | Window end, in milliseconds since the Unix epoch. Defaults to now. |
 
-`query_events` and `get_stats` take an `app_id` from `list_apps`, and an optional time window as `from` and `to` in milliseconds since the Unix epoch. The window defaults to the last 28 days. `query_events` returns up to 100 rows unless you ask for more, and at most 1,000.
+The window can span at most 366 days, the length of the dashboard's **Last Year** range.
+
+Tools that return a list take `limit`, the number of items per page, and `page`, starting at 1. A bad parameter, such as an unknown enum value or a `limit` out of range, returns a tool error that says what's allowed.
+
+### Apps and analytics
+
+| Tool | Parameters | Returns |
+| --- | --- | --- |
+| `list_apps` | None | The `id` and `name` of each app that you can access. |
+| `query_events` | `app_id`, `question` (required), `from`, `to` | The answer to a plain-language question, for example "top 10 screens by errors last week": the matching rows and the SQL that ran. Returns up to 100 rows unless you ask for more, and at most 1,000. |
+| `get_stats` | `app_id`, `from`, `to` | Total events, distinct users, and distinct sessions in the window. It counts events from your mobile app only. |
+
+### Replays and sessions
+
+| Tool | Parameters | Returns |
+| --- | --- | --- |
+| `list_replays` | `app_id`, `from`, `to`, `has_errors`, `has_rage_taps`, `user` (an email or a device ID), `screen`, `app_version`, `os`, `sort_by` (`timestamp` or `duration`), `limit` (1 to 50, default 10), `page` | Session replays, newest or longest first. Each has its `id`, `deviceId`, `deviceSessionId`, start `timestamp`, `durationInSeconds`, user, app version, OS, country, and `labels` (`has_errors`, `has_rage_taps`, `has_custom_events`). `totalItems` counts the matching replays. |
+| `get_session_timeline` | `app_id`, `device_id` and `session_id` (required), `from`, `to`, `limit` (1 to 500, default 100), `page` | One session's events in time order, such as screen views, taps, custom events, network requests, console logs, and errors with their stack traces, with the session's `start` and `end`. `hasMore` says whether the next page has more. Only events inside the window are read, so pass a window around the session, such as an hour either side of the replay's timestamp. |
+
+### Errors
+
+| Tool | Parameters | Returns |
+| --- | --- | --- |
+| `list_error_groups` | `app_id`, `from`, `to`, `status` (`OPEN`, `RESOLVED`, `IGNORED`, or `REGRESSED`), `limit` (1 to 100, default 20), `page` | Error groups, most recently seen first. A group is one deduplicated error, with its `fingerprint`, title, event, device, and crash counts, first and last occurrence, app versions, triage `status`, and assignee. The status filter applies after each page is read, so a filtered page can hold fewer items than `limit`. |
+| `get_error_group` | `app_id`, `fingerprint` (required), `from`, `to`, `limit` (1 to 50, default 5), `page` | The group's newest occurrence in the window (`latest`), with its message, stack trace, screen, app version, and replay ID, and the sessions that hit it, most recent first, each with its `deviceId`, `sessionId`, occurrence count, and `recordingId` when it has a replay. `latest` is null when the group had no occurrence in the window. |
+
+### Dashboards, insights, and funnels
+
+| Tool | Parameters | Returns |
+| --- | --- | --- |
+| `list_dashboards` | `app_id`, `platform` (`MOBILE`, the default, or `WEB`) | Dashboards with the saved insights on each: their `id`, name, description, and `type` (`TIME_SERIES` for a trend, `FUNNEL` for a funnel). |
+| `get_insight` | `app_id`, `dashboard_id` and `widget_id` (required), `from`, `to` | The insight's config and the data the dashboard shows: for a trend, the series, its total, and the previous period's total; for a funnel, its levels. |
+| `get_funnel` | `app_id`, `dashboard_id` and `widget_id` (required), `from`, `to`, `breakdown` (`OS`, `APP_VERSION`, `COUNTRY`, or `PROPERTY`), `property` | The funnel's config and `levels`, where level N's `total` is the number of users who reached step N, and level 0 is everyone the funnel considered. With `breakdown`, also the levels for each top value; `other: true` marks the row that folds in the rest. `PROPERTY` splits by a property of the first step's event, named in `property`. |
+
+### Cohorts and heatmaps
+
+| Tool | Parameters | Returns |
+| --- | --- | --- |
+| `list_cohorts` | `app_id` | Saved cohorts with their `id`, name, creator, and definition. |
+| `count_cohort` | `app_id`, `cohort_id` (required), `from`, `to`, `platform` (`MOBILE`, the default, or `WEB`) | The number of users in the cohort over the window. |
+| `list_heatmap_screens` | `app_id`, `from`, `to`, `search`, `limit` (1 to 100, default 20), `page` | Screens that have a heatmap, alphabetically, with each screen's tap count in the window, latest app version, and app versions. |
+
+### Write tools
+
+These tools need the `mcp:write` scope.
+
+| Tool | Parameters | Returns |
+| --- | --- | --- |
+| `set_error_group_status` | `app_id`, `fingerprint` and `status` (required; `OPEN`, `RESOLVED`, or `IGNORED`), `version` | The group's new status. When you resolve a group, pass `version`, the app version with the fix, so a later occurrence shows as a regression. Vexo sets `REGRESSED` itself. Needs write access to the app, as in the dashboard. |
+| `add_session_comment` | `app_id`, `session_id` and `body` (required; up to 5,000 characters), `timestamp_ms` | The new comment's `commentId`. The comment shows on the session's replay, signed with your email. `timestamp_ms` pins it to a playback position in milliseconds; without it, the comment is about the whole session. Any member of the app can comment, as in the dashboard. |
 
 ## Limits
 
@@ -64,7 +134,7 @@ A client that supports MCP authorization can sign in with OAuth instead of a tok
 - 60 questions an hour.
 - 90 questions a day, or 240 a day when the owner of the app has set up billing. The daily count resets at 00:00 UTC.
 
-`list_apps` and `get_stats` have no limit of their own.
+The other tools have no limit of their own.
 
 To answer a question, Vexo sends its text to OpenAI, which turns it into a query. Vexo runs the query on your data and limits it to the app and time window that you asked about.
 
