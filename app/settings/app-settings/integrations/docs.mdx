@@ -1,0 +1,122 @@
+import { DocLayout } from '../../../../components';
+
+# Integrations
+
+Vexo connects to the following tools:
+
+| Integration | What it does | Where you set it up |
+| --- | --- | --- |
+| [Slack](#slack) | Posts a daily analytics report and your alerts to a channel. | Your account settings |
+| [Microsoft Teams](#microsoft-teams) | Posts your alerts to a channel. | The app's settings |
+| [Jira](#jira) | Files a Jira issue that links to a session replay. | The app's settings |
+| [Segment](#segment) | Forwards your custom events to Segment. | The app's settings |
+| [Crashlytics](#crashlytics) | Imports Firebase Crashlytics crashes into Vexo's errors. | The app's settings |
+| [GitHub](#github) | Opens a pull request that installs the Vexo SDK in your repository. | The app's settings |
+
+You set up an app's integrations in its **App Settings**, and only the app's owner can connect, change, or disconnect them.
+
+## Slack
+
+Slack connects to your Vexo account, not to a single app, and you choose a channel for each app that you own.
+
+1. Click **My Account** at the bottom of the sidebar, and go to **Integrations**.
+2. Click **Add to Slack**, and allow Vexo to access your Slack workspace.
+3. In Slack, open the direct message from **Vexo AI**. Select an app in **Choose an app** and a channel in **Select a channel**, and click **Configure Daily Reports**. To add another app, make the same choices again in that message.
+4. In each channel that you chose, run `/invite @Vexo AI`.
+
+Each app's channel then receives:
+
+- A daily analytics report at 18:30 UTC that covers the previous day: for a mobile app, active users, average session time, downloads, errors, and top screens; for a website, active users, sessions, session time, errors, and top pages. Each metric shows its change from the day before.
+- The app's [alerts](/settings/app-settings/alerts), once you turn them on.
+
+To disconnect, click **Disconnect Slack Integration**, and then click **Disconnect Integration**. Vexo forgets your channel choices, so if you reconnect, choose them again.
+
+## Microsoft Teams
+
+Teams receives an app's alerts through a channel's Incoming Webhook.
+
+1. In Microsoft Teams, add an Incoming Webhook to the channel, and copy its URL. The URL must use `https` on an `office.com` host, for example `https://your-org.webhook.office.com/webhookb2/...`. Vexo doesn't accept Workflows webhook URLs.
+2. In the app's **App Settings**, go to **Microsoft Teams Integration**, paste the URL in **Incoming Webhook URL**, and click **Save**.
+3. Click **Test connection**. Vexo posts a card titled **Vexo connection test** to the channel.
+4. Turn on the alerts that you want in [Alerts](/settings/app-settings/alerts).
+
+By default, the channel receives every alert. To receive only some, select them under **Notifications**. The list includes only error spikes, crash-free sessions drops, D1 retention falloff, and funnel step conversion falloff, so selecting any of them also stops anomaly alerts and custom event alerts.
+
+To pause alerts and keep the URL, turn off **Delivery enabled** and click **Save**. To remove the integration, click **Disconnect**.
+
+## Jira
+
+Jira lets anyone on the app's team file a Jira Cloud issue from a session replay.
+
+To connect Jira:
+
+1. Create an [Atlassian API token](https://id.atlassian.com/manage-profile/security/api-tokens) for the Jira account that will create the issues.
+2. In the app's **App Settings**, go to **Jira Integration**, and enter your **Jira site URL**, for example `https://your-team.atlassian.net`, the **Account email**, and the **API token**.
+3. Click **Save**, and then click **Test connection**.
+
+To file an issue:
+
+1. Open a session replay, and click **Create Jira issue**.
+2. Enter the **Project key**, for example `APP`, and a **Summary** of up to 255 characters. Optionally, add a **Description**.
+3. Optional: to let anyone who can see the issue watch the replay without signing in to Vexo, select **Attach a guest link**. The link works for 30 days, or until you revoke it. Only the app's owner can attach one.
+4. Click **Create issue**.
+
+Vexo creates the issue with the type **Task**. Its description contains your description, a link to the replay, and the guest link if you attached one.
+
+## Segment
+
+Segment receives your custom events from Vexo. Vexo doesn't import data from Segment.
+
+1. In Segment, create an HTTP API source, and copy its write key.
+2. In the app's **App Settings**, go to **Segment Integration**, and paste the key in **Write Key**.
+3. Optional: in **Events to forward**, enter the names of the custom events to send, separated by commas. Leave it empty to send every custom event.
+4. Click **Save**, and then click **Test connection**.
+
+Forwarding starts within 5 minutes. Vexo sends each custom event, from your mobile app and your website, as a Segment `track` call:
+
+- `event` is the custom event's name, and `properties` are its properties.
+- `anonymousId` is the Vexo device ID.
+- If the properties include `userId` or `email`, Vexo first sends an `identify` call with the `email` and `name` traits, and sets `userId` on both calls.
+
+Vexo doesn't forward screens, errors, or other automatic events. If Segment rejects a batch three times, Vexo drops it. To pause forwarding and keep the key, turn off **Forwarding enabled** and click **Save**.
+
+Forwarding has no extra charge: the events count toward your usage once, when Vexo receives them.
+
+## Crashlytics
+
+The Crashlytics integration imports crashes from Firebase Crashlytics into the app's **Errors**, where Vexo groups them with the crashes that its SDK reports. Vexo doesn't connect to Firebase. Instead, you run a scheduled job that sends rows from your Crashlytics BigQuery export to Vexo.
+
+1. In Firebase, turn on the Crashlytics export to BigQuery.
+2. In the app's **App Settings**, go to **Crashlytics Integration**. Optionally, enter the **Firebase App ID** and **Bundle identifier** for your reference. Click **Save**.
+3. Schedule a job that reads new rows from the export and sends them to Vexo, up to 5,000 rows in each request:
+
+```bash
+curl -X POST https://api.vexo.co/integrations/crashlytics/import \
+  -H "X-Api-Key: <your app API key>" \
+  -H "Content-Type: application/json" \
+  -d '{ "crashes": [ /* Crashlytics BigQuery export rows */ ] }'
+```
+
+Use the app's API key, the same key as the SDK. The response counts the rows that Vexo `received`, `imported`, skipped as `duplicates`, and `skipped` because they had no readable `event_timestamp`. Vexo uses `event_id` to skip rows that it already imported, so you can safely send a row again.
+
+Vexo imports every row that you send into this app. It treats `FATAL` and `ANR` crashes as unhandled and `NON_FATAL` ones as handled. To show the screen where a crash happened, set a Crashlytics custom key named `current_screen`, `screen`, or `route`. Imported crashes have no session replay.
+
+The section shows **Last import** and **Imported crashes** so you can check that the job runs. To pause imports, turn off **Import enabled** and click **Save**.
+
+## GitHub
+
+The VexoAI GitHub App opens a pull request that installs and configures the Vexo SDK in your repository.
+
+1. In the app's **App Settings**, go to **GitHub Integration**, and click **Install VexoAI GitHub App**.
+2. On GitHub, choose the repositories that VexoAI can access, and install it.
+3. On **Select Repository**, click **Connect** next to your app's repository.
+4. Back in **GitHub Integration**, click **Set Up with VexoAI**.
+5. Review the pull request, **Add Vexo Analytics Integration**, and merge it.
+
+For a React Native app, the pull request adds the `vexo-analytics` package. For a website, it adds the Vexo script. To write the change, Vexo sends your repository's JavaScript, TypeScript, HTML, Vue, and JSON files to OpenAI. The change contains the app's API key.
+
+Each app connects to one repository, and VexoAI opens one pull request for it. To disconnect the repository, click **Disconnect**, and then click **Disconnect Repository**. VexoAI stays installed on GitHub. To uninstall it from your GitHub organization, for all your apps, click **Remove VexoAI**.
+
+You can also start this setup from the app's setup page, with **Set up with VexoAI**.
+
+export default ({ children }) => <DocLayout current="integrations" previous={{href: '/settings/app-settings/alerts', label: 'Alerts'}} next={{href: '/settings/app-settings/team', label: 'Team'}}>{children}</DocLayout>

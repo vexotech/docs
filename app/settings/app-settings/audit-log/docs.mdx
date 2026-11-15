@@ -1,0 +1,35 @@
+import { DocLayout } from '../../../../components';
+
+# Audit log
+
+An app's audit log records who changed the app's access or its data, and when. Each app has its own log, and only the app's owner can see it.
+
+To open it, go to the app's **App Settings**, and scroll to **Audit Log**.
+
+## What the log records
+
+| Action | Recorded when | Target |
+| --- | --- | --- |
+| `PERMISSION_GRANT` | Someone gives a person access to the app. | The person's email address |
+| `PERMISSION_REVOKE` | Someone removes a person's access. | The person's email address |
+| `APP_TRANSFER` | The owner transfers the app to someone else. | The new owner's email address |
+| `API_KEY_CREATE` | Someone creates an API key for the app. | None |
+| `DATA_ERASURE` | Someone [erases a person's data](/settings/data-retention#erase-a-persons-data). | The device ID |
+| `ERROR_GROUP_ASSIGN` | Someone assigns an [error group](/react-native-guide/mobile-features/error-triage) to a team member. | The assignee's email address |
+| `ERROR_GROUP_UNASSIGN` | Someone removes an error group's assignee. | The error group's fingerprint |
+
+Each entry also shows when it happened, in your local time, and who did it. Some actions add details: a `DATA_ERASURE` entry, for example, lists what was erased from each store.
+
+Vexo keeps every entry for as long as the app exists. You can't edit or delete entries.
+
+## Find an entry
+
+The log shows the newest entries first, 25 at a time. Click **Load more** to see older ones.
+
+To narrow the log, use the filters above it:
+
+- **Filter by actor**: shows entries by people whose email address contains the text that you type.
+- **All actions**: shows only one action. You can't filter on `ERROR_GROUP_ASSIGN` or `ERROR_GROUP_UNASSIGN`.
+- **From date** and **To date**: show entries from the start of the first day to the end of the last day, in UTC.
+
+export default ({ children }) => <DocLayout current="audit-log" previous={{href: '/settings/app-settings/team', label: 'Team'}} next={{href: '/settings/app-settings/delete-application', label: 'Delete Application'}}>{children}</DocLayout>

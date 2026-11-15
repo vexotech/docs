@@ -1,0 +1,45 @@
+import { DocLayout } from '../../../components';
+
+# Two-factor authentication
+
+Two-factor authentication (2FA) protects your Vexo account with a 6-digit code from an authenticator app. Once it's on, Vexo asks for a code each time you sign in, with your password or with GitHub. 2FA applies to your own account, and any user can turn it on.
+
+You manage 2FA in your account settings: click **My Account** at the bottom of the sidebar, and go to **Security**.
+
+## Turn on two-factor authentication
+
+1. In **Security**, click **Enable Two-Factor Authentication**.
+2. Scan the QR code with your authenticator app, for example Google Authenticator, Authy, or 1Password. If you can't scan it, enter the secret key manually. Click **Next**.
+3. Enter the 6-digit code from your app, and click **Verify**.
+4. Save your recovery codes. Click **Copy all** or **Download .txt**, store the codes somewhere safe, and click **I've saved these codes**.
+
+Finish setup within 10 minutes of step 1. After that, start again.
+
+## Sign in with a code
+
+After you enter your password or sign in with GitHub, Vexo asks for a code. Enter the 6-digit code from your authenticator app in **Authentication Code**, and click **Verify**.
+
+- Each code works only once.
+- You have 5 minutes and 5 attempts to enter the code. After that, sign in again.
+- After 15 failed codes in 30 minutes, Vexo stops accepting sign-ins for your account for a while.
+
+Apps that sign you in through the Vexo sign-in page, such as an [MCP client](/settings/mcp-server), also ask for the code. [Personal access tokens](/settings/api-tokens) don't.
+
+## Use a recovery code
+
+If you don't have your authenticator app, click **Use a recovery code instead**, enter one of your recovery codes in **Recovery Code**, and click **Verify**.
+
+- You get 8 recovery codes, and each one works only once.
+- A code is 8 letters and digits. Enter it without a dash, even though the field's placeholder shows one.
+
+To replace your recovery codes, click **Regenerate Recovery Codes**, enter a code from your authenticator app or your password, and click **Regenerate**. Your old codes stop working.
+
+## Turn off two-factor authentication
+
+1. In **Security**, click **Disable 2FA**.
+2. Enter your password, or a code from your authenticator app. If you sign in only with GitHub, enter a code.
+3. Click **Disable 2FA**.
+
+Vexo signs you out of every session, and you sign in again. Turning off 2FA doesn't revoke your personal access tokens.
+
+export default ({ children }) => <DocLayout current="two-factor-authentication" previous={{href: '/settings/account-settings', label: 'Account Settings'}} next={{href: '/settings/api-tokens', label: 'API Tokens'}}>{children}</DocLayout>

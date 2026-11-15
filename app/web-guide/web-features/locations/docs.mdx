@@ -1,0 +1,13 @@
+import { DocLayout } from '../../../../components';
+
+# Locations
+
+The **Locations** page shows where your website's visitors are, country by country, on a map and in a table. To open it, click **Locations** in the sidebar of your web dashboard. The page is available once you set your website's domain in **App Settings**.
+
+It works the same way as the mobile page, with the same metrics, map, globe, and comparisons. See [Locations](/react-native-guide/mobile-features/locations).
+
+## Filters
+
+The web page uses the date range, OS, referrer, and UTM filters. It always shows every country, so it doesn't use the country filter.
+
+export default ({ children }) => <DocLayout current="web-locations" previous={{href: '/web-guide/web-features/people', label: 'People'}} next={{href: '/web-guide/web-features/session-replays', label: 'Session Replays'}}>{children}</DocLayout>

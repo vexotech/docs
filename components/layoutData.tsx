@@ -58,12 +58,18 @@ export const sidebarData: SidebarData = [
                             { title: 'Retention', name: 'retention', href: '/react-native-guide/mobile-features/dashboard/retention' },
                             { title: 'Customize your Dashboard', name: 'customize-dashboard', href: '/react-native-guide/mobile-features/dashboard/customize-dashboard' },
                             { title: 'Funnels', name: 'funnels', href: '/react-native-guide/mobile-features/dashboard/funnels' },
+                            { title: 'User Flow', name: 'user-flow', href: '/react-native-guide/mobile-features/dashboard/user-flow' },
+                            { title: 'Custom Metrics', name: 'custom-metrics', href: '/react-native-guide/mobile-features/dashboard/custom-metrics' },
                         ]
                     },
+                    { title: 'Cohorts and Saved Segments', name: 'cohorts-segments', href: '/react-native-guide/mobile-features/cohorts-segments' },
                     { title: 'People', name: 'people', href: '/react-native-guide/mobile-features/people' },
+                    { title: 'Locations', name: 'locations', href: '/react-native-guide/mobile-features/locations' },
+                    { title: 'Error Triage', name: 'error-triage', href: '/react-native-guide/mobile-features/error-triage' },
                     { title: 'Session Replays & Heatmaps', name: 'session-replays-heatmaps', href: '/react-native-guide/mobile-features/session-replays-heatmaps' },
                     { title: 'Console Logs', name: 'console-logs', href: '/react-native-guide/mobile-features/console-logs' },
                     { title: 'Custom Events', name: 'custom-events', href: '/react-native-guide/mobile-features/custom-events' },
+                    { title: 'Ask Vexo and AI Summaries', name: 'ask-vexo', href: '/react-native-guide/mobile-features/ask-vexo' },
                 ]
             },
             { title: 'Mobile Publishing', name: 'mobile-publishing', href: '/react-native-guide/mobile-publishing' },
@@ -111,6 +117,7 @@ export const sidebarData: SidebarData = [
                         ]
                     },
                     { title: 'People', name: 'web-people', href: '/web-guide/web-features/people' },
+                    { title: 'Locations', name: 'web-locations', href: '/web-guide/web-features/locations' },
                     { title: 'Session Replays', name: 'web-session-replays', href: '/web-guide/web-features/session-replays' },
                     { title: 'Custom Events', name: 'web-custom-events', href: '/web-guide/web-features/custom-events' },
                 ]
@@ -133,6 +140,9 @@ export const sidebarData: SidebarData = [
         defaultOpen: false,
         children: [
             { title: 'Account Settings', name: 'account-settings', href: '/settings/account-settings' },
+            { title: 'Two-Factor Authentication', name: 'two-factor-authentication', href: '/settings/two-factor-authentication' },
+            { title: 'API Tokens', name: 'api-tokens', href: '/settings/api-tokens' },
+            { title: 'MCP Server', name: 'mcp-server', href: '/settings/mcp-server' },
             { title: 'Billing', name: 'billing', href: '/settings/billing' },
             { title: 'Subscription', name: 'subscription', href: '/settings/subscription' },
             { title: 'Usage and Limits', name: 'usage-limits', href: '/settings/usage-limits' },
@@ -145,7 +155,10 @@ export const sidebarData: SidebarData = [
                     { title: 'General Information', name: 'app-general-information', href: '/settings/app-settings/app-general-information' },
                     { title: 'Webhooks', name: 'webhooks', href: '/settings/app-settings/webhooks' },
                     { title: 'Export API', name: 'export-api', href: '/settings/app-settings/export-api' },
+                    { title: 'Alerts', name: 'alerts', href: '/settings/app-settings/alerts' },
+                    { title: 'Integrations', name: 'integrations', href: '/settings/app-settings/integrations' },
                     { title: 'Team', name: 'team', href: '/settings/app-settings/team' },
+                    { title: 'Audit Log', name: 'audit-log', href: '/settings/app-settings/audit-log' },
                     { title: 'Delete Application', name: 'delete-application', href: '/settings/app-settings/delete-application' },
                 ]
             },

@@ -3,9 +3,9 @@ import Image from 'next/image';
 
 # Webhooks
 
-Webhooks allow you to be notified every time a custom event is triggered. **Note: Webhooks are ONLY triggered for custom events, not for standard tracking events.**
+Webhooks allow you to be notified every time a custom event is triggered, or when an alert fires. Webhooks aren't triggered for standard tracking events.
 
-Here you are able to set an endpoint to which we'll send all custom events.
+Here you are able to set an endpoint to which we'll send all custom events. To send the app's [alerts](/settings/app-settings/alerts#how-vexo-sends-alerts) instead, set **Delivers** to **Alerts (threshold & anomaly)**.
 
 Once created, you'll see a validation token. This token will be included on every
 request sent to the endpoint as a Bearer token in the header: `X-Vexo-API-Token: Bearer <your-token>`.

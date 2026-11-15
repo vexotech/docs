@@ -1,0 +1,59 @@
+import { DocLayout } from '../../../../components';
+
+# Cohorts and saved segments
+
+The filter bar at the top of each page has two tools for reusing a group of users:
+
+- A **cohort** is a group of users defined by the [custom events](/react-native-guide/mobile-features/custom-events) that they sent, or didn't send. You apply it to your dashboard's funnels and custom event widgets.
+- A **saved segment** is a saved set of filters, such as a date range, country, and app version, that you apply to a page in one click.
+
+Cohorts and segments belong to the app, so everyone on the app's team sees and can use them. They work for mobile apps and websites.
+
+## Cohorts
+
+### Create a cohort
+
+1. In the filter bar, click the cohorts button, labeled **Behavioral cohorts**, and click **New cohort**.
+2. Enter a name for the cohort.
+3. Choose how to combine the steps: **ALL of** or **ANY of** these steps, or select **in order (sequence)**.
+4. For each step, choose **did** or **did not do**, enter the custom event's name exactly, and optionally set how many times, with **≥**.
+5. Optional: to match the event's properties, click **+ prop**, and enter a property, an operator, a value, and its type: **String**, **Number**, or **Boolean**.
+6. To add another step, click **Add step**. A cohort can have up to 10 steps.
+7. Check how many users match in the current date range, and click **Save cohort**.
+
+You can't edit a cohort. To change one, delete it and create it again.
+
+### How Vexo matches users
+
+Vexo works out a cohort's users each time that you apply it, from the events in the date range of the filter bar.
+
+- **did**: the user sent the event at least the number of times that you set.
+- **did not do**: the user sent other custom events in the date range, but not this one. Users who sent no custom events don't match.
+- **ALL of** matches users who meet every step, and **ANY of** users who meet at least one.
+- **in order (sequence)**: the user sent the steps' events in that order. In this mode, every step is **did**, and the counts don't apply.
+
+Property operators compare the event's property with your value: `EQ` (equals), `NOT` (doesn't equal), `LIKE` (contains), `NOT_LIKE` (doesn't contain), and `GT`, `GTE`, `LT`, and `LTE` (greater than, greater than or equal to, less than, and less than or equal to). A step's property filters must all match. Property names can contain letters, digits, `_`, `.`, and `-`.
+
+If the builder doesn't show a user count, check the event names and property names.
+
+### Apply a cohort
+
+Click the cohorts button, and click the cohort's name. The button shows the cohort's name while it's applied. To stop applying it, click **Clear cohort filter**.
+
+A cohort applies only to the [funnels](/react-native-guide/mobile-features/dashboard/funnels) and [custom event widgets](/react-native-guide/mobile-features/dashboard/customize-dashboard) on the dashboard. Other widgets and pages, such as retention, People, and Session Replays, show every user.
+
+To delete a cohort, click the **×** next to its name. Vexo deletes it right away, for the whole team.
+
+## Saved segments
+
+A saved segment stores every filter on the page, including the date range as fixed dates.
+
+1. Set the filters that you want to save.
+2. In the filter bar, click the segments button, labeled **Saved segments**, and click **Save current filters**.
+3. Enter a name, and confirm.
+
+To apply a segment, click the segments button, and click the segment's name. It replaces the page's current filters. Apply cohorts from the cohorts button, even if they appear in the segments list.
+
+To delete a segment, click the **×** next to its name. Vexo deletes it right away, for the whole team.
+
+export default ({ children }) => <DocLayout current="cohorts-segments" previous={{href: '/react-native-guide/mobile-features/dashboard/custom-metrics', label: 'Custom Metrics'}} next={{href: '/react-native-guide/mobile-features/people', label: 'People'}}>{children}</DocLayout>

@@ -1,0 +1,47 @@
+import { DocLayout } from '../../../../../components';
+
+# Custom metrics
+
+A custom metric combines Vexo metrics with arithmetic, for example errors per 100 sessions. You add custom metrics in the **Custom Metrics** card on your app's dashboard, and everyone on the app's team sees them.
+
+## Add a custom metric
+
+1. In **Custom Metrics**, optionally enter a **Name**. If you leave it empty, the metric is named after its formula.
+2. Build the formula: choose metrics from **+ metric**, and add operators and parentheses with the buttons, or type it.
+3. Click **Preview**, and fix any error that it shows.
+4. Click **Add**.
+
+Always preview a formula before you add it: if it has an error, **Add** doesn't save it, and doesn't show the error.
+
+To delete a custom metric, click its delete button, and then click **Delete**. To change a metric, delete it and add it again.
+
+## Write a formula
+
+A formula uses metric IDs, numbers, the operators `+`, `-`, `*`, and `/`, and parentheses. Multiplication and division come before addition and subtraction. For example:
+
+```
+error-count / user-session-count-v5 * 100
+```
+
+Put a space on each side of every operator, because metric IDs contain hyphens: `error-count/user-session-count-v5` isn't valid. **+ metric** offers these metrics:
+
+| Metric | ID |
+| --- | --- |
+| Errors | `error-count` |
+| Active devices | `active-devices-v4` |
+| New downloads | `new-downloads-v4` |
+| Sessions | `user-session-count-v5` |
+| Custom events | `custom-event-count` |
+| Screen taps | `screen-tap-count` |
+
+A formula can be up to 512 characters long, and a name up to 255.
+
+## How Vexo calculates it
+
+Vexo calculates a custom metric each time that you view it, for each day of the last 28 days. The card shows each metric's trend over those days, and its total, which is the formula applied to the totals of its metrics. For example, the total of `error-count / user-session-count-v5` is all errors divided by all sessions. The total of **Active devices** is the sum of its daily counts, not the number of unique devices.
+
+Dividing by zero gives 0, and a day with no value for a metric counts that metric as 0.
+
+Custom metrics always cover the last 28 days. The dashboard's date range and filters don't apply to them.
+
+export default ({ children }) => <DocLayout current="custom-metrics" previous={{href: '/react-native-guide/mobile-features/dashboard/user-flow', label: 'User Flow'}} next={{href: '/react-native-guide/mobile-features/cohorts-segments', label: 'Cohorts and Saved Segments'}}>{children}</DocLayout>

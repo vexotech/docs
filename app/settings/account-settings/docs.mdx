@@ -9,6 +9,18 @@ This is where you can change your name or the e-mail that you've provided.
 
 <DocImage src="/docs/account-general-info.png" width="1049" height="620" size="large" />
 
+# Security
+
+To protect your account with a code from an authenticator app, see [Two-factor authentication](/settings/two-factor-authentication).
+
+# API tokens
+
+To create tokens for the read API and the MCP server, see [Personal access tokens](/settings/api-tokens) and [MCP server](/settings/mcp-server).
+
+# Integrations
+
+To connect your Slack workspace to Vexo, see [Slack](/settings/app-settings/integrations#slack).
+
 # Billing
 
 The account card shows your current monthly event usage against the free allowance of **500,000 events per month**. Open it to break usage down by event type, including the performance and console events the SDK sends by default. On a pay-as-you-go plan it also estimates the events bill so far and where it's heading by the end of the billing period.
@@ -29,4 +41,4 @@ When you delete your account:
 
 Your apps' stored data isn't erased. To erase a person's data, or to ask for your data to be erased, see [Data Retention](/settings/data-retention).
 
-export default ({ children }) => <DocLayout current="account-settings" previous={{href: '/server-side/capture', label: 'Server-side capture'}} next={{href: '/settings/billing', label: 'Billing'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout current="account-settings" previous={{href: '/server-side/capture', label: 'Server-side capture'}} next={{href: '/settings/two-factor-authentication', label: 'Two-Factor Authentication'}}>{children}</DocLayout>

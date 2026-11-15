@@ -1,0 +1,32 @@
+import { DocLayout } from '../../../../../components';
+
+# User flow
+
+The **User Flow** card on your app's dashboard shows how users move between screens, as a Sankey chart. Each screen is a node, and each band is a move from one screen to the next.
+
+## Read the chart
+
+- A band's thickness is the number of times that users made that move.
+- A band's percentage is its share of the moves out of its screen. Percentages appear on bands above 5%.
+- When the bands that leave a screen add up to less than 100%, the rest of the users left the app from that screen.
+- Hover over a screen or a band to see its count.
+
+Vexo builds the chart from screen changes and from the screen shown when the app comes back to the foreground. It counts each move: a session that goes from screen A to screen B twice counts twice. Visits to the same screen in a row count once. The chart shows the 50 most common moves, so percentages are relative to those.
+
+Screens appear with the display names that you set in **App Settings**, under **Screen names**.
+
+## Focus on a screen
+
+To see only the screens that users came from and went to around one screen, click the screen in the chart, or select it in the dropdown above it. To see every screen again, select **All screens**.
+
+## Zoom
+
+Use the **Zoom in**, **Zoom out**, and **Reset zoom** buttons, or hold Command or Ctrl and scroll. Zoom ranges from 50% to 300%.
+
+## Data and filters
+
+User Flow always shows the last 28 days. The dashboard's date range and filters, and cohorts and segments, don't apply to it.
+
+User Flow needs screen events. If you turn off **Screens** in [Event Tracking](/react-native-guide/mobile-settings#event-tracking), the chart stays empty.
+
+export default ({ children }) => <DocLayout current="user-flow" previous={{href: '/react-native-guide/mobile-features/dashboard/funnels', label: 'Funnels'}} next={{href: '/react-native-guide/mobile-features/dashboard/custom-metrics', label: 'Custom Metrics'}}>{children}</DocLayout>

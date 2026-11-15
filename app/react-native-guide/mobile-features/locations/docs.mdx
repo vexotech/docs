@@ -1,0 +1,39 @@
+import { DocLayout } from '../../../../components';
+
+# Locations
+
+The **Locations** page shows where your users are, country by country, on a map and in a table. To open it, click **Locations** in the sidebar. Websites have the same page; see [Locations (Web)](/web-guide/web-features/locations).
+
+Vexo finds a device's country from its IP address with the MaxMind GeoLite2 database, so locations are approximate. Devices that Vexo can't place appear as **Unknown**.
+
+## Metrics
+
+Choose a metric with the buttons above the map:
+
+- **Users**: devices that were active in the date range.
+- **New users**: devices that first appeared in the date range, counted in the country where they first appeared.
+- **Sessions**: sessions in the date range.
+- **Avg. session length**: the average length of sessions that have a duration. A country needs at least 20 such sessions, or it shows **Not enough data**. The map colors each country by how its average compares with the overall average, from **Much shorter** to **Much longer**.
+
+Hover over a country to see all four metrics. The table below the map lists every country, with each metric in a column that you can sort. It also shows each country's share of users, and how its average session length compares with the overall average.
+
+## Map and globe
+
+Switch between a flat **Map** and a **Globe**, and click **Reset view** to go back to the starting view. The map needs a browser that supports WebGL2. Without it, the page shows the table only.
+
+## Compare countries
+
+1. Click a country on the map, or its row in the table. Vexo compares it with all other countries.
+2. To compare it with one other country instead, hold Shift and click the second country, or click **Compare** in its row.
+3. Read the **Metric** table, which shows each country's value and the **Difference**.
+4. To stop comparing, click **Clear comparison**.
+
+The comparison is part of the page's URL, so you can share it. When you compare a country with all other countries, the user count of the other countries is approximate, marked **≈**: a device seen in more than one country counts in each.
+
+## Filters
+
+The page uses the date range, OS, and app version filters. It always shows every country, so it doesn't use the country filter.
+
+The dashboard's **Countries** widget lists your top countries by users, and shows a country's cities when you open it. See [Users by Country](/react-native-guide/mobile-features/dashboard/users-by-country).
+
+export default ({ children }) => <DocLayout current="locations" previous={{href: '/react-native-guide/mobile-features/people', label: 'People'}} next={{href: '/react-native-guide/mobile-features/error-triage', label: 'Error Triage'}}>{children}</DocLayout>
