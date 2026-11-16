@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'Audit log',
-    description: "See who changed an app's team, transferred it, created an API key, erased a person's data, or assigned an error, and filter the log by person, action, or date.",
+    description: "See who signed in, changed access, viewed replays, or exported data in your Vexo apps, filter the app and team audit logs, and send the team log to your SIEM.",
 }
 
 export default function Home() {

@@ -1,14 +1,79 @@
-import { DocLayout, DocImage } from '../../../../components';
-import Image from 'next/image';
+import { DocLayout } from '../../../../components';
 
-# Team
+# Team and roles
 
-This are the team members that will have access your application data.
+Each app has a team: its owner, and the members whom the owner shares the app with. Each member holds one role on each app, and the role decides what they can see and do there.
 
-It's important to see who are the users that have access to the data behind your application, and what type of access they have.
-You can change the level of access for each team member at any point in time, if you have the required permissions for it.
-There are three defined levels of access:
-* __Owner:__ Only one person per app can be the owner, it refers to the person who created the app and has all privileges.
-* __Guest:__ They only have access to read the data from your application, no modifications allowed.
+- **Owner**: the person who created the app, or received it by transfer. Each app has one owner, who can do everything, including managing the team, transferring the app, and deleting it.
+- **Members**: the people whom the owner invites. Each member takes one of the owner's [seats](/settings/subscription#seats).
 
-export default ({ children }) => <DocLayout current="team" previous={{href: '/settings/app-settings/integrations', label: 'Integrations'}} next={{href: '/settings/app-settings/audit-log', label: 'Audit Log'}}>{children}</DocLayout>
+Only the app's owner can add members, remove them, and change their roles.
+
+## Built-in roles
+
+| Role | Permissions | Plan |
+| --- | --- | --- |
+| Admin | `VIEW`, `REPLAYS`, `PII`, `EXPORTS`, and `MANAGE` | Every plan |
+| Analyst | `VIEW`, `REPLAYS`, `PII`, and `EXPORTS` | Every plan |
+| Replay viewer | `VIEW` and `REPLAYS` | Business package |
+| Billing | `VIEW` and `BILLING` | Business package |
+
+Admin is what was called write access, and Analyst is what was called read access. Members who had those keep the same access. New members get Analyst unless you choose another role.
+
+To get the Business package, [contact us](mailto:hello@vexo.co?subject=Vexo%20Business).
+
+## What each permission allows
+
+| Permission | Allows | Also gives |
+| --- | --- | --- |
+| `VIEW` | Dashboards, events, errors, and the app's other analytics. Every role has it. | None |
+| `REPLAYS` | Session replays and recordings, session timelines, console and network logs, comments, and Jira issues created from a session. | `VIEW` |
+| `PII` | Personal data: people's profiles, the device list and each device's details, and power users. | `VIEW` |
+| `EXPORTS` | Data that leaves Vexo: CSV downloads, export jobs, the SQL console, webhooks, and the Events API. | `PII`, because exports include personal data |
+| `MANAGE` | Changes to the app: its settings, dashboards, alerts, integrations, share links, and [data erasure](/settings/data-retention#erase-a-persons-data). | Every other app permission: `REPLAYS`, `PII`, and `EXPORTS`, because those changes reach replays and personal data |
+| `BILLING` | The app owner's billing portal. See [The Billing role](#the-billing-role). | `VIEW` |
+
+`BILLING` is separate from `MANAGE`: an Admin doesn't get billing access.
+
+## Custom roles
+
+With the Business package, you can create your own roles in **Settings** > **Team**. Your custom roles work on every app that you own.
+
+1. Name the role. The name must be 1 to 64 characters, and different from your other roles and the built-in ones.
+2. Choose its permissions. Vexo adds what each one needs: every role gets `VIEW`, `EXPORTS` adds `PII`, and `MANAGE` adds `REPLAYS`, `PII`, and `EXPORTS`.
+3. Save the role.
+
+When you change a custom role, everyone who holds it gets the new permissions right away. You can't delete a custom role that a member holds: give those members another role first.
+
+Each change to a custom role appears as `ROLE_CHANGE` in your [team audit log](/settings/app-settings/audit-log).
+
+If your account loses the Business package, the roles that you already gave keep working, and you can give only Admin and Analyst.
+
+## Give a member a role
+
+- **On one app**: in the app's **App Settings** > **Team**, change the member's role. To add someone, invite them by email address and choose their role.
+- **On all your apps**: in **Settings** > **Team**, change the member's role. Vexo gives them that role on every one of your apps that they belong to. When their roles differ between apps, the team list shows that their roles are mixed.
+- **When you invite someone to your team**: in **Settings** > **Team**, choose the role that they get on each of your apps.
+
+Members who join through [single sign-on (SSO)](/settings/team-security) or [directory sync](/settings/app-settings/directory-sync) get Analyst on every app.
+
+Each role change appears as `PERMISSION_GRANT` in the app's [audit log](/settings/app-settings/audit-log).
+
+## When a role doesn't allow something
+
+Vexo shows members what their role allows. When a member opens something that their role doesn't include, such as the device list with the Replay viewer role, Vexo refuses it and says that their role doesn't allow it. To get access, they ask the app's owner for a role that includes the permission.
+
+With the API, the refusal is a `403` response whose `data` has `reason` set to `role` and `permission` set to the missing permission.
+
+## The Billing role
+
+A member whose role includes `BILLING`, such as someone in your finance team, can open the app owner's billing portal from the app. The portal is the Stripe billing portal of the owner's whole account, not of one app. In it, the member can update the card, view past invoices, and cancel the owner's subscription.
+
+Each time someone opens the portal this way, the app's audit log records `BILLING_PORTAL_OPEN`.
+
+## Limits
+
+- A role without `PII` still sees what replays show. A replay shows whatever the app's screens showed, and session lists and replays show the identifier that the SDK recorded for the session. To keep personal data out of mobile replays, keep [Blur session replays](/react-native-guide/mobile-settings#blur-session-replays) on.
+- The [MCP server](/settings/mcp-server)'s read tools need only `VIEW`, so any member's MCP client can query the app's events. Its write tools need `MANAGE`.
+
+export default ({ children }) => <DocLayout current="team" previous={{href: '/settings/app-settings/integrations', label: 'Integrations'}} next={{href: '/settings/app-settings/directory-sync', label: 'Directory Sync'}}>{children}</DocLayout>

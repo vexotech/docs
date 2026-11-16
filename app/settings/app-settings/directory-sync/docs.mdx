@@ -1,0 +1,60 @@
+import { DocLayout } from '../../../../components';
+
+# Directory sync (SCIM)
+
+With directory sync, your Vexo team follows your identity provider. When your IT team adds someone to your directory, they join your Vexo team. When IT suspends or removes them, Vexo removes their access.
+
+Vexo connects to your directory through WorkOS Directory Sync, the same service that Vexo uses for single sign-on (SSO). It works with the directories that WorkOS supports, such as Okta, Microsoft Entra ID, and Google Workspace.
+
+## Before you begin
+
+- Directory sync comes with the Enterprise package. To get it, [contact us](mailto:hello@vexo.co?subject=Vexo%20Enterprise).
+- Set up SSO first: verify your email domain and connect your identity provider. For more information, see [SSO and Team Security](/settings/team-security#set-up-sso).
+- You must be the account owner.
+
+## Connect your directory
+
+1. In **Settings** > **Team**, open the directory sync setup. Vexo opens the WorkOS Admin Portal for the organization that your SSO uses.
+2. In the Admin Portal, choose your identity provider, and follow its steps to connect your directory.
+3. Return to Vexo. When the directory is linked, **Settings** > **Team** shows it as connected, with the number of members that it manages.
+
+## What happens when your directory changes
+
+Vexo checks your directory for changes once a minute.
+
+| In your identity provider | In Vexo |
+| --- | --- |
+| You add a person, or a person already in the directory is active when you connect it. | The person joins your team with the Analyst role on every app that you own. If they don't have a Vexo account, Vexo creates one on a free seat, with their email address verified, and they sign in with SSO. If they already hold a seat on your account, Vexo links their account and keeps their roles. |
+| You suspend, deactivate, or remove a person. | Within about a minute, Vexo removes them from your team and from every app that you own, and turns off the share links that they made on your apps. Vexo also signs them out of every Vexo session, and revokes every personal access token and MCP refresh token of their Vexo account, including ones that they use outside your team. |
+| You restore a person. | They rejoin your team with the Analyst role on every app, if a seat is free. Their earlier roles aren't restored. |
+
+Vexo removes access even if your account no longer has the Enterprise package.
+
+An MCP access token that was issued before the removal keeps working until it expires, within an hour. It can't reach your apps, because the person no longer has a role on them.
+
+To give a member a role other than Analyst, change it in Vexo. For more information, see [Team and roles](/settings/app-settings/team#give-a-member-a-role).
+
+## When Vexo doesn't add someone
+
+Vexo doesn't add a person in these cases:
+
+- **Their email address isn't in one of your verified domains.** Vexo never creates or links an account for an address outside your verified domains. To add the domain, verify it in your SSO settings.
+- **They already have a Vexo account that's outside your team.** Vexo links an existing account only if it already holds a seat on your account. [Invite them to your team](/settings/app-settings/team#give-a-member-a-role) first.
+- **Every seat is in use.** Add a [seat](/settings/subscription#seats), or remove a member.
+
+After you fix the cause, Vexo adds the person the next time your directory reports a change for them, for example when you update their profile in your identity provider. Until Vexo links a person, it can't remove them either: if your identity provider removes someone whom Vexo never added, remove them from your Vexo team yourself.
+
+## Limits
+
+- Everyone joins as Analyst. Directory groups don't map to Vexo roles.
+- Name and email address changes in your directory after a person joins don't update their Vexo account.
+- When you disconnect a directory, its members stay on your team. To remove them, remove them in Vexo.
+
+## Audit log
+
+Every change that directory sync makes appears in your [team audit log](/settings/app-settings/audit-log), with the actor `directory-sync`:
+
+- `SCIM_PROVISION`: a person joined, rejoined, or couldn't be added. The entry shows `created`, `reactivated`, or `refused` with the reason: `domain_not_verified`, `outside_team`, or `no_free_seat`.
+- `SCIM_DEPROVISION`: a person was removed. The entry shows how many personal access tokens and MCP tokens Vexo revoked.
+
+export default ({ children }) => <DocLayout current="directory-sync" previous={{href: '/settings/app-settings/team', label: 'Team and Roles'}} next={{href: '/settings/app-settings/audit-log', label: 'Audit Log'}}>{children}</DocLayout>

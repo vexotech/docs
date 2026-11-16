@@ -157,7 +157,8 @@ export const sidebarData: SidebarData = [
                     { title: 'Export API', name: 'export-api', href: '/settings/app-settings/export-api' },
                     { title: 'Alerts', name: 'alerts', href: '/settings/app-settings/alerts' },
                     { title: 'Integrations', name: 'integrations', href: '/settings/app-settings/integrations' },
-                    { title: 'Team', name: 'team', href: '/settings/app-settings/team' },
+                    { title: 'Team and Roles', name: 'team', href: '/settings/app-settings/team' },
+                    { title: 'Directory Sync', name: 'directory-sync', href: '/settings/app-settings/directory-sync' },
                     { title: 'Audit Log', name: 'audit-log', href: '/settings/app-settings/audit-log' },
                     { title: 'Delete Application', name: 'delete-application', href: '/settings/app-settings/delete-application' },
                 ]
