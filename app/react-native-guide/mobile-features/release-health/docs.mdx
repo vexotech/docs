@@ -36,7 +36,7 @@ Click an error to open its group. For an app version, the links at the end of th
 
 ## How Vexo counts
 
-- A crash is an error that your app didn't handle. Errors that you report with `trackError` aren't crashes. Crash-free sessions is the share of sessions without a crash; crash-free users is the share of users without one.
+- A crash is an error that your app didn't handle. Errors that you report with `trackError` are handled, so they aren't crashes, unless you pass `{ handled: false }`. Crash-free sessions is the share of sessions without a crash; crash-free users is the share of users without one.
 - The pages read at most 90 days. If you choose a longer date range, they show its last 90 days, and say so.
 - New errors compare the two releases within the date range only. If the release before it had few sessions in the range, more groups can show as new; choose a longer range to compare more of its history.
 - Sessions that didn't report an app version, or an Expo update, count toward adoption but aren't listed as a release.
