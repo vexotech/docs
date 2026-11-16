@@ -69,6 +69,7 @@ export const sidebarData: SidebarData = [
                     { title: 'Session Replays & Heatmaps', name: 'session-replays-heatmaps', href: '/react-native-guide/mobile-features/session-replays-heatmaps' },
                     { title: 'Console Logs', name: 'console-logs', href: '/react-native-guide/mobile-features/console-logs' },
                     { title: 'Custom Events', name: 'custom-events', href: '/react-native-guide/mobile-features/custom-events' },
+                    { title: 'In-App Surveys', name: 'surveys', href: '/react-native-guide/mobile-features/surveys' },
                     { title: 'Ask Vexo and AI Summaries', name: 'ask-vexo', href: '/react-native-guide/mobile-features/ask-vexo' },
                 ]
             },
