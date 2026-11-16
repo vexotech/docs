@@ -26,13 +26,92 @@ Because the dev-server filter is anchored to those exact paths, your own request
 
 ### Query strings stay on the device
 
-From `vexo-analytics` X.Y.Z, the SDK records each request's URL with its origin and path only: it drops the query string and the fragment on the device, so tokens, emails, and IDs in them never reach Vexo. For example, `https://api.example.com/users/42?email=a@b.com` is recorded as `https://api.example.com/users/42`, and requests that differ only in their query string are counted under one route. Credentials in a URL (`user:password@`) are never recorded. Headers and request and response bodies are never captured. IDs in the path itself are kept, so keep personal data out of your URL paths.
+From `vexo-analytics` X.Y.Z, the SDK records each request's URL with its origin and path only: it drops the query string and the fragment on the device, so tokens, emails, and IDs in them never reach Vexo. For example, `https://api.example.com/users/42?email=a@b.com` is recorded as `https://api.example.com/users/42`, and requests that differ only in their query string are counted under one route. Credentials in a URL (`user:password@`) are never recorded. Headers and request and response bodies aren't captured unless you turn them on for specific URLs; see [Headers and bodies](#headers-and-bodies). IDs in the path itself are kept, so keep personal data out of your URL paths.
 
 To record query strings and fragments too, pass `network: { captureQueryParams: true }`. Turn it on only if your URLs carry no personal data or secrets:
 
 ```js
 vexo('YOUR_API_KEY', { network: { captureQueryParams: true } });
 ```
+
+## Headers and bodies
+
+From `vexo-analytics` X.Y.Z, you can record the request and response headers and bodies of the requests you choose. They appear in the session replay's **Network** tab: select **Details** on a request to see them. Use them to debug a failed checkout or a wrong response without asking the user what happened.
+
+Header and body capture is off by default. Turn it on only for endpoints whose payloads you've reviewed.
+
+### Turn it on
+
+Pass `network.captureHeadersAndBodies` with an allow list:
+
+```js
+vexo('YOUR_API_KEY', {
+  network: {
+    captureHeadersAndBodies: {
+      // Required. URL prefixes (strings) or regular expressions.
+      allowUrls: ['https://api.example.com/v1/'],
+      // Optional. Never recorded, even when allowed.
+      denyUrls: [/\/auth\//, /\/payments\//, /\/health-records\//],
+    },
+  },
+});
+```
+
+- A string matches every URL that starts with it. End it with `/` so `https://api.example.com` doesn't also match `https://api.example.com.example.net`.
+- A regular expression matches if it's found anywhere in the URL.
+- `denyUrls` wins over `allowUrls`.
+- With no `allowUrls`, or an empty list, nothing is recorded.
+
+The SDK records text bodies only: JSON, plain text, HTML, XML, CSV, form data, and GraphQL. It doesn't read images, files, or streaming responses (event streams). It reads a response body from a copy, so your app's own response is untouched.
+
+### What the SDK filters on the device
+
+Before a request leaves the device, the SDK replaces these values with `[Filtered]`:
+
+- **Credential headers:** `Authorization`, `Proxy-Authorization`, `Cookie`, `Set-Cookie`, and any header whose name contains `auth`, `token`, `secret`, `password`, `api-key`, `session`, `signature`, or `credential`. The header name stays, so you can see that it was sent.
+- **Sensitive fields in JSON and form bodies,** at any depth: keys that name a password, token, secret, API key, session, cookie, card number, CVV or CVC, Social Security number, or IBAN.
+- **Common personal data anywhere** in headers and bodies: email addresses, card numbers that pass the Luhn check, US Social Security numbers in the `123-45-6789` form, and JSON Web Tokens.
+
+A JSON body over 256 KB, or one that isn't valid JSON, isn't recorded: the SDK can't check it field by field, so a `[Filtered]` note takes its place. Each recorded body is then cut to 10,240 characters.
+
+The Vexo API applies the credential-header filter and the size limits again when it receives a request.
+
+### Redact your own data with `beforeSend`
+
+The built-in rules can't know which fields in your API carry personal data, such as names, addresses, phone numbers, dates of birth, or health data. Redact them with `beforeSend`. It receives each request's headers and bodies after the built-in filtering, before the 10,240-character limit, and the request URL. Return what to record, or `null` to record the request without headers and bodies:
+
+```js
+captureHeadersAndBodies: {
+  allowUrls: ['https://api.example.com/v1/'],
+  beforeSend: (detail, url) => {
+    if (url.includes('/profile')) return null;
+    return {
+      ...detail,
+      responseBody: detail.responseBody?.replace(/"(name|phone|address)":"[^"]*"/g, '"$1":"[Filtered]"'),
+    };
+  },
+},
+```
+
+If `beforeSend` throws or returns anything but an object, the SDK records the request without headers and bodies.
+
+### Privacy guidance
+
+Request and response bodies can carry the most sensitive data your app handles. Turning on body capture is a new flow of personal data to Vexo, so treat it as one:
+
+- **Collect the minimum.** Allow the few endpoints you need to debug, not your whole API host. Deny sign-in, payment, and health endpoints, and any endpoint that returns another person's data.
+- **Review what's recorded.** Open a replay of a test session and check each allowed endpoint's headers and bodies before you release.
+- **Redact the rest.** Use `beforeSend` for any personal data the built-in rules don't filter.
+- **Update your disclosures.** Your privacy policy, your data processing terms with your customers, and your App Store and Google Play data declarations must cover what these bodies contain. For example, if a body includes a user's name or address, declare that data type for Vexo. See [App Store and Play compliance](/react-native-guide/store-compliance).
+- **Consent applies.** Headers and bodies follow the same consent and opt-out as every other event: nothing is recorded before `grantConsent()` when you use `requireConsent`, or after `disableTracking()`.
+
+Headers and bodies are kept with your other events and deleted with them, and only team members with access to the app can see them. Replay share links don't include them.
+
+### Billing
+
+Headers and bodies don't add events. They're part of the request's existing network event, so your event count and your bill stay the same.
+
+To stop recording them, remove `captureHeadersAndBodies` from `vexo()` in your next release. To stop all network capture right away, set **Network (fetch)** to **Off** in [Event Tracking](/react-native-guide/mobile-settings#event-tracking).
 
 ## Sorting
 
