@@ -1,0 +1,149 @@
+import { DocLayout } from '../../../../components';
+
+# Feature flags
+
+Feature flags let you change what your app does without shipping a new build. Use a flag to:
+
+- Turn a feature on for a percentage of your users, and raise the percentage as you gain confidence.
+- Show a feature only to some users, such as users on your pro plan or the users in a [cohort](/react-native-guide/mobile-features/cohorts-segments).
+- Split users between two or more variants of a screen.
+- Send configuration to your app as JSON (remote config), such as a price or a piece of copy.
+- Turn a feature off for everyone at once if something goes wrong.
+
+Flags belong to an app, so everyone on the app's team sees them. Anyone with write access to the app can create and change them.
+
+## Before you begin
+
+- Install `vexo-analytics` 1.15.0 or later. See [React Native Integration](/react-native-guide/integration).
+- To target users by traits, identify them with `identifyDevice`. See [Device Identity](/react-native-guide/integration#device-identity).
+
+## Create a flag
+
+1. Open your app, and in the navigation, click **Feature flags**.
+2. Click **Create flag**.
+3. Enter a key, such as `new-checkout`. A key is 1 to 100 letters, numbers, hyphens, or underscores, and it's unique in the app. Your code reads the flag by this key.
+4. Set the **rollout percentage**: the share of matching users who get the flag, from 0 to 100.
+5. Optional: add **trait rules**, a **cohort**, **variants**, or a **payload**. See the sections that follow.
+6. Turn the flag on, and click **Save**.
+
+To turn a flag off for everyone, use its switch in the list. To delete a flag, open it and click **Delete**. Your app then reads it as off.
+
+## Read a flag in your app
+
+Use the `useFeatureFlag` hook in a component. It returns the flag while it's on for the user, and `undefined` while it's off, and it re-renders the component when the value changes.
+
+```tsx
+import { useFeatureFlag } from 'vexo-analytics';
+
+function CheckoutScreen() {
+  const newCheckout = useFeatureFlag('new-checkout');
+  return newCheckout ? <NewCheckout /> : <Checkout />;
+}
+```
+
+Outside a component, use `getFeatureFlag`. It returns the value that the SDK has now, without waiting for the network.
+
+```tsx
+import { getFeatureFlag } from 'vexo-analytics';
+
+if (getFeatureFlag('new-checkout')) {
+  // ...
+}
+```
+
+A flag that's on has two fields:
+
+- `variant`: the variant that the user gets, or `null` for a flag without variants.
+- `payload`: the flag's JSON payload, or `null` if it has none.
+
+```tsx
+const paywall = useFeatureFlag('paywall');
+const price = paywall?.variant === 'discount' ? 3.99 : 4.99;
+
+const copy = getFeatureFlag('onboarding-copy')?.payload as { title: string } | undefined;
+```
+
+Write your code so that `undefined` gives the current experience. A user gets `undefined` before the first response arrives, while offline on a first launch, and if your app can't reach Vexo.
+
+## How the SDK loads flags
+
+The SDK requests flags the first time your app reads one, after `vexo()` has registered the device. It stores the response on the device, so later launches start with the last values and then refresh them. The SDK also refreshes flags after `identifyDevice`, because a user's traits can change which flags they get, and when your app returns to the foreground, at most every 5 minutes.
+
+Until the first response arrives, the SDK serves values in this order:
+
+1. The values that it stored on an earlier launch.
+2. The values that you pass in `bootstrapFlags`.
+
+A response replaces every value: a flag that isn't in it is off.
+
+The SDK doesn't request flags when it isn't allowed to send data, for example before the user gives consent if you use [Tracking Opt-in](/react-native-guide/integration#tracking-opt-in). Your app then gets the stored or bootstrap values.
+
+### Bootstrap flags
+
+To have values on a user's very first launch, before any response, pass them to `vexo()`:
+
+```tsx
+vexo('YOUR_API_KEY', {
+  bootstrapFlags: {
+    'new-checkout': { variant: null, payload: null },
+  },
+});
+```
+
+A flag that you leave out of `bootstrapFlags` reads as off until the first response.
+
+## How Vexo decides who gets a flag
+
+Vexo evaluates flags on its servers, so your targeting rules never ship inside your app. A flag is on for a user when all of these are true:
+
+1. The flag is on.
+2. The user matches every trait rule.
+3. The user's device is in the cohort, if you chose one.
+4. The user falls inside the rollout percentage.
+
+### Rollout
+
+Vexo places each user at a fixed point from 0 to 100 for each flag, from a hash of the flag's key and the user. A user whom you [identified](/react-native-guide/integration#device-identity) gets the same point on every device, so they see the same value on their phone and their tablet. A device that you didn't identify is its own user.
+
+Because the point is fixed, raising the rollout from 20% to 50% keeps the first 20% and adds more users, and lowering it removes users without reshuffling the rest.
+
+### Trait rules
+
+A trait rule compares one of the user's traits, which you send with `identifyDevice`, with a value. The operators are the same as in the People filters: `EQ` (equals), `NOT` (doesn't equal), `LIKE` (contains), `NOT_LIKE` (doesn't contain), and `GT`, `GTE`, `LT`, and `LTE` for numbers. A user without the trait matches no rule about it, not even `NOT`. A flag can have up to 10 trait rules, and the user must match all of them.
+
+Vexo reads the user's traits each time the device requests flags, from every device of that user and from traits that you set with the server identify API.
+
+### Cohorts
+
+A flag can target one saved [cohort](/react-native-guide/mobile-features/cohorts-segments). Vexo uses the cohort's members over the last 30 days and refreshes them about every 10 minutes, so a user who just joined a cohort can wait up to about 10 minutes to get the flag. A cohort used by a flag can have up to 500,000 members; a larger cohort matches nobody. If you delete a cohort that a flag targets, the flag matches nobody until you change it.
+
+### Variants
+
+To split users between versions, add 2 to 20 variants, each with a key and a weight. Weights are percentages of the users who get the flag, and they must add up to 100. A user always gets the same variant, and changing the rollout percentage doesn't move users between variants.
+
+### Payload
+
+A payload is any JSON, up to 10,000 bytes, that your app reads from `payload` while the flag is on. Use it as remote config: set a flag to 100% with a payload, and change the payload in the dashboard to change your app.
+
+## When changes reach your users
+
+Vexo applies a change to a flag within about a minute. A device sees it the next time that it requests flags: on the next launch, after `identifyDevice`, or when the app returns to the foreground more than 5 minutes after the last request.
+
+## Pricing
+
+Feature flags are included on every plan. Each request that your app makes for flags counts as one flag request, however many flags it returns. A device makes about one request per launch.
+
+- On pay-as-you-go billing, the first 1,000,000 flag requests in each billing cycle are free, then they're **$25 per million**, billed monthly with your event usage.
+- On the free plan, flag requests aren't billed.
+
+See [Subscription](/settings/subscription).
+
+## Limits
+
+- 100 flags per app.
+- 10 trait rules and 1 cohort per flag.
+- 2 to 20 variants per flag.
+- 10,000 bytes of payload per flag.
+- 500,000 members in a cohort that a flag targets.
+
+export default ({ children }) => <DocLayout current="feature-flags" previous={{href: '/react-native-guide/mobile-features/ask-vexo', label: 'Ask Vexo and AI Summaries'}} next={{href: '/react-native-guide/mobile-publishing', label: 'Mobile Publishing'}}>{children}</DocLayout>

@@ -70,6 +70,7 @@ export const sidebarData: SidebarData = [
                     { title: 'Console Logs', name: 'console-logs', href: '/react-native-guide/mobile-features/console-logs' },
                     { title: 'Custom Events', name: 'custom-events', href: '/react-native-guide/mobile-features/custom-events' },
                     { title: 'Ask Vexo and AI Summaries', name: 'ask-vexo', href: '/react-native-guide/mobile-features/ask-vexo' },
+                    { title: 'Feature Flags', name: 'feature-flags', href: '/react-native-guide/mobile-features/feature-flags' },
                 ]
             },
             { title: 'Mobile Publishing', name: 'mobile-publishing', href: '/react-native-guide/mobile-publishing' },
