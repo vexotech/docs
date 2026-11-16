@@ -101,6 +101,7 @@ Tools that return a list take `limit`, the number of items per page, and `page`,
 | --- | --- | --- |
 | `list_error_groups` | `app_id`, `from`, `to`, `status` (`OPEN`, `RESOLVED`, `IGNORED`, or `REGRESSED`), `limit` (1 to 100, default 20), `page` | Error groups, most recently seen first. A group is one deduplicated error, with its `fingerprint`, title, event, device, and crash counts, first and last occurrence, app versions, triage `status`, and assignee. The status filter applies after each page is read, so a filtered page can hold fewer items than `limit`. |
 | `get_error_group` | `app_id`, `fingerprint` (required), `from`, `to`, `limit` (1 to 50, default 5), `page` | The group's newest occurrence in the window (`latest`), with its message, stack trace, screen, app version, and replay ID, and the sessions that hit it, most recent first, each with its `deviceId`, `sessionId`, occurrence count, and `recordingId` when it has a replay. `latest` is null when the group had no occurrence in the window. |
+| `list_releases` | `app_id`, `from`, `to`, `by` (`APP_VERSION`, the default, or `EXPO_UPDATE`) | Releases with sessions in the window, newest first by the day each was first seen. Each has its sessions, users, crashed sessions and users, crash-free session and user rates, and adoption (its percent of the window's sessions). The next release in the list is the one users had before it. The window can span at most 90 days. |
 
 ### Dashboards, insights, and funnels
 
