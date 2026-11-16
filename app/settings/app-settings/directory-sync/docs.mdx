@@ -41,8 +41,9 @@ Vexo doesn't add a person in these cases:
 - **Their email address isn't in one of your verified domains.** Vexo never creates or links an account for an address outside your verified domains. To add the domain, verify it in your SSO settings.
 - **They already have a Vexo account that's outside your team.** Vexo links an existing account only if it already holds a seat on your account. [Invite them to your team](/settings/app-settings/team#give-a-member-a-role) first.
 - **Every seat is in use.** Add a [seat](/settings/subscription#seats), or remove a member.
+- **The person is you, the account owner.** Directory sync never manages the owner's account, so that your password and 2FA still work if your identity provider fails. Removing you in your identity provider doesn't sign you out of Vexo.
 
-After you fix the cause, Vexo adds the person the next time your directory reports a change for them, for example when you update their profile in your identity provider. Until Vexo links a person, it can't remove them either: if your identity provider removes someone whom Vexo never added, remove them from your Vexo team yourself.
+After you fix one of the other causes, Vexo adds the person the next time your directory reports a change for them, for example when you update their profile in your identity provider. Until Vexo links a person, it can't remove them either: if your identity provider removes someone whom Vexo never added, remove them from your Vexo team yourself.
 
 ## Limits
 
@@ -54,7 +55,7 @@ After you fix the cause, Vexo adds the person the next time your directory repor
 
 Every change that directory sync makes appears in your [team audit log](/settings/app-settings/audit-log), with the actor `directory-sync`:
 
-- `SCIM_PROVISION`: a person joined, rejoined, or couldn't be added. The entry shows `created`, `reactivated`, or `refused` with the reason: `domain_not_verified`, `outside_team`, or `no_free_seat`.
+- `SCIM_PROVISION`: a person joined, rejoined, or couldn't be added. The entry shows `created`, `reactivated`, or `refused` with the reason: `domain_not_verified`, `outside_team`, `no_free_seat`, or `owner`.
 - `SCIM_DEPROVISION`: a person was removed. The entry shows how many personal access tokens and MCP tokens Vexo revoked.
 
 export default ({ children }) => <DocLayout current="directory-sync" previous={{href: '/settings/app-settings/team', label: 'Team and Roles'}} next={{href: '/settings/app-settings/audit-log', label: 'Audit Log'}}>{children}</DocLayout>

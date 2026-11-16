@@ -5,7 +5,7 @@ import { DocLayout } from '../../../../components';
 The audit log records who did what in your apps and your account, and when: changes to access and settings, sign-ins, and who viewed or exported data. You can read it in two places:
 
 - **An app's audit log** shows one app's entries. The app's owner opens it in the app's **App Settings**, under **Audit Log**. It's available on every plan.
-- **The team audit log** shows your whole account in one place: your team's sign-ins, your team's role, SIEM export, and directory sync changes, and the entries of every app that you own, including apps that you deleted. Open it in **Settings** > **Team**. It comes with the Business package. To get the package, [contact us](mailto:hello@vexo.co?subject=Vexo%20Business).
+- **The team audit log** shows your whole account in one place: your team's sign-ins; changes to your SSO, security requirements, roles, SIEM export, directory sync, and personal access tokens; and the entries of every app that you own, including apps that you deleted. Open it in **Settings** > **Team**. It comes with the Business package. To get the package, [contact us](mailto:hello@vexo.co?subject=Vexo%20Business).
 
 Vexo keeps every entry. You can't edit or delete entries.
 
@@ -19,7 +19,7 @@ These entries appear in the app's audit log and in the team audit log.
 
 | Action | Recorded when | Target | Details |
 | --- | --- | --- | --- |
-| `PERMISSION_GRANT` | The app's owner adds a person to the app or changes their role. | The person's email address | The role |
+| `PERMISSION_GRANT` | The app's owner adds a person to the app or changes their role. | The person's email address | `type`: the role's key, such as `ANALYST`, or a custom role's ID |
 | `PERMISSION_REVOKE` | The app's owner removes a person from the app. | The person's email address | None |
 | `APP_TRANSFER` | The owner transfers the app to someone else. | The new owner's email address | None |
 | `API_KEY_CREATE` | Someone creates an API key for the app. | None | None |
@@ -48,12 +48,19 @@ These entries belong to your account, not to one app, so they appear only in the
 | Action | Recorded when | Target | Details |
 | --- | --- | --- | --- |
 | `LOGIN` | Someone signs in to Vexo, with a password, GitHub, or SSO, after the two-factor authentication (2FA) step if they use 2FA. | The person's email address | `method`: `PASSWORD`, `GITHUB`, or `SSO`; `twoFactor`: `true` when they entered a 2FA code; `ip`: their IP address |
+| `SSO_LOGIN` | Someone signs in through your [single sign-on (SSO)](/settings/team-security). A `LOGIN` entry follows when they get their session. | Your WorkOS organization's ID | `profile`: their identity provider profile's ID; `provisioned`: `true` when Vexo created their account at this sign-in |
+| `SSO_SETUP` | You open the WorkOS Admin Portal to verify a domain, connect your identity provider, or connect a directory. | Your WorkOS organization's ID | `intent`: `domain_verification`, `sso`, or `dsync`; `organizationCreated` |
+| `REQUIRE_SSO_CHANGE` | You turn **Require SSO** on or off. | Your email address | `required` |
+| `REQUIRE_2FA_CHANGE` | You turn **Require two-factor authentication** on or off. | Your email address | `required` |
+| `PAT_CREATE`, `PAT_ROTATE`, `PAT_REVOKE` | You create, rotate, or revoke one of your [personal access tokens](/settings/api-tokens). | The token's ID | None |
 | `ROLE_CHANGE` | You create, change, or delete a [custom role](/settings/app-settings/team#custom-roles). | The role's ID | `name`, `permissions`, and `removed` |
-| `AUDIT_EXPORT_CHANGE` | You set up, change, or remove the [SIEM export](#send-the-team-audit-log-to-your-siem). | The endpoint URL | `removed`, and `hasAuthHeader` when you save the export |
+| `AUDIT_EXPORT_CHANGE` | You set up, change, or remove the [SIEM export](#send-the-team-audit-log-to-your-siem). | The endpoint's host | `removed`, and `hasAuthHeader` when you save the export |
 | `SCIM_PROVISION` | [Directory sync](/settings/app-settings/directory-sync) adds a person to your team, restores them, or can't add them. The actor is `directory-sync`. | The person's email address | `created` or `reactivated`, or `refused` with the reason |
 | `SCIM_DEPROVISION` | Directory sync removes a person whom your identity provider suspended or removed. The actor is `directory-sync`. | The person's email address | The number of personal access tokens and MCP tokens revoked |
 
-A person's sign-ins appear in their own account's log and in the log of every account where they hold a seat. If a member leaves your team, their earlier sign-ins stay in your log.
+A person's sign-ins appear in their own account's log and in the log of every account where they hold a seat. If a member leaves your team, their earlier sign-ins stay in your log. Personal access token changes appear only in the token holder's own log.
+
+The team audit log doesn't include SSO, security requirement, or personal access token entries from before it became available.
 
 ## Find an entry
 
@@ -140,7 +147,7 @@ The following example is a request body with two entries:
 
 Datadog stores each entry of the array as a separate log. Splunk's raw endpoint and Sumo Logic split what they receive into events by line, and Vexo sends each request on one line, so each request arrives as one event. To store one event per entry, set up event breaking for the source in your SIEM, or send the export to a log shipper, such as Vector or Cribl, that splits the array and forwards the entries.
 
-The endpoint URL appears in the export settings and in the `AUDIT_EXPORT_CHANGE` entry of your team audit log, which is also exported. When your SIEM accepts its key in a header, put the key in the header instead of the URL.
+The audit log records only the endpoint's host, so a key in the URL doesn't reach the log or your SIEM. The export settings show you the full URL.
 
 ### Verify the signature
 
