@@ -17,10 +17,33 @@ Adding billing (a card on file) unlocks these features:
 - **Two years** of data retention instead of 60 days, and the option to extend it further with the extended-retention add-on.
 - More than **3** widgets on your dashboards.
 - **240** AI queries a day instead of 90.
+- AI features past their free limits after the month's free [AI credits](#what-are-ai-credits) run out, billed per credit.
+- [AI issues](/react-native-guide/mobile-features/ai-issues), a weekly report of your app's top issues, paid in AI credits.
 
 The features cost nothing by themselves. Usage above the free allowances is billed at the rates above, and the extended-retention add-on is billed separately.
 
 An app's replay length follows the app owner's billing, and so does the AI query limit when you query that app: a team member on a free account gets them in apps whose owner has billing. The dashboard widget limit follows your own account's billing.
+
+### What are AI credits?
+
+AI features cost Vexo money each time they run, so using one past its free limit costs AI credits. Every account gets **500 AI credits free each calendar month** (UTC), and the count starts again on the 1st. A feature uses credits only after it reaches its own free limit:
+
+| Feature | Free limit | Credits after the limit |
+| --- | --- | --- |
+| Questions about your data, on the dashboard or through the MCP server | 90 a day per user, or 240 when the app owner has billing | 1 a question |
+| Ask Vexo | 60 an hour per app | 1 a question |
+| AI session summaries | 20 a day per user | 3 a summary |
+| [AI issues](/react-native-guide/mobile-features/ai-issues) | None | 10 per app each week |
+
+With billing, credits past the free 500 cost **$0.01 each**, billed on your monthly invoice. Without billing, an AI feature stops at its free limit once the month's free credits are used, until the 1st. Credits come from the account that owns the app, so a team member's questions use the app owner's credits.
+
+To see this month's credits and what used them, open **Settings → Billing**. The **AI credits** card warns you at 80% of the free credits.
+
+### How are export rows billed?
+
+Export rows are the rows that your scheduled and on-demand data exports write. The first **1 million export rows each billing period are free**, and after that, rows cost **$10 per million**. Reading events through the [Export API](/settings/app-settings/export-api) doesn't count.
+
+To see this period's export rows, open **Settings → Billing**. The **Export rows** card warns you at 80% of the free rows and estimates the cost of the rows past them.
 
 ### How do I get my invoices?
 

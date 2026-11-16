@@ -1,0 +1,52 @@
+import { DocLayout } from '../../../../components';
+
+# AI issues
+
+**AI issues** finds your app's biggest problems across all of its sessions, once a week. Vexo ranks the week's errors, ANRs, and rage taps by how many sessions they reached, and AI writes up the top 10, each with example replays. You can send an issue to GitHub for a coding agent to fix. AI issues is available for mobile apps, on accounts with billing, and uses [AI credits](/settings/billing#what-are-ai-credits).
+
+## Turn on the weekly report
+
+The account owner turns on the report for all of the account's apps.
+
+1. Open **Settings**.
+2. Under **AI issue discovery**, turn on **Weekly AI issue report**.
+
+The first report arrives the next Monday. To stop the reports, turn the setting off. Issues already found stay in the inbox until your data retention removes them.
+
+## How Vexo finds issues
+
+Every Monday at 06:00 UTC, Vexo looks at the previous Monday through Sunday (UTC) of each app, and groups three kinds of signal:
+
+- **Errors**, by error name, message, and top stack frame: the same groups as [Error triage](/react-native-guide/mobile-features/error-triage).
+- **App not responding (ANR)**, by screen.
+- **Rage taps**, 4 or more taps within 2 seconds, by screen.
+
+Vexo ranks the groups by the number of sessions they reached and sends the top 10 to OpenAI, which writes a title, a short summary, and where to look in your code for each one.
+
+## Review the issues
+
+In your app, open **AI issues**. Each issue shows:
+
+- Its rank, kind, title, and summary.
+- **Where to look**: a suggestion for where to start in your code.
+- How many times it happened, in how many sessions, on how many devices.
+- Up to 3 example replays of sessions where it happened.
+
+An issue that happens again the next week keeps its place in the inbox, with that week's numbers and write-up.
+
+## Send an issue to a coding agent
+
+**Send to GitHub** opens a GitHub issue with the write-up, the numbers, and links to the example replays, in the repository linked to your app. Assign the GitHub issue to your coding agent, such as GitHub Copilot or Claude Code, to draft a fix.
+
+1. Link your app's repository with the VexoAI GitHub App. See [Integrations](/settings/app-settings/integrations#github).
+2. In **AI issues**, click **Send to GitHub** on an issue.
+3. Click **View GitHub issue** to open it.
+
+Each issue opens one GitHub issue. If GitHub refuses, accept the VexoAI app's **Issues** permission for the repository in your GitHub settings, and try again.
+
+## Data and cost
+
+- Vexo sends OpenAI the error name, the error message with numbers and quoted text removed, the name of the top stack frame, the screen name, and the counts. Vexo doesn't send user, device, or session IDs, or full stack traces.
+- Each app's weekly report uses 10 AI credits. A week with no errors, ANRs, or rage taps uses none. Sending an issue to GitHub doesn't use credits.
+
+export default ({ children }) => <DocLayout current="ai-issues" previous={{href: '/react-native-guide/mobile-features/ask-vexo', label: 'Ask Vexo and AI Summaries'}} next={{href: '/react-native-guide/mobile-publishing', label: 'Mobile Publishing'}}>{children}</DocLayout>
