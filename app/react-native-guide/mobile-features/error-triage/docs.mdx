@@ -93,7 +93,7 @@ Uploading a map for the same platform, app version, and update again replaces th
 
 A crash is an error that your app didn't handle: an error that reached the top of the app, or one that you report with `trackError(err, { handled: false })`. Crash-free sessions and crash-free users count sessions and users without a crash. Errors that you report with `trackError(err)` are handled, and don't count against them. See [Error reporting](/react-native-guide/integration#error-reporting).
 
-Vexo's SDK reports JavaScript errors. It doesn't capture native crashes, but you can import them from Firebase Crashlytics. See [Crashlytics](/settings/app-settings/integrations#crashlytics). When the JavaScript thread stops responding for 5 seconds or more, the SDK records it in the session's timeline, not on the **Errors** page.
+Vexo's SDK reports JavaScript errors. It doesn't capture native crashes, but you can import them from Firebase Crashlytics, and with `vexo-analytics` 1.15.0 or later, each imported crash links to the session it ended and its replay. See [Crashlytics](/settings/app-settings/integrations#crashlytics). When the JavaScript thread stops responding for 5 seconds or more, the SDK records it in the session's timeline, not on the **Errors** page.
 
 ## Get notified
 
