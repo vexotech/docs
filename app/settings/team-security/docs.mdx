@@ -1,10 +1,12 @@
-import { DocLayout } from '../../../components/DocLayout';
+import { DocLayout } from '../../../components';
 
 # SSO and Team Security
 
-This page describes how to sign in to Vexo through your company's identity provider, and how to set what everyone you share apps with must use to sign in.
+This page describes how to connect Vexo to your company's identity provider for single sign-on (SSO), and how to set what everyone you share apps with must use to sign in.
 
-You manage both in the dashboard's **Settings**, under **Security**, in the **Team security** card. The settings apply to your account: you, the people on your team, and anyone you've given access to one of your apps.
+You manage both in the dashboard's **Settings**, under **Security**, in the **Team security** card. The settings apply to your team: you, the account owner, and the people who hold seats on your account.
+
+To sign in to your own account with Google or Microsoft, see [Sign-in methods](/settings/account-settings#sign-in-methods).
 
 ## Require two-factor authentication
 
@@ -16,53 +18,224 @@ This setting is available on every plan.
 
 ## Single sign-on (SSO)
 
-With SSO, the people on your team sign in to Vexo through your identity provider, such as Okta, Microsoft Entra ID, or Google Workspace, with SAML or OpenID Connect (OIDC). Vexo connects to your identity provider through WorkOS.
+With SSO, the people on your team sign in to Vexo through your identity provider, such as Okta, Microsoft Entra ID, or Google Workspace. Vexo connects to it directly, with OpenID Connect (OIDC) or SAML 2.0.
 
-SSO is part of the Business plan. To get it, [contact us](mailto:hello@vexo.co?subject=Vexo%20Enterprise).
+### Before you begin
+
+- SSO is part of the Business package. To get it, [contact us](mailto:hello@vexo.co?subject=Vexo%20Business).
+- You must be the account owner.
+- You need an administrator account in your identity provider, and access to your email domain's DNS records.
 
 ### Set up SSO
 
-1. In **Settings** > **Security** > **Team security**, click **Verify domain**. Vexo opens the WorkOS Admin Portal, which asks you to add a DNS TXT record to your email domain, for example `example.com`. When the domain is verified, the portal returns you to Vexo, and the domain shows **Verified**.
-2. Click **Set up SSO**. In the Admin Portal, choose your identity provider and follow its steps to connect it. When you finish, the card shows **Identity provider connected**.
+1. In **Settings** > **Security** > **Team security**, go to **Single sign-on (SSO)**.
+2. In your identity provider, create an application for Vexo with [Vexo's values](#vexos-values-for-your-identity-provider). For step-by-step instructions, see [Identity provider guides](#identity-provider-guides).
+3. In Vexo, connect the application with [OIDC](#connect-with-oidc) or [SAML 2.0](#connect-with-saml-20), and click **Save connection**.
+4. [Verify your email domain](#verify-your-email-domain).
+5. [Run a test sign-in](#run-a-test-sign-in).
 
-Admin Portal links work for five minutes. If a link expires, click the button again.
+Your members can then [sign in with SSO](#sign-in-with-sso). To make SSO the only way they sign in, turn on [Require SSO](#require-sso).
+
+### Vexo's values for your identity provider
+
+Your identity provider asks for these values. **Single sign-on (SSO)** shows them with your team's ID filled in: copy them from there.
+
+| Protocol | Setting | Value |
+| --- | --- | --- |
+| OIDC | Redirect URI | `https://vexo.co/auth/sso/callback` |
+| SAML 2.0 | Entity ID (audience) | `https://api.vexo.co/auth/sso/saml/<team ID>` |
+| SAML 2.0 | ACS URL (reply URL), with the HTTP-POST binding | `https://api.vexo.co/auth/sso/saml/<team ID>/acs` |
+| SAML 2.0 | Metadata URL | `https://api.vexo.co/auth/sso/saml/<team ID>/metadata` |
+
+If your identity provider can read service provider metadata, give it the metadata URL instead of the entity ID and ACS URL.
+
+### Connect with OIDC
+
+Under **Identity provider**, set **Protocol** to **OIDC**, and enter these values from your identity provider's application:
+
+- **Issuer URL**: Vexo reads the issuer's OpenID Connect discovery document, at `<issuer URL>/.well-known/openid-configuration`, to find its endpoints and signing keys.
+- **Client ID**.
+- **Client secret**: Vexo stores it encrypted and never shows it again. To keep the saved secret when you change other values, leave the field empty.
+
+Vexo signs people in with the authorization code flow and PKCE, and asks for the `openid`, `email`, and `profile` scopes. Your identity provider must send each person's email address in the ID token. Vexo refuses an email address that the identity provider marks as unverified.
+
+Some identity providers need extra care:
+
+- **Microsoft Entra ID**: use your own tenant's issuer, `https://login.microsoftonline.com/<tenant ID>/v2.0`. Vexo refuses the multi-tenant issuers (`common` and `organizations`), because they would let any Microsoft tenant sign in. Add the `email` optional claim to the ID token.
+- **Google**: with Google as the OIDC issuer, only accounts of the Google Workspace whose domain matches the email address can sign in. A personal Google account made with a work address can't. For Google Workspace, use [SAML](#google-workspace-saml) instead.
+
+### Connect with SAML 2.0
+
+Under **Identity provider**, set **Protocol** to **SAML 2.0**. Under **Identity provider metadata**, give Vexo your identity provider's metadata in one of two ways:
+
+- **From a URL**: enter the metadata URL. Vexo fetches it once, when you save. After your identity provider's signing certificate changes, save the connection again.
+- **Paste the XML**: paste the metadata XML. After the signing certificate changes, paste the new metadata.
+
+Set up your identity provider's application this way:
+
+- **Sign-in URL**: the metadata must include a single sign-on URL with the HTTP-Redirect binding.
+- **Signing**: sign the assertions, the response, or both.
+- **Signed requests**: don't require them. Vexo doesn't sign its requests, and refuses metadata that requires signed requests.
+- **Encryption**: don't encrypt assertions.
+- **NameID format**: persistent is recommended.
+
+Vexo reads these attributes from the assertion, taking the first one in each list that has a value. Attribute names aren't case-sensitive.
+
+| Vexo reads | Attributes |
+| --- | --- |
+| Email address | `email`, `mail`, `emailaddress`, `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`, or `urn:oid:0.9.2342.19200300.100.1.3`. If none has a value, Vexo uses the NameID when it's an email address. |
+| First name | `firstName`, `givenName`, `given_name`, `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname`, or `urn:oid:2.5.4.42` |
+| Last name | `lastName`, `surname`, `sn`, `family_name`, `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname`, or `urn:oid:2.5.4.4` |
+
+Sign-in must start from Vexo. Vexo refuses sign-in that starts from your identity provider (IdP-initiated sign-in), such as clicking the app's tile in the Okta dashboard or Microsoft My Apps. Hide the tile, or set its URL to `https://vexo.co/login`.
+
+### Identity provider guides
+
+These guides show where Vexo's values go in common identity providers. Each one ends with a connection that you save in Vexo.
+
+#### Okta (OIDC)
+
+1. In the Okta Admin Console, go to **Applications** > **Applications**, and click **Create App Integration**.
+2. Select **OIDC - OpenID Connect**, select **Web Application**, and click **Next**.
+3. Name the app, for example `Vexo`. Keep the **Authorization Code** grant type.
+4. In **Sign-in redirect URIs**, enter the redirect URI: `https://vexo.co/auth/sso/callback`.
+5. Under **Assignments**, choose who can use Vexo, and click **Save**.
+6. In Vexo, set **Protocol** to **OIDC**, and enter your Okta domain as the **Issuer URL**, for example `https://example.okta.com`. Copy the **Client ID** and the **Client secret** from the app's **General** tab, and click **Save connection**.
+
+#### Okta (SAML)
+
+1. In the Okta Admin Console, go to **Applications** > **Applications**, and click **Create App Integration**.
+2. Select **SAML 2.0**, and click **Next**.
+3. Name the app, for example `Vexo`. To keep people from starting sign-in from the Okta dashboard, select **Do not display application icon to users**. Click **Next**.
+4. Enter these values:
+   - **Single sign-on URL**: the ACS URL. Keep **Use this for Recipient URL and Destination URL** selected.
+   - **Audience URI (SP Entity ID)**: the entity ID.
+   - **Name ID format**: **Persistent**.
+   - **Application username**: **Email**.
+5. Under **Attribute Statements**, add `email` with the value `user.email`, `firstName` with `user.firstName`, and `lastName` with `user.lastName`.
+6. Click **Next**, and then **Finish**.
+7. On the app's **Sign On** tab, copy the **Metadata URL**.
+8. On the **Assignments** tab, assign the people or groups who use Vexo.
+9. In Vexo, set **Protocol** to **SAML 2.0**, choose **From a URL**, paste the metadata URL, and click **Save connection**.
+
+#### Microsoft Entra ID (OIDC)
+
+1. In the Microsoft Entra admin center, go to **App registrations**, and click **New registration**.
+2. Name the app, for example `Vexo`.
+3. Under **Supported account types**, select **Accounts in this organizational directory only (Single tenant)**.
+4. Under **Redirect URI**, select the **Web** platform, and enter `https://vexo.co/auth/sso/callback`. Click **Register**.
+5. On the app's **Overview** page, copy the **Application (client) ID** and the **Directory (tenant) ID**.
+6. Go to **Certificates & secrets**, click **New client secret**, and copy the secret's **Value**. Note when the secret expires: before then, create a new one and save it in Vexo.
+7. Go to **Token configuration**, click **Add optional claim**, select the **ID** token type, select `email`, and click **Add**.
+8. In Vexo, set **Protocol** to **OIDC**, and enter:
+   - **Issuer URL**: `https://login.microsoftonline.com/<tenant ID>/v2.0`, with your directory (tenant) ID.
+   - **Client ID**: the application (client) ID.
+   - **Client secret**: the secret's value.
+9. Click **Save connection**.
+
+Entra ID sends the `email` claim only for people whose account has an email address. To let only some people sign in, go to **Enterprise applications**, open the app, set **Assignment required?** to **Yes** in **Properties**, and assign people or groups in **Users and groups**.
+
+#### Microsoft Entra ID (SAML)
+
+1. In the Microsoft Entra admin center, go to **Enterprise applications**, and click **New application**.
+2. Click **Create your own application**, name it, for example `Vexo`, select **Integrate any other application you don't find in the gallery (Non-gallery)**, and click **Create**.
+3. Go to **Single sign-on**, and select **SAML**.
+4. Under **Basic SAML Configuration**, click **Edit**, and enter:
+   - **Identifier (Entity ID)**: the entity ID.
+   - **Reply URL (Assertion Consumer Service URL)**: the ACS URL.
+   - **Sign on URL**: `https://vexo.co/login`. The app's tile in My Apps then opens the Vexo sign-in page.
+5. Click **Save**. The default **Attributes & Claims** include the email address, given name, and surname that Vexo reads.
+6. Under **SAML Certificates**, copy the **App Federation Metadata Url**, or download the **Federation Metadata XML**.
+7. Go to **Users and groups**, and assign the people or groups who use Vexo.
+8. In Vexo, set **Protocol** to **SAML 2.0**, enter the metadata URL or paste the XML, and click **Save connection**.
+
+#### Google Workspace (SAML)
+
+1. In the Google Admin console, go to **Apps** > **Web and mobile apps**, and click **Add app** > **Add custom SAML app**.
+2. Name the app, for example `Vexo`, and click **Continue**.
+3. Under **Option 1**, click **Download Metadata**, and then click **Continue**.
+4. Enter these values:
+   - **ACS URL**: the ACS URL.
+   - **Entity ID**: the entity ID.
+   - **Name ID format**: **PERSISTENT** or **EMAIL**.
+   - **Name ID**: **Basic Information** > **Primary email**.
+5. Click **Continue**. Under **Attribute mapping**, map **Primary email** to `email`, **First name** to `firstName`, and **Last name** to `lastName`. Click **Finish**.
+6. Open the app's **User access**, turn the app on for everyone or for the organizational units and groups who use Vexo, and click **Save**. Google can take a while to apply the change.
+7. In Vexo, set **Protocol** to **SAML 2.0**, choose **Paste the XML**, paste the metadata file you downloaded, and click **Save connection**.
+
+Google shows the app in its app launcher. Clicking it there starts IdP-initiated sign-in, which Vexo refuses, so tell people to start from the [Vexo sign-in page](https://vexo.co/login).
+
+### Verify your email domain
+
+Vexo creates and links accounts through SSO only for email addresses in domains that your team has verified.
+
+1. Under **Domains**, enter your email domain, for example `example.com`, and click **Add domain**.
+2. At your DNS provider, add a TXT record with the **TXT record name** and **TXT record value** that Vexo shows:
+   - Name: `_vexo-verification.<domain>`, for example `_vexo-verification.example.com`.
+   - Value: `vexo-verification=<token>`.
+3. Click **Verify**. DNS changes can take a while to appear. If Vexo doesn't find the record, try again later.
+
+Keep the record published. You can check a domain again at any time with **Re-check**. If the record is gone, the domain stops counting as verified.
+
+Only one Vexo team at a time can hold a domain verified. If another team already verified yours, [contact Vexo](/contact-vexo).
+
+### Run a test sign-in
+
+After you save the connection, click **Test sign-in**. Vexo sends you to your identity provider. Sign in there, and Vexo shows whom your identity provider signed in and whether that email address's domain is verified. The test doesn't sign anyone in, and your Vexo session doesn't change.
+
+When you change the connection, Vexo clears the test. Run it again before you require SSO.
 
 ### Sign in with SSO
 
 1. On the Vexo sign-in page, click **Continue with SSO**.
-2. Enter your work email, and then click **Continue**. Vexo sends you to your identity provider.
+2. In **Work email**, enter your work email address, and then click **Continue**. Vexo sends you to your identity provider.
 3. Sign in to your identity provider. It sends you back to Vexo, signed in.
 
 If your Vexo account uses two-factor authentication, Vexo asks for your code after your identity provider signs you in.
 
-Start from the Vexo sign-in page. Sign-in that starts from your identity provider's app dashboard (IdP-initiated sign-in) isn't supported.
-
 ### New members join when they first sign in
 
-When someone signs in with SSO for the first time and has no Vexo account, Vexo creates one for them, as long as their email address is in one of your verified domains. The new member:
+When someone signs in with SSO for the first time and has no Vexo account, Vexo creates one for them, as long as their email address is in one of your verified domains. Vexo marks the account's email address as verified. The new member:
 
-- Takes one of your account's seats. When every seat is in use, Vexo refuses the sign-in until you add a seat or remove a member.
-- Joins your team with read access to your apps. To give them write access, change their permission in the app's **Team** settings. For more information, see [Team](/settings/app-settings/team).
+- Takes one of your account's free seats. When every seat is in use, Vexo refuses the sign-in until you add a seat or remove a member.
+- Joins your team with read access to your apps. For more information, see [Team](/settings/app-settings/team).
 
 Vexo never creates an account for an email address outside your verified domains.
 
 ### Existing Vexo accounts
 
-When someone signs in with SSO and already has a Vexo account with the same email address, Vexo links SSO to that account only if the account already belongs to your team: it's yours, a team member's, or it holds access to one of your apps. Otherwise, Vexo refuses the sign-in. To add that person, invite them to your team first, and then have them sign in with SSO.
+When someone signs in with SSO and already has a Vexo account with the same email address, Vexo links SSO to that account only if it already holds a seat on your account. Otherwise, Vexo refuses the sign-in. To add that person, invite them to your team first, and then have them sign in with SSO.
 
-After the first sign-in, Vexo recognizes the person by their identity provider account, not by their email address.
+After the first sign-in, Vexo recognizes the person by their identity provider account (the OIDC subject or the SAML NameID), not by their email address.
+
+### When SSO sign-in fails
+
+| Message | What to do |
+| --- | --- |
+| Single sign-on isn't set up for this email domain. | No team with SSO has verified the email address's domain. Check the address, or [verify the domain](#verify-your-email-domain). |
+| Your email domain isn't verified for your team's single sign-on. | The domain that your identity provider sent isn't verified for your team. Verify it, or check which email address your identity provider sends. |
+| An account with this email already exists outside your team. Ask your team owner to invite it, then sign in with SSO again. | Invite the account to your team, and then have the person sign in with SSO again. |
+| Your team has no free seats. Ask your team owner to add one, then sign in again. | Add a [seat](/settings/subscription#seats), or remove a member. |
 
 ## Require SSO
 
-When you turn on **Require SSO**, the people you share apps with can sign in only with SSO. For them:
+When you turn on **Require SSO**, the people on your team can sign in only with SSO. For them:
 
 - Password sign-in stops working.
-- **Continue with GitHub** stops working.
+- **Continue with GitHub**, **Continue with Google**, and **Continue with Microsoft** stop working.
 - Password reset stops working.
 
 Turning on **Require SSO** signs them out of Vexo. They sign in again with SSO.
 
-You can turn it on only after a domain is verified and your identity provider is connected.
+To turn it on, you need:
+
+- A connection that passed a [test sign-in](#run-a-test-sign-in).
+- A [verified domain](#verify-your-email-domain).
+- Two-factor authentication on your own account.
+
+While SSO is required, you can't remove the connection or your last verified domain, or switch the connection to a different identity provider. You can still save a new client secret or refreshed SAML metadata. To make the other changes, turn off **Require SSO** first.
+
+If your account loses the Business package, the requirement stops applying.
 
 ### Owner access when your identity provider is down
 
@@ -70,11 +243,12 @@ The requirement doesn't apply to you, the account owner. You can always sign in 
 
 To recover from an identity provider problem, sign in with your password, and then turn off **Require SSO**. Your members can then sign in with their passwords again. A member who has never had a password, because Vexo created their account at their first SSO sign-in, can set one with **Forgot password?** on the sign-in page.
 
-If you lose your second factor, sign in with your password and one of your recovery codes. If you can't sign in at all, [contact Vexo](/contact-vexo). Support can stop the requirement by removing the Business plan from your account, so your members can sign in with their passwords while you recover your own account through two-factor recovery.
+If you lose your second factor, sign in with your password and one of your recovery codes. If you can't sign in at all, [contact Vexo](/contact-vexo). Support can stop the requirement by removing the Business package from your account, so your members can sign in with their passwords while you recover your own account through two-factor recovery.
 
 ## Known limits
 
 - Personal access tokens and MCP tokens keep working while **Require SSO** is on.
-- **Require two-factor authentication** doesn't need the Business plan.
+- Vexo doesn't support IdP-initiated sign-in.
+- **Require two-factor authentication** doesn't need the Business package.
 
 export default ({ children }) => <DocLayout current="team-security" previous={{href: '/settings/data-retention', label: 'Data Retention'}} next={{href: '/contact-vexo', label: 'Contact Vexo'}}>{children}</DocLayout>
