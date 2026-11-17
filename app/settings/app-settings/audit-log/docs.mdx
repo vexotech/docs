@@ -162,7 +162,7 @@ Vexo writes each batch to your bucket as an object, using an IAM role in your AW
 
 Until the role's policies are in place, deliveries fail with an error such as `AccessDenied`, and the entries wait. No entries are lost.
 
-The trust policy lets Vexo assume the role only with your external ID:
+The trust policy lets Vexo's export role, `vexo-audit-export`, assume your role only with your external ID. Your role trusts only that export role, which Vexo uses for nothing but audit exports, not Vexo's servers.
 
 ```json
 {
@@ -170,7 +170,7 @@ The trust policy lets Vexo assume the role only with your external ID:
   "Statement": [
     {
       "Effect": "Allow",
-      "Principal": { "AWS": "arn:aws:iam::238865950570:role/vexo-api-asg-instance" },
+      "Principal": { "AWS": "arn:aws:iam::238865950570:role/vexo-audit-export" },
       "Action": "sts:AssumeRole",
       "Condition": { "StringEquals": { "sts:ExternalId": "<your external ID>" } }
     }
@@ -217,7 +217,7 @@ Optional: to keep anyone else from writing under the prefix, add a bucket policy
 
 ### S3 objects and errors
 
-Each batch is one gzip-compressed NDJSON object, with this key:
+Each batch is one gzip-compressed NDJSON file, stored as `application/gzip`, so a download is the `.ndjson.gz` file itself. Its key is:
 
 ```
 <prefix>yyyy/MM/dd/<time of the batch's first entry>-<first entry's id>.ndjson.gz
