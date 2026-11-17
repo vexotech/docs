@@ -198,9 +198,11 @@ If your Vexo account uses two-factor authentication, Vexo asks for your code aft
 When someone signs in with SSO for the first time and has no Vexo account, Vexo creates one for them, as long as their email address is in one of your verified domains. Vexo marks the account's email address as verified. The new member:
 
 - Takes one of your account's free seats. When every seat is in use, Vexo refuses the sign-in until you add a seat or remove a member.
-- Joins your team with read access to your apps. For more information, see [Team](/settings/app-settings/team).
+- Joins your team with the Analyst role on every app that you own. For more information, see [Team and roles](/settings/app-settings/team).
 
 Vexo never creates an account for an email address outside your verified domains.
+
+To add and remove members from your identity provider before they sign in, use [directory sync (SCIM)](/settings/app-settings/directory-sync).
 
 ### Existing Vexo accounts
 
@@ -244,6 +246,10 @@ The requirement doesn't apply to you, the account owner. You can always sign in 
 To recover from an identity provider problem, sign in with your password, and then turn off **Require SSO**. Your members can then sign in with their passwords again. A member who has never had a password, because Vexo created their account at their first SSO sign-in, can set one with **Forgot password?** on the sign-in page.
 
 If you lose your second factor, sign in with your password and one of your recovery codes. If you can't sign in at all, [contact Vexo](/contact-vexo). Support can stop the requirement by removing the Business package from your account, so your members can sign in with their passwords while you recover your own account through two-factor recovery.
+
+## Audit log
+
+Your [team audit log](/settings/app-settings/audit-log) records each SSO setup change as `SSO_SETUP`, each SSO sign-in as `SSO_LOGIN`, and each change to **Require SSO** as `REQUIRE_SSO_CHANGE`.
 
 ## Known limits
 

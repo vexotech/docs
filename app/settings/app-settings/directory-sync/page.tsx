@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'Directory sync (SCIM)',
-    description: 'Connect your identity provider directory to Vexo so that people join your team, and lose access, when IT adds, suspends, or removes them.',
+    description: 'Provision Vexo users from Okta or Microsoft Entra ID with SCIM 2.0, so that people join your team, and lose access, when IT adds, deactivates, or removes them.',
 }
 
 export default function Home() {

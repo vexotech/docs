@@ -47,16 +47,17 @@ These entries belong to your account, not to one app, so they appear only in the
 
 | Action | Recorded when | Target | Details |
 | --- | --- | --- | --- |
-| `LOGIN` | Someone signs in to Vexo, with a password, GitHub, or SSO, after the two-factor authentication (2FA) step if they use 2FA. | The person's email address | `method`: `PASSWORD`, `GITHUB`, or `SSO`; `twoFactor`: `true` when they entered a 2FA code; `ip`: their IP address |
-| `SSO_LOGIN` | Someone signs in through your [single sign-on (SSO)](/settings/team-security). A `LOGIN` entry follows when they get their session. | Your WorkOS organization's ID | `profile`: their identity provider profile's ID; `provisioned`: `true` when Vexo created their account at this sign-in |
-| `SSO_SETUP` | You open the WorkOS Admin Portal to verify a domain, connect your identity provider, or connect a directory. | Your WorkOS organization's ID | `intent`: `domain_verification`, `sso`, or `dsync`; `organizationCreated` |
+| `LOGIN` | Someone signs in to Vexo, with a password, GitHub, Google, Microsoft, or SSO, after the two-factor authentication (2FA) step if they use 2FA. | The person's email address | `method`: `PASSWORD`, `GITHUB`, `GOOGLE`, `MICROSOFT`, or `SSO`; `twoFactor`: `true` when they entered a 2FA code; `ip`: their IP address |
+| `SSO_LOGIN` | Someone signs in through your [single sign-on (SSO)](/settings/team-security). A `LOGIN` entry follows when they get their session. | Your SSO connection's ID | `subject`: their account's ID at your identity provider (the OIDC subject or SAML NameID); `protocol`: `OIDC` or `SAML`; `provisioned`: `true` when Vexo created their account at this sign-in |
+| `SSO_SETUP` | You change your [SSO setup](/settings/team-security#set-up-sso): save or remove the identity provider connection, add or remove a domain, verify a domain or find that its TXT record is gone, or run a test sign-in. | Your email address | `change`: `connection_saved`, `connection_removed`, `domain_added`, `domain_verified`, `domain_unverified`, `domain_removed`, or `test_sign_in`; with `protocol`, `domain`, or the test's `subject` and `email` |
 | `REQUIRE_SSO_CHANGE` | You turn **Require SSO** on or off. | Your email address | `required` |
 | `REQUIRE_2FA_CHANGE` | You turn **Require two-factor authentication** on or off. | Your email address | `required` |
 | `PAT_CREATE`, `PAT_ROTATE`, `PAT_REVOKE` | You create, rotate, or revoke one of your [personal access tokens](/settings/api-tokens). | The token's ID | None |
 | `ROLE_CHANGE` | You create, change, or delete a [custom role](/settings/app-settings/team#custom-roles). | The role's ID | `name`, `permissions`, and `removed` |
 | `AUDIT_EXPORT_CHANGE` | You set up, change, or remove the [SIEM export](#send-the-team-audit-log-to-your-siem), or rotate its external ID. | The endpoint's host, or the S3 bucket's name | `destination`, `removed`, `hasAuthHeader`, or `externalIdRotated`. The external ID is never recorded. |
-| `SCIM_PROVISION` | [Directory sync](/settings/app-settings/directory-sync) adds a person to your team, restores them, or can't add them. The actor is `directory-sync`. | The person's email address | `created` or `reactivated`, or `refused` with the reason |
-| `SCIM_DEPROVISION` | Directory sync removes a person whom your identity provider suspended or removed. The actor is `directory-sync`. | The person's email address | The number of personal access tokens and MCP tokens revoked |
+| `SCIM_PROVISION` | [Directory sync](/settings/app-settings/directory-sync) adds a person to your team, restores them, or can't add them. The actor is `scim`. | The person's email address | `created` or `reactivated`, or `refused` with the reason |
+| `SCIM_DEPROVISION` | Directory sync removes a person whom your identity provider deactivated or deleted. The actor is `scim`. | The person's email address | The number of personal access tokens and MCP tokens revoked |
+| `SCIM_SETUP` | You create, rotate, or revoke your [SCIM token](/settings/app-settings/directory-sync#create-a-scim-token). | Your email address | `change`: `token_created`, `token_rotated`, or `token_revoked` |
 
 A person's sign-ins appear in their own account's log and in the log of every account where they hold a seat. If a member leaves your team, their earlier sign-ins stay in your log. Personal access token changes appear only in the token holder's own log.
 
@@ -95,7 +96,7 @@ If your account loses the Enterprise package, Vexo stops sending. If you get the
 | `id` | string | The entry's unique ID. Use it to drop duplicates. |
 | `appId` | string or `null` | The app that the entry is about. `null` for sign-ins and team changes. |
 | `accountId` | string or `null` | The account that the entry is about, for sign-ins and team changes. `null` for an app's entries. |
-| `actor` | string | Who did it: an email address, or `guest`, `directory-sync`, or another name for an automatic actor. |
+| `actor` | string | Who did it: an email address, or `guest`, `scim`, or another name for an automatic actor. |
 | `action` | string | The action, such as `LOGIN`. See [What the log records](#what-the-log-records). |
 | `target` | string or `null` | What the action was done to. |
 | `metadata` | object | The action's details. |
