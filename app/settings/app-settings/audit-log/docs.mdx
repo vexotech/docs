@@ -54,7 +54,7 @@ These entries belong to your account, not to one app, so they appear only in the
 | `REQUIRE_2FA_CHANGE` | You turn **Require two-factor authentication** on or off. | Your email address | `required` |
 | `PAT_CREATE`, `PAT_ROTATE`, `PAT_REVOKE` | You create, rotate, or revoke one of your [personal access tokens](/settings/api-tokens). | The token's ID | None |
 | `ROLE_CHANGE` | You create, change, or delete a [custom role](/settings/app-settings/team#custom-roles). | The role's ID | `name`, `permissions`, and `removed` |
-| `AUDIT_EXPORT_CHANGE` | You set up, change, or remove the [SIEM export](#send-the-team-audit-log-to-your-siem). | The endpoint's host | `removed`, and `hasAuthHeader` when you save the export |
+| `AUDIT_EXPORT_CHANGE` | You set up, change, or remove the [SIEM export](#send-the-team-audit-log-to-your-siem), or rotate its external ID. | The endpoint's host, or the S3 bucket's name | `destination`, `removed`, `hasAuthHeader`, or `externalIdRotated`. The external ID is never recorded. |
 | `SCIM_PROVISION` | [Directory sync](/settings/app-settings/directory-sync) adds a person to your team, restores them, or can't add them. The actor is `directory-sync`. | The person's email address | `created` or `reactivated`, or `refused` with the reason |
 | `SCIM_DEPROVISION` | Directory sync removes a person whom your identity provider suspended or removed. The actor is `directory-sync`. | The person's email address | The number of personal access tokens and MCP tokens revoked |
 
@@ -74,26 +74,17 @@ To narrow the log, use the filters above it. The team audit log has the same fil
 
 ## Send the team audit log to your SIEM
 
-With the Enterprise package, Vexo sends your team audit log to an HTTPS endpoint, such as your security information and event management (SIEM) system or a log shipper. Vexo sends the same entries that the team audit log shows. To get the package, [contact us](mailto:hello@vexo.co?subject=Vexo%20Enterprise).
+With the Enterprise package, Vexo sends your team audit log to your security information and event management (SIEM) system. Vexo sends the same entries that the team audit log shows, to one destination: an HTTPS endpoint, or an Amazon S3 bucket. To get the package, [contact us](mailto:hello@vexo.co?subject=Vexo%20Enterprise).
 
-### Set up the export
-
-1. In **Settings** > **Team**, open the SIEM export settings.
-2. Enter the endpoint's URL. It must start with `https://`, and its host must resolve to a public IP address.
-3. Optional: enter a value for the `Authorization` header, if your endpoint needs one. Vexo sends it with every request, and never shows it again after you save it.
-4. Save the export. Vexo shows a signing secret, which you use to [verify each request](#verify-the-signature).
-
-After you save, the settings show when Vexo last delivered entries, and the status code or error of the last attempt.
-
-The export starts with entries written after you set it up. The first entry that Vexo sends is the `AUDIT_EXPORT_CHANGE` entry that records the setup. Earlier entries aren't sent.
+You set up the export in **Settings** > **Team**, in the SIEM export settings. After you save it, the settings show when Vexo last delivered entries, and the status or error of the last attempt.
 
 ### What Vexo sends
 
-- **Format:** each request is a `POST` with a JSON array of up to 500 entries, oldest first, on one line.
-- **Schedule:** Vexo sends once a minute. When entries are waiting, it sends up to 10 requests in that minute, so a backlog catches up at up to 5,000 entries a minute.
+- **Format:** NDJSON (newline-delimited JSON): one entry per line, and each line ends with a newline. Each batch has up to 500 entries, oldest first.
+- **Start:** the export starts with entries written after you set it up. The first entry that Vexo sends is the `AUDIT_EXPORT_CHANGE` entry that records the setup. Earlier entries aren't sent.
+- **Schedule:** Vexo sends once a minute. When entries are waiting, it sends up to 10 batches in that minute, so a backlog catches up at up to 5,000 entries a minute.
 - **Delay:** Vexo sends an entry once it's at least 2 minutes old, so that no entry that's still being saved is skipped. Use each entry's `createdAt` as the event time in your SIEM, not the time that it arrived.
-- **Delivery:** at least once. Vexo counts a request as delivered when your endpoint answers with a `2xx` status within 30 seconds. After any other answer, including a redirect, Vexo sends the same entries again the next minute, and sends nothing newer until they're delivered. Because a retry can repeat entries that your endpoint already stored, drop duplicates by `id`.
-- **Headers:** `Content-Type: application/json`, `User-Agent: Vexo-Audit-Export`, `X-Vexo-Signature`, and `Authorization` if you set one.
+- **Delivery:** at least once. When a batch fails, Vexo sends the same entries again the next minute, and sends nothing newer until they're delivered. Because a retry can repeat entries that your SIEM already stored, drop duplicates by `id`.
 
 If your account loses the Enterprise package, Vexo stops sending. If you get the package again, Vexo continues from the last entry that it delivered.
 
@@ -103,57 +94,44 @@ If your account loses the Enterprise package, Vexo stops sending. If you get the
 | --- | --- | --- |
 | `id` | string | The entry's unique ID. Use it to drop duplicates. |
 | `appId` | string or `null` | The app that the entry is about. `null` for sign-ins and team changes. |
-| `accountId` | string or `null` | Your account's ID, for sign-ins and team changes. `null` for an app's entries. |
+| `accountId` | string or `null` | The account that the entry is about, for sign-ins and team changes. `null` for an app's entries. |
 | `actor` | string | Who did it: an email address, or `guest`, `directory-sync`, or another name for an automatic actor. |
 | `action` | string | The action, such as `LOGIN`. See [What the log records](#what-the-log-records). |
 | `target` | string or `null` | What the action was done to. |
 | `metadata` | object | The action's details. |
 | `createdAt` | number | When it happened, in milliseconds since the Unix epoch, to the second. |
 
-The following example is a request body with two entries:
+The following example is a batch with two entries:
 
-```json
-[
-  {
-    "id": "0b6e6c1e-3f0d-4f5c-9d61-2f7c1a9e8b42",
-    "appId": null,
-    "accountId": "8c2f4d1a-6b7e-4a39-a0c5-5e1d9b3f7a10",
-    "actor": "ana@example.com",
-    "action": "LOGIN",
-    "target": "ana@example.com",
-    "metadata": { "method": "SSO", "twoFactor": false, "ip": "203.0.113.24" },
-    "createdAt": 1763294400000
-  },
-  {
-    "id": "5d9a7f3c-1e2b-4c8d-b6a4-7f0e3d2c1b98",
-    "appId": "3e7b9c2d-4a1f-4d6e-8b5c-0a9f8e7d6c54",
-    "accountId": null,
-    "actor": "ana@example.com",
-    "action": "REPLAY_VIEW",
-    "target": "9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a",
-    "metadata": { "platform": "web" },
-    "createdAt": 1763294460000
-  }
-]
+```
+{"accountId":"8c2f4d1a-6b7e-4a39-a0c5-5e1d9b3f7a10","action":"LOGIN","actor":"ana@example.com","appId":null,"createdAt":1794830400000,"id":"0b6e6c1e-3f0d-4f5c-9d61-2f7c1a9e8b42","metadata":{"method":"SSO","twoFactor":false,"ip":"203.0.113.24"},"target":"ana@example.com"}
+{"accountId":null,"action":"REPLAY_VIEW","actor":"ana@example.com","appId":"3e7b9c2d-4a1f-4d6e-8b5c-0a9f8e7d6c54","createdAt":1794830460000,"id":"5d9a7f3c-1e2b-4c8d-b6a4-7f0e3d2c1b98","metadata":{"platform":"web"},"target":"9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a"}
 ```
 
-### Connect your SIEM
+### Send to an HTTPS endpoint
+
+1. In the SIEM export settings, choose the HTTPS endpoint, and enter its URL. The URL must start with `https://`, and its host must resolve to a public IP address.
+2. Optional: enter a value for the `Authorization` header, if your endpoint needs one. Vexo sends it with every request, and never shows it again after you save it.
+3. Save the export. Vexo shows a signing secret, which you use to [verify each request](#verify-the-signature).
+
+Each batch is one `POST` request with these headers: `Content-Type: application/x-ndjson`, `User-Agent: Vexo-Audit-Export`, `X-Vexo-Signature`, and `Authorization` if you set one. Vexo counts a request as delivered when your endpoint answers with a `2xx` status within 30 seconds. Any other answer, including a redirect, is a failure, and Vexo retries the batch the next minute.
+
+The audit log records only the endpoint's host, so a key in the URL doesn't reach the log or your SIEM. The export settings show you the full URL.
 
 | SIEM | URL | Authorization header |
 | --- | --- | --- |
 | Splunk | Your HTTP Event Collector's raw endpoint, such as `https://splunk.example.com:8088/services/collector/raw` | `Splunk <HEC token>` |
-| Datadog | Your site's HTTP log intake, such as `https://http-intake.logs.datadoghq.com/api/v2/logs?dd-api-key=<API key>&ddsource=vexo` | None. Datadog reads its API key from a `DD-API-KEY` header, which Vexo doesn't send, so put the key in the URL. |
 | Sumo Logic | Your HTTP source's URL, which contains its token | None |
 
-Datadog stores each entry of the array as a separate log. Splunk's raw endpoint and Sumo Logic split what they receive into events by line, and Vexo sends each request on one line, so each request arrives as one event. To store one event per entry, set up event breaking for the source in your SIEM, or send the export to a log shipper, such as Vector or Cribl, that splits the array and forwards the entries.
+Splunk's raw endpoint and Sumo Logic split what they receive on line breaks, so each entry becomes its own event. Turn off line merging so that they don't join entries: in Splunk, give the token a source type with `SHOULD_LINEMERGE = false`; in Sumo Logic, turn off the source's multiline processing.
 
-The audit log records only the endpoint's host, so a key in the URL doesn't reach the log or your SIEM. The export settings show you the full URL.
+Datadog's HTTP log intake documents a JSON array body and an API key in a `DD-API-KEY` header, neither of which the export sends. To send the log to Datadog, send the export to a log shipper, such as Vector, that forwards it to Datadog, or use the [S3 destination](#send-to-amazon-s3) with the Datadog Forwarder, which sends new S3 objects to Datadog.
 
 ### Verify the signature
 
-Every request has an `X-Vexo-Signature` header: `sha256=`, then the hex-encoded HMAC-SHA256 of the raw request body, keyed with your signing secret. Vexo signs outbound [webhooks](/settings/app-settings/webhooks) the same way.
+Every request to an HTTPS endpoint has an `X-Vexo-Signature` header: `sha256=`, then the hex-encoded HMAC-SHA256 of the raw request body, keyed with your signing secret. Vexo signs outbound [webhooks](/settings/app-settings/webhooks) the same way.
 
-If your endpoint is a service that you run, verify the signature before you store the entries. Compute it over the body exactly as received, before you parse it. The following example is for Node.js:
+If your endpoint is a service that you run, verify the signature before you store the entries. Compute it over the body exactly as received, before you split it into lines. The following example is for Node.js:
 
 ```js
 import crypto from 'node:crypto';
@@ -165,11 +143,98 @@ export function isFromVexo(rawBody, signature, secret) {
   const received = Buffer.from(signature ?? '');
   return received.length === expected.length && crypto.timingSafeEqual(received, Buffer.from(expected));
 }
+
+// After the signature checks out: one entry per line.
+export function entries(rawBody) {
+  return rawBody.toString('utf8').split('\n').filter(Boolean).map((line) => JSON.parse(line));
+}
 ```
+
+### Send to Amazon S3
+
+Vexo writes each batch to your bucket as an object, using an IAM role in your AWS account that Vexo assumes with an external ID. The role can only add objects under the prefix that you choose.
+
+1. Create an S3 bucket for the log. Its name can't contain dots, and it must be in the same AWS account as the role that you create next.
+2. In IAM, create a role for Vexo, with the trust policy that follows these steps. You fill in its external ID in step 4.
+3. In the SIEM export settings, choose Amazon S3, and enter the bucket's name, its Region code, such as `us-east-1`, an optional key prefix, such as `vexo/`, and the role's ARN. Save the export.
+4. Vexo shows the role's trust policy with your external ID in it, once. Copy it, and paste it into the role's trust relationships.
+5. Give the role the permissions policy that follows the trust policy, with your bucket and prefix.
+
+Until the role's policies are in place, deliveries fail with an error such as `AccessDenied`, and the entries wait. No entries are lost.
+
+The trust policy lets Vexo assume the role only with your external ID:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::238865950570:role/vexo-api-asg-instance" },
+      "Action": "sts:AssumeRole",
+      "Condition": { "StringEquals": { "sts:ExternalId": "<your external ID>" } }
+    }
+  ]
+}
+```
+
+The permissions policy is all that the role needs: it can add objects under your prefix, and nothing else. This example uses the bucket `example-audit-logs` and the prefix `vexo/`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::example-audit-logs/vexo/*"
+    }
+  ]
+}
+```
+
+If the bucket encrypts objects with a customer managed AWS KMS key, also allow `kms:GenerateDataKey` on that key.
+
+Optional: to keep anyone else from writing under the prefix, add a bucket policy like the following, with your role's ARN. The role's permissions policy already limits what Vexo can do; the bucket policy limits everyone else.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OnlyVexoWritesTheAuditLog",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::example-audit-logs/vexo/*",
+      "Condition": {
+        "ArnNotEquals": { "aws:PrincipalArn": "arn:aws:iam::123456789012:role/vexo-audit-export" }
+      }
+    }
+  ]
+}
+```
+
+### S3 objects and errors
+
+Each batch is one gzip-compressed NDJSON object, with this key:
+
+```
+<prefix>yyyy/MM/dd/<time of the batch's first entry>-<first entry's id>.ndjson.gz
+```
+
+For example, `vexo/2026/11/16/20261116T120000Z-0b6e6c1e-3f0d-4f5c-9d61-2f7c1a9e8b42.ndjson.gz`. The date and time are in UTC, so keys sort by time. When Vexo retries a batch, it writes the same key again, replacing the object instead of adding another one.
+
+Vexo writes only to a bucket that the role's AWS account owns. If the bucket belongs to another account, the write fails.
+
+When a write fails, the export settings show the error, such as `AccessDenied` or `NoSuchBucket`. Vexo retries the batch every minute until it succeeds, and writes nothing newer until then.
+
+To change the external ID, rotate it in the export settings. Vexo shows the new external ID once. Update the role's trust policy to match: until you do, deliveries fail with `AccessDenied`. If you lose the external ID, rotate it.
 
 ### Change or remove the export
 
-- To change the URL or the `Authorization` header value, edit the export and save it. Vexo continues from the last entry that it delivered, and the signing secret stays the same.
+- To change the export's settings, edit the export and save it. Vexo continues from the last entry that it delivered.
+- To switch between an HTTPS endpoint and S3, choose the other destination, and enter its settings. Vexo continues from the last entry that it delivered. Switching back to S3 keeps your external ID, so your role's trust policy keeps working.
 - To stop the export, remove it. You can remove it even if your account no longer has the Enterprise package.
 - To get a new signing secret, remove the export and set it up again. The new export starts with entries written after you set it up, so entries written while no export exists aren't sent.
 
