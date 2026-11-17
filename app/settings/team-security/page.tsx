@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'SSO and team security',
-    description: 'Learn how to set up single sign-on (SAML or OIDC) through your identity provider, and how to require SSO or two-factor authentication of everyone you share apps with.',
+    description: 'Connect Vexo to Okta, Microsoft Entra ID, Google Workspace, or another identity provider with OIDC or SAML 2.0, verify your email domain, and require SSO or two-factor authentication of your team.',
 }
 
 export default function Home() {

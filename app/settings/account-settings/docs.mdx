@@ -13,6 +13,31 @@ This is where you can change your name or the e-mail that you've provided.
 
 To protect your account with a code from an authenticator app, see [Two-factor authentication](/settings/two-factor-authentication).
 
+# Sign-in methods
+
+You can sign in to Vexo with your email address and password, GitHub, Google, or Microsoft, on every plan. If your team uses single sign-on, see [SSO and Team Security](/settings/team-security#sign-in-with-sso).
+
+## Sign up or sign in with Google or Microsoft
+
+On the sign-in or sign-up page, click **Continue with Google** or **Continue with Microsoft**.
+
+To create a new account this way, the provider must confirm your email address:
+
+- **Google**: the address must be verified with Google.
+- **Microsoft**: the address must be in a domain that your organization verified with Microsoft, or belong to a personal Microsoft account.
+
+If a Vexo account already uses that email address, Vexo doesn't connect Google or Microsoft to it automatically. Sign in the way you usually do, with your password or GitHub, and then [connect the provider](#connect-or-disconnect-google-or-microsoft).
+
+Vexo recognizes you by your Google or Microsoft account, not by its email address. If your account uses two-factor authentication, Vexo asks for your code after Google or Microsoft signs you in.
+
+## Connect or disconnect Google or Microsoft
+
+In **Settings** > **Security** > **Sign-in methods**, click **Connect Google** or **Connect Microsoft**, and sign in to the provider. To stop using a provider, click **Disconnect Google** or **Disconnect Microsoft**. You can connect one Google account and one Microsoft account. Connecting a different account of the same provider replaces the first one.
+
+An account that you created with Google or Microsoft has no password. Before you disconnect the provider, set a password with **Forgot password?** on the sign-in page.
+
+Members of a team that [requires SSO](/settings/team-security#require-sso) can't sign in with Google or Microsoft.
+
 # API tokens
 
 To create tokens for the read API and the MCP server, see [Personal access tokens](/settings/api-tokens) and [MCP server](/settings/mcp-server).
