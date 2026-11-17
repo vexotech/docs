@@ -39,6 +39,9 @@ const synonyms: Record<string, string[]> = {
   plans: [SUBSCRIPTION],
   billing: ['/settings/billing', SUBSCRIPTION],
   seats: [`${SUBSCRIPTION}#seats`],
+  sso: ['/settings/business'],
+  sla: ['/settings/business'],
+  annual: ['/settings/business'],
 };
 
 const MAX_RESULTS = 8;

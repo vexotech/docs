@@ -1,0 +1,66 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Business plan
+
+The Business plan adds single sign-on, custom roles, a team audit log, and an uptime commitment to your paid plan. It costs **$299 a month**, or **$249 a month billed annually** ($2,988 a year). Usage, such as events, session replays, and extra seats, stays billed on your plan at the [usual rates](/settings/subscription#rates).
+
+### What's included
+
+{/* Restates BUSINESS_FEATURES, BUSINESS_SLA and the Business prices in vexo-web src/_utils/pricing.ts; change them together. */}
+
+- **Single sign-on (SSO)** with SAML or OIDC, and the option to require it for your team.
+- **Custom roles and per-feature permissions.**
+- **Team audit log**, with SIEM export.
+- **99.5% uptime SLA**: see the [Business uptime SLA](https://www.vexo.co/sla) for how Vexo measures uptime and how to claim a service credit.
+
+Requiring two-factor authentication for your team is available on every plan, including Business.
+
+### Upgrade to Business
+
+Business needs a paid plan, because your usage is billed on it. If your account is on the free plan, [enable billing](/settings/subscription#enabling-billing) first.
+
+1. Log in to your Vexo account.
+2. Click your profile name in the top-right corner and open **Settings**.
+3. Under **Billing**, find **Business plan**, and choose **Monthly** or **Annually**.
+4. Click **Upgrade to Business**, and complete checkout.
+
+Business turns on as soon as Stripe confirms the payment, usually within a minute. Refresh **Settings** to see it.
+
+Business is a separate subscription from your plan, billed in advance on its own invoice. Your usage stays on your plan's monthly invoice, so with monthly Business you get two invoices a month.
+
+### Switch between monthly and annual billing
+
+1. In **Settings**, under **Billing**, click **Manage billing** to open the Stripe billing portal.
+2. Update the **Vexo Business** subscription to the other billing period.
+
+The portal shows what you'll pay before you confirm.
+
+### Cancel Business
+
+1. In **Settings**, under **Billing**, click **Manage billing** to open the Stripe billing portal.
+2. Cancel the **Vexo Business** subscription.
+
+Your plan and Business are separate subscriptions: cancelling Business doesn't cancel your plan, and cancelling your plan doesn't cancel Business. To leave Vexo's paid plans entirely, cancel both.
+
+### What happens when Business ends
+
+{/* Restates BUSINESS_RENEWAL in vexo-web src/_utils/pricing.ts; change both together. */}
+
+- Business stays on until the end of the period you've paid for. You aren't charged again.
+- When that period ends, the Business features turn off.
+- If your team requires SSO, the requirement stops applying, so no member is locked out. Members sign in with the other methods on their accounts, such as their password.
+- Your plan, your usage billing, and your data don't change.
+
+### If a payment fails
+
+If a Business payment fails, Stripe retries it, and Business stays on while it does. To pay sooner, update your card in **Manage billing**. If every retry fails, Stripe ends the subscription and Business turns off.
+
+### Business through an agreement with Vexo
+
+If your account has Business through an agreement with Vexo, **Settings** says so, and there's nothing to manage in the billing portal. To change it, email hello@vexo.co.
+
+### Enterprise
+
+Enterprise includes everything in Business and is sold through a conversation with the Vexo team. To talk about Enterprise, email hello@vexo.co.
+
+export default ({ children }) => <DocLayout current="business" previous={{href: '/settings/subscription', label: 'Subscription'}} next={{href: '/settings/usage-limits', label: 'Usage and Limits'}}>{children}</DocLayout>
