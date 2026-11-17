@@ -42,6 +42,48 @@ Session replays are priced separately from events, with the same shape: a free a
 - Your account has a **replay limit** — a hard cap on replays recorded per cycle, which you control in **Settings → Session Replays**. It defaults to 1,000. Raising it above 1,000 is how you opt in to pay-as-you-go replays; you can also lower it (even to 0) at any time for privacy or cost control. Free accounts can set it up to 1,000.
 - When you reach your replay limit, new session replays **pause** until the next cycle starts or you raise the limit. Events, dashboards, and existing replays are unaffected.
 
+### Other usage
+
+{/* Restates the meter prices and AI_CREDIT_COSTS in vexo-web src/_utils/pricing.ts (the pricing page's price book); change them together. */}
+
+Some features are metered too. Every account gets a free amount of each one every month. Past it, usage is billed monthly in arrears on accounts with billing enabled, at the same prices on every paid plan, Business included.
+
+| Usage | Free each month | Then |
+| --- | --- | --- |
+| AI credits | 500 | $0.01 a credit |
+| Export rows | 1 million | $10 per million |
+| Feature flag requests | 1 million | $20 per million |
+| Survey responses | 1,500 | $0.03 a response |
+
+AI credits pay for AI features: a session summary costs 3 credits, a natural-language query or an Ask Vexo question costs 1, and AI issue discovery costs 10 for each app each week.
+
+Signing in with Google or Microsoft is free on every plan.
+
+### Plans
+
+- **Free:** the free amounts above, with no card required.
+- **Pay-as-you-go:** add billing, and pay for usage past the free amounts at the rates on this page.
+- **Business:** $299 a month, or $249 a month billed annually ($2,988 a year), on top of your usage. Adds single sign-on, custom roles, the team audit log, and a 99.5% uptime SLA. See [Business plan](/settings/business).
+- **Enterprise:** includes Business and is sold through a conversation with the Vexo team. Email hello@vexo.co.
+
+### Example bill
+
+A mid-size app on monthly Business, for one month:
+
+| Usage | Billed |
+| --- | --- |
+| 5M events (4.5M past the free 500K, at $30 per million) | $135.00 |
+| 3,000 session replays (2,000 past the included 1,000) | $6.00 |
+| 5 seats (3 past the included 2) | $14.70 |
+| 2,000 AI credits (1,500 past the free 500) | $15.00 |
+| 2 million export rows (1 million past the free 1 million) | $10.00 |
+| 3 million feature flag requests (2 million past the free 1 million) | $40.00 |
+| 2,500 survey responses (1,000 past the free 1,500) | $30.00 |
+| Business, billed monthly | $299.00 |
+| **Total** | **$549.70** |
+
+Amounts are before discounts and tax. The same app without Business pays $250.70.
+
 ### Enabling billing
 
 Free accounts don't need a card. To keep collecting events beyond the free allowance:
