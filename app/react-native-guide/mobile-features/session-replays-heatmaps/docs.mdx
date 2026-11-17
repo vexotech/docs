@@ -22,6 +22,41 @@ track down bugs from your application, and understand that users are following p
 
 <DocImage src="/docs/mobile-session-replays.png" width="1018" height="392" size="large" />
 
+### Find replays by sequence
+
+Single filters find sessions with an event. A sequence finds sessions where events happened in order, such as "viewed Cart, then tapped Checkout, then hit a payment error."
+
+1. In **Session Replays**, select **Sequence**.
+2. Add 2 to 5 steps. Each step is one of these:
+   - **Screen**: the user viewed a screen. Use `*` as a wildcard, for example `Product/*`.
+   - **Tap on screen**: the user tapped on a screen.
+   - **Custom Event**: your app tracked a custom event. You can match its properties, as in funnels.
+   - **Error**: the session had an error from an error group.
+3. Set **Within**: the most time between the first and last step, from 1 minute to 1 day.
+4. Select **Apply**.
+
+The list shows replays of sessions that did every step in order, with other events allowed in between. A sequence search covers at most 31 days of replays; pick a shorter date range if the list asks for one. To remove the sequence, open it and select **Clear**.
+
+### Saved views
+
+A saved view keeps the replay list's filters and sequence under a name, so you and your team can run the same search again.
+
+- To save one, select **Saved views**, enter a name, and select **Save**.
+- To use one, select **Saved views**, then the view's name. The view applies its filters to the date range you're looking at; it doesn't save a date range.
+- To delete one, select the trash icon next to it.
+
+Everyone on the app sees its saved views. Saving or deleting one needs write access to the app. An app can have up to 50 saved views.
+
+### Playlists
+
+A playlist collects replays to watch later or review with your team.
+
+- To add a replay, open it and select **Add to playlist**. Choose a playlist, or enter a name and select **Create and add**.
+- To watch a playlist, select **Playlists** in **Session Replays**, then the playlist's name. Its replays show in the order you added them; select **All replays** to go back.
+- To take a replay out, select **Remove** on its row. To delete a playlist, select the trash icon next to it in **Playlists**.
+
+Everyone on the app sees its playlists, and you can share a playlist's link with your team. Changing a playlist needs write access to the app. An app can have up to 50 playlists of up to 100 replays each. When a replay expires under your [data retention](/settings/data-retention) settings, it leaves its playlists.
+
 # Heatmaps
 
 ### Screens & Taps
