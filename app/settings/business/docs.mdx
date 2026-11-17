@@ -10,10 +10,10 @@ The Business plan adds single sign-on, custom roles, a team audit log, and an up
 
 - **Single sign-on (SSO)** with SAML or OIDC, and the option to require it for your team.
 - **Custom roles and per-feature permissions.**
-- **Team audit log**, with SIEM export.
+- **Team audit log.**
 - **99.5% uptime SLA**: see the [Business uptime SLA](https://www.vexo.co/sla) for how Vexo measures uptime and how to claim a service credit.
 
-Requiring two-factor authentication for your team is available on every plan, including Business.
+Requiring two-factor authentication for your team is available on every plan, including Business. SIEM export of the audit log comes with [Enterprise](#enterprise).
 
 ### Upgrade to Business
 
@@ -61,6 +61,6 @@ If your account has Business through an agreement with Vexo, **Settings** says s
 
 ### Enterprise
 
-Enterprise includes everything in Business and is sold through a conversation with the Vexo team. To talk about Enterprise, email hello@vexo.co.
+Enterprise includes everything in Business, adds SIEM export of the team audit log, and is sold through a conversation with the Vexo team. To talk about Enterprise, email hello@vexo.co.
 
 export default ({ children }) => <DocLayout current="business" previous={{href: '/settings/subscription', label: 'Subscription'}} next={{href: '/settings/usage-limits', label: 'Usage and Limits'}}>{children}</DocLayout>
