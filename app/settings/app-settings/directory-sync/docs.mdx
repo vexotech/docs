@@ -16,13 +16,16 @@ Vexo is a SCIM 2.0 service provider: your identity provider, such as Okta or Mic
 
 Your identity provider authenticates to Vexo with a bearer token that you create in Vexo.
 
-1. In **Settings**, go to **Directory sync (SCIM)**.
-2. Create a token, and copy it. Vexo shows the token only once.
-3. Copy the base URL: `https://api.vexo.co/scim/v2`.
+1. In **Settings** > **Security** > **Team security**, go to **Directory sync (SCIM)**.
+2. Copy the **SCIM base URL**: `https://api.vexo.co/scim/v2`.
+3. Click **Create token**, copy the **SCIM token**, and then click **Done**. Vexo shows the token only once.
 
 Your identity provider needs both values. It sends the token in the HTTP `Authorization` header, as `Bearer <token>`.
 
-To replace the token, rotate it. The old token stops working at once, so update your identity provider right away. To stop provisioning, revoke the token.
+Once the token exists, **Directory sync (SCIM)** shows when it was created, when it was last used, and how many members it manages.
+
+- To replace the token, click **Rotate token**. The old token stops working at once, so paste the new one into your identity provider right away.
+- To stop provisioning, click **Turn off directory sync**. Vexo deletes the token, so your identity provider can't add or remove members until you create a new one.
 
 ## Connect Okta
 
@@ -95,7 +98,7 @@ After you fix the cause, have your identity provider send the person again, for 
 
 - Everyone joins as Analyst. Vexo accepts groups, so group push succeeds, but groups don't map to Vexo roles.
 - Directory sync never changes a Vexo account's email address, and name changes in your directory don't update the Vexo account.
-- When you revoke the token or turn off provisioning, the people it added stay on your team. To remove them, remove them in Vexo.
+- When you turn off directory sync in Vexo or provisioning in your identity provider, the people it added stay on your team. To remove them, remove them in Vexo.
 - Vexo limits SCIM requests per team. Over the limit, it answers with HTTP status `429`, and your identity provider tries again later.
 
 ## Audit log
@@ -105,6 +108,6 @@ Every change that directory sync makes appears in your [team audit log](/setting
 - `SCIM_PROVISION`: a person joined, rejoined, or couldn't be added. The entry shows `created`, `reactivated`, or `refused` with the reason: `domain_not_verified`, `outside_team`, `no_free_seat`, or `owner`.
 - `SCIM_DEPROVISION`: a person was removed. The entry shows how many personal access tokens and MCP tokens Vexo revoked.
 
-Each time you create, rotate, or revoke the SCIM token, the log records `SCIM_SETUP`.
+Each time you create or rotate the SCIM token, or turn off directory sync, the log records `SCIM_SETUP`.
 
 export default ({ children }) => <DocLayout current="directory-sync" previous={{href: '/settings/app-settings/team', label: 'Team and Roles'}} next={{href: '/settings/app-settings/audit-log', label: 'Audit Log'}}>{children}</DocLayout>

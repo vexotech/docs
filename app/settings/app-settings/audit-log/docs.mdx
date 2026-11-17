@@ -57,7 +57,7 @@ These entries belong to your account, not to one app, so they appear only in the
 | `AUDIT_EXPORT_CHANGE` | You set up, change, or remove the [SIEM export](#send-the-team-audit-log-to-your-siem), or rotate its external ID. | The endpoint's host, or the S3 bucket's name | `destination`, `removed`, `hasAuthHeader`, or `externalIdRotated`. The external ID is never recorded. |
 | `SCIM_PROVISION` | [Directory sync](/settings/app-settings/directory-sync) adds a person to your team, restores them, or can't add them. The actor is `scim`. | The person's email address | `created` or `reactivated`, or `refused` with the reason |
 | `SCIM_DEPROVISION` | Directory sync removes a person whom your identity provider deactivated or deleted. The actor is `scim`. | The person's email address | The number of personal access tokens and MCP tokens revoked |
-| `SCIM_SETUP` | You create, rotate, or revoke your [SCIM token](/settings/app-settings/directory-sync#create-a-scim-token). | Your email address | `change`: `token_created`, `token_rotated`, or `token_revoked` |
+| `SCIM_SETUP` | You create or rotate your [SCIM token](/settings/app-settings/directory-sync#create-a-scim-token), or turn off directory sync, which deletes the token. | Your email address | `change`: `token_created`, `token_rotated`, or `token_revoked` |
 
 A person's sign-ins appear in their own account's log and in the log of every account where they hold a seat. If a member leaves your team, their earlier sign-ins stay in your log. Personal access token changes appear only in the token holder's own log.
 
