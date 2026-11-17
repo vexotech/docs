@@ -38,11 +38,11 @@ Your members can then [sign in with SSO](#sign-in-with-sso). To make SSO the onl
 
 ### Vexo's values for your identity provider
 
-Your identity provider asks for these values. **Single sign-on (SSO)** shows them with your team's ID filled in: copy them from there.
+Your identity provider asks for these values. Each one includes your team's ID, and **Single sign-on (SSO)** shows them with the ID filled in: copy them from there.
 
 | Protocol | Setting | Value |
 | --- | --- | --- |
-| OIDC | Redirect URI | `https://vexo.co/auth/sso/callback` |
+| OIDC | Redirect URI | `https://vexo.co/auth/sso/callback/<team ID>` |
 | SAML 2.0 | Entity ID (audience) | `https://api.vexo.co/auth/sso/saml/<team ID>` |
 | SAML 2.0 | ACS URL (reply URL), with the HTTP-POST binding | `https://api.vexo.co/auth/sso/saml/<team ID>/acs` |
 | SAML 2.0 | Metadata URL | `https://api.vexo.co/auth/sso/saml/<team ID>/metadata` |
@@ -61,7 +61,7 @@ Vexo signs people in with the authorization code flow and PKCE, and asks for the
 
 Some identity providers need extra care:
 
-- **Microsoft Entra ID**: use your own tenant's issuer, `https://login.microsoftonline.com/<tenant ID>/v2.0`. Vexo refuses the multi-tenant issuers (`common` and `organizations`), because they would let any Microsoft tenant sign in. Add the `email` optional claim to the ID token.
+- **Microsoft Entra ID**: use your own tenant's issuer, `https://login.microsoftonline.com/<tenant ID>/v2.0`. Vexo refuses the multi-tenant issuers (`common` and `organizations`), because they would let any Microsoft tenant sign in, and the tenant of personal Microsoft accounts. Add the `email` optional claim to the ID token.
 - **Google**: with Google as the OIDC issuer, only accounts of the Google Workspace whose domain matches the email address can sign in. A personal Google account made with a work address can't. For Google Workspace, use [SAML](#google-workspace-saml) instead.
 
 ### Connect with SAML 2.0
@@ -98,7 +98,7 @@ These guides show where Vexo's values go in common identity providers. Each one 
 1. In the Okta Admin Console, go to **Applications** > **Applications**, and click **Create App Integration**.
 2. Select **OIDC - OpenID Connect**, select **Web Application**, and click **Next**.
 3. Name the app, for example `Vexo`. Keep the **Authorization Code** grant type.
-4. In **Sign-in redirect URIs**, enter the redirect URI: `https://vexo.co/auth/sso/callback`.
+4. In **Sign-in redirect URIs**, enter the redirect URI from Vexo: `https://vexo.co/auth/sso/callback/<team ID>`.
 5. Under **Assignments**, choose who can use Vexo, and click **Save**.
 6. In Vexo, set **Protocol** to **OIDC**, and enter your Okta domain as the **Issuer URL**, for example `https://example.okta.com`. Copy the **Client ID** and the **Client secret** from the app's **General** tab, and click **Save connection**.
 
@@ -123,7 +123,7 @@ These guides show where Vexo's values go in common identity providers. Each one 
 1. In the Microsoft Entra admin center, go to **App registrations**, and click **New registration**.
 2. Name the app, for example `Vexo`.
 3. Under **Supported account types**, select **Accounts in this organizational directory only (Single tenant)**.
-4. Under **Redirect URI**, select the **Web** platform, and enter `https://vexo.co/auth/sso/callback`. Click **Register**.
+4. Under **Redirect URI**, select the **Web** platform, and enter the redirect URI from Vexo: `https://vexo.co/auth/sso/callback/<team ID>`. Click **Register**.
 5. On the app's **Overview** page, copy the **Application (client) ID** and the **Directory (tenant) ID**.
 6. Go to **Certificates & secrets**, click **New client secret**, and copy the secret's **Value**. Note when the secret expires: before then, create a new one and save it in Vexo.
 7. Go to **Token configuration**, click **Add optional claim**, select the **ID** token type, select `email`, and click **Add**.
@@ -175,7 +175,7 @@ Vexo creates and links accounts through SSO only for email addresses in domains 
    - Value: `vexo-verification=<token>`.
 3. Click **Verify**. DNS changes can take a while to appear. If Vexo doesn't find the record, try again later.
 
-Keep the record published. You can check a domain again at any time with **Re-check**. If the record is gone, the domain stops counting as verified.
+Keep the record published. You can check a domain again at any time with **Re-check**. If the record is gone, the domain stops counting as verified, even while SSO is required: new members from that domain can't join until you verify it again. Members who already signed in with SSO keep signing in.
 
 Only one Vexo team at a time can hold a domain verified. If another team already verified yours, [contact Vexo](/contact-vexo).
 
@@ -183,7 +183,7 @@ Only one Vexo team at a time can hold a domain verified. If another team already
 
 After you save the connection, click **Test sign-in**. Vexo sends you to your identity provider. Sign in there, and Vexo shows whom your identity provider signed in and whether that email address's domain is verified. The test doesn't sign anyone in, and your Vexo session doesn't change.
 
-When you change the connection, Vexo clears the test. Run it again before you require SSO.
+When you change the connection, including when you save a new client secret or refreshed SAML metadata, Vexo clears the test. Run it again before you require SSO.
 
 ### Sign in with SSO
 
@@ -208,7 +208,7 @@ To add and remove members from your identity provider before they sign in, use [
 
 When someone signs in with SSO and already has a Vexo account with the same email address, Vexo links SSO to that account only if it already holds a seat on your account. Otherwise, Vexo refuses the sign-in. To add that person, invite them to your team first, and then have them sign in with SSO.
 
-After the first sign-in, Vexo recognizes the person by their identity provider account (the OIDC subject or the SAML NameID), not by their email address.
+After the first sign-in, Vexo recognizes the person by their identity provider account (the OIDC subject or the SAML NameID), not by their email address. If they leave your team, their next SSO sign-in follows the first sign-in rules again.
 
 ### When SSO sign-in fails
 
@@ -235,7 +235,7 @@ To turn it on, you need:
 - A [verified domain](#verify-your-email-domain).
 - Two-factor authentication on your own account.
 
-While SSO is required, you can't remove the connection or your last verified domain, or switch the connection to a different identity provider. You can still save a new client secret or refreshed SAML metadata. To make the other changes, turn off **Require SSO** first.
+While SSO is required, you can't remove the connection or your last verified domain, or switch the connection to a different identity provider. You can still save a new client secret or refreshed SAML metadata, which clears the test sign-in. To make the other changes, turn off **Require SSO** first.
 
 If your account loses the Business package, the requirement stops applying.
 
