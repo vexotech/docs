@@ -2,34 +2,241 @@ import { DocLayout } from '../../../../components';
 
 # Audit log
 
-An app's audit log records who changed the app's access or its data, and when. Each app has its own log, and only the app's owner can see it.
+The audit log records who did what in your apps and your account, and when: changes to access and settings, sign-ins, and who viewed or exported data. You can read it in two places:
 
-To open it, go to the app's **App Settings**, and scroll to **Audit Log**.
+- **An app's audit log** shows one app's entries. The app's owner opens it in the app's **App Settings**, under **Audit Log**. It's available on every plan.
+- **The team audit log** shows your whole account in one place: your team's sign-ins; changes to your SSO, security requirements, roles, SIEM export, directory sync, and personal access tokens; and the entries of every app that you own, including apps that you deleted. Open it in **Settings** > **Team**. It comes with the Business package: upgrade to Business in **Settings** > **Billing**.
+
+Vexo keeps every entry. You can't edit or delete entries.
 
 ## What the log records
 
-| Action | Recorded when | Target |
-| --- | --- | --- |
-| `PERMISSION_GRANT` | Someone gives a person access to the app. | The person's email address |
-| `PERMISSION_REVOKE` | Someone removes a person's access. | The person's email address |
-| `APP_TRANSFER` | The owner transfers the app to someone else. | The new owner's email address |
-| `API_KEY_CREATE` | Someone creates an API key for the app. | None |
-| `DATA_ERASURE` | Someone [erases a person's data](/settings/data-retention#erase-a-persons-data). | The device ID |
-| `ERROR_GROUP_ASSIGN` | Someone assigns an [error group](/react-native-guide/mobile-features/error-triage) to a team member. | The assignee's email address |
-| `ERROR_GROUP_UNASSIGN` | Someone removes an error group's assignee. | The error group's fingerprint |
+Each entry shows when it happened, in your local time, who did it (the actor), the action, and its target. Many entries add details, listed in the **Details** column of the following tables.
 
-Each entry also shows when it happened, in your local time, and who did it. Some actions add details: a `DATA_ERASURE` entry, for example, lists what was erased from each store.
+### App access and settings
 
-Vexo keeps every entry for as long as the app exists. You can't edit or delete entries.
+These entries appear in the app's audit log and in the team audit log.
+
+| Action | Recorded when | Target | Details |
+| --- | --- | --- | --- |
+| `PERMISSION_GRANT` | The app's owner adds a person to the app or changes their role. | The person's email address | `type`: the role's key, such as `ANALYST`, or a custom role's ID |
+| `PERMISSION_REVOKE` | The app's owner removes a person from the app. | The person's email address | None |
+| `APP_TRANSFER` | The owner transfers the app to someone else. | The new owner's email address | None |
+| `API_KEY_CREATE` | Someone creates an API key for the app. | None | None |
+| `DATA_ERASURE` | Someone [erases a person's data](/settings/data-retention#erase-a-persons-data). | The device ID | What was erased from each store |
+| `ERROR_GROUP_ASSIGN` | Someone assigns an [error group](/react-native-guide/mobile-features/error-triage) to a team member. | The assignee's email address | None |
+| `ERROR_GROUP_UNASSIGN` | Someone removes an error group's assignee. | The error group's fingerprint | None |
+| `APP_PURGE` | Vexo permanently deletes a deleted app's data. Because a deleted app's own log is closed, you see this entry in the team audit log. | The app's ID | None |
+| `ADMIN_APP_ACCESS` | A Vexo staff member opens or changes the app, for example to answer a support request. | The app's ID | The permission that the request needed, and the request's method and path |
+
+### Data access
+
+These entries also appear in the app's audit log and in the team audit log.
+
+| Action | Recorded when | Target | Details |
+| --- | --- | --- | --- |
+| `REPLAY_VIEW` | Someone opens a session replay. | The recording's ID | `platform`: `mobile` or `web` |
+| `EXPORT` | Someone downloads the devices CSV or the custom events CSV, runs an export, or downloads an export file. | The file name, or the export run's ID | `kind`: `devices_csv`, `custom_events_csv`, `export_run`, or `export_download`, with the row count or the export job's ID |
+| `SQL_QUERY` | A query in the SQL console succeeds. Failed queries aren't recorded. | None | `sql`: the query as written, up to 4,000 characters; `rows`: the number of rows returned |
+| `SHARE_LINK_VIEW` | Someone opens a replay or dashboard share link. The actor is `guest`. | The link's ID | `kind`: `replay` or `dashboard`; `sharedBy`: who created the link; `ip`: the visitor's IP address |
+| `BILLING_PORTAL_OPEN` | Someone opens the app owner's billing portal from the app. For more information, see [Team and roles](/settings/app-settings/team#the-billing-role). | The owner's email address | None |
+
+### Sign-ins and team changes
+
+These entries belong to your account, not to one app, so they appear only in the team audit log.
+
+| Action | Recorded when | Target | Details |
+| --- | --- | --- | --- |
+| `LOGIN` | Someone signs in to Vexo, with a password, GitHub, Google, Microsoft, or SSO, after the two-factor authentication (2FA) step if they use 2FA. | The person's email address | `method`: `PASSWORD`, `GITHUB`, `GOOGLE`, `MICROSOFT`, or `SSO`; `twoFactor`: `true` when they entered a 2FA code; `ip`: their IP address |
+| `SSO_LOGIN` | Someone signs in through your [single sign-on (SSO)](/settings/team-security). A `LOGIN` entry follows when they get their session. | Your SSO connection's ID | `subject`: their account's ID at your identity provider (the OIDC subject or SAML NameID); `protocol`: `OIDC` or `SAML`; `provisioned`: `true` when Vexo created their account at this sign-in |
+| `SSO_SETUP` | You change your [SSO setup](/settings/team-security#set-up-sso): save or remove the identity provider connection, add or remove a domain, verify a domain or find that its TXT record is gone, or run a test sign-in. | Your email address | `change`: `connection_saved`, `connection_removed`, `domain_added`, `domain_verified`, `domain_unverified`, `domain_removed`, or `test_sign_in`; with `protocol`, `domain`, or the test's `subject` and `email` |
+| `REQUIRE_SSO_CHANGE` | You turn **Require SSO** on or off. | Your email address | `required` |
+| `REQUIRE_2FA_CHANGE` | You turn **Require two-factor authentication** on or off. | Your email address | `required` |
+| `PAT_CREATE`, `PAT_ROTATE`, `PAT_REVOKE` | You create, rotate, or revoke one of your [personal access tokens](/settings/api-tokens). | The token's ID | None |
+| `ROLE_CHANGE` | You create, change, or delete a [custom role](/settings/app-settings/team#custom-roles). | The role's ID | `name`, `permissions`, and `removed` |
+| `AUDIT_EXPORT_CHANGE` | You set up, change, or remove the [SIEM export](#send-the-team-audit-log-to-your-siem), or rotate its external ID. | The endpoint's host, or the S3 bucket's name | `destination`, `removed`, `hasAuthHeader`, or `externalIdRotated`. The external ID is never recorded. |
+| `SCIM_PROVISION` | [Directory sync](/settings/app-settings/directory-sync) adds a person to your team, restores them, or can't add them. The actor is `scim`. | The person's email address | `created` or `reactivated`, or `refused` with the reason |
+| `SCIM_DEPROVISION` | Directory sync removes a person whom your identity provider deactivated or deleted. The actor is `scim`. | The person's email address | The number of personal access tokens and MCP tokens revoked |
+| `SCIM_SETUP` | You create or rotate your [SCIM token](/settings/app-settings/directory-sync#create-a-scim-token), or turn off directory sync, which deletes the token. | Your email address | `change`: `token_created`, `token_rotated`, or `token_revoked` |
+
+A person's sign-ins appear in their own account's log and in the log of every account where they hold a seat. If a member leaves your team, their earlier sign-ins stay in your log. Personal access token changes appear only in the token holder's own log.
+
+The team audit log doesn't include SSO, security requirement, or personal access token entries from before it became available.
 
 ## Find an entry
 
 The log shows the newest entries first, 25 at a time. Click **Load more** to see older ones.
 
-To narrow the log, use the filters above it:
+To narrow the log, use the filters above it. The team audit log has the same filters:
 
-- **Filter by actor**: shows entries by people whose email address contains the text that you type.
-- **All actions**: shows only one action. You can't filter on `ERROR_GROUP_ASSIGN` or `ERROR_GROUP_UNASSIGN`.
+- **Filter by actor**: shows entries whose actor contains the text that you type, such as part of an email address, or `guest`.
+- **All actions**: shows only one action.
 - **From date** and **To date**: show entries from the start of the first day to the end of the last day, in UTC.
 
-export default ({ children }) => <DocLayout current="audit-log" previous={{href: '/settings/app-settings/team', label: 'Team'}} next={{href: '/settings/app-settings/delete-application', label: 'Delete Application'}}>{children}</DocLayout>
+## Send the team audit log to your SIEM
+
+With the Enterprise package, Vexo sends your team audit log to your security information and event management (SIEM) system. Vexo sends the same entries that the team audit log shows, to one destination: an HTTPS endpoint, or an Amazon S3 bucket. To get the package, [contact us](mailto:hello@vexo.co?subject=Vexo%20Enterprise).
+
+You set up the export in **Settings** > **Team**, in the SIEM export settings. After you save it, the settings show when Vexo last delivered entries, and the status or error of the last attempt.
+
+### What Vexo sends
+
+- **Format:** NDJSON (newline-delimited JSON): one entry per line, and each line ends with a newline. Each batch has up to 500 entries, oldest first.
+- **Start:** the export starts with entries written after you set it up. The first entry that Vexo sends is the `AUDIT_EXPORT_CHANGE` entry that records the setup. Earlier entries aren't sent.
+- **Schedule:** Vexo sends once a minute. When entries are waiting, it sends up to 10 batches in that minute, so a backlog catches up at up to 5,000 entries a minute.
+- **Delay:** Vexo sends an entry once it's at least 2 minutes old, so that no entry that's still being saved is skipped. Use each entry's `createdAt` as the event time in your SIEM, not the time that it arrived.
+- **Delivery:** at least once. When a batch fails, Vexo sends the same entries again the next minute, and sends nothing newer until they're delivered. Because a retry can repeat entries that your SIEM already stored, drop duplicates by `id`.
+
+If your account loses the Enterprise package, Vexo stops sending. If you get the package again, Vexo continues from the last entry that it delivered.
+
+### Entry fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | string | The entry's unique ID. Use it to drop duplicates. |
+| `appId` | string or `null` | The app that the entry is about. `null` for sign-ins and team changes. |
+| `accountId` | string or `null` | The account that the entry is about, for sign-ins and team changes. `null` for an app's entries. |
+| `actor` | string | Who did it: an email address, or `guest`, `scim`, or another name for an automatic actor. |
+| `action` | string | The action, such as `LOGIN`. See [What the log records](#what-the-log-records). |
+| `target` | string or `null` | What the action was done to. |
+| `metadata` | object | The action's details. |
+| `createdAt` | number | When it happened, in milliseconds since the Unix epoch, to the second. |
+
+The following example is a batch with two entries:
+
+```
+{"accountId":"8c2f4d1a-6b7e-4a39-a0c5-5e1d9b3f7a10","action":"LOGIN","actor":"ana@example.com","appId":null,"createdAt":1794830400000,"id":"0b6e6c1e-3f0d-4f5c-9d61-2f7c1a9e8b42","metadata":{"method":"SSO","twoFactor":false,"ip":"203.0.113.24"},"target":"ana@example.com"}
+{"accountId":null,"action":"REPLAY_VIEW","actor":"ana@example.com","appId":"3e7b9c2d-4a1f-4d6e-8b5c-0a9f8e7d6c54","createdAt":1794830460000,"id":"5d9a7f3c-1e2b-4c8d-b6a4-7f0e3d2c1b98","metadata":{"platform":"web"},"target":"9f8e7d6c-5b4a-4392-8170-6f5e4d3c2b1a"}
+```
+
+### Send to an HTTPS endpoint
+
+1. In the SIEM export settings, choose the HTTPS endpoint, and enter its URL. The URL must start with `https://`, and its host must resolve to a public IP address.
+2. Optional: enter a value for the `Authorization` header, if your endpoint needs one. Vexo sends it with every request, and never shows it again after you save it.
+3. Save the export. Vexo shows a signing secret, which you use to [verify each request](#verify-the-signature).
+
+Each batch is one `POST` request with these headers: `Content-Type: application/x-ndjson`, `User-Agent: Vexo-Audit-Export`, `X-Vexo-Signature`, and `Authorization` if you set one. Vexo counts a request as delivered when your endpoint answers with a `2xx` status within 30 seconds. Any other answer, including a redirect, is a failure, and Vexo retries the batch the next minute.
+
+The audit log records only the endpoint's host, so a key in the URL doesn't reach the log or your SIEM. The export settings show you the full URL.
+
+| SIEM | URL | Authorization header |
+| --- | --- | --- |
+| Splunk | Your HTTP Event Collector's raw endpoint, such as `https://splunk.example.com:8088/services/collector/raw` | `Splunk <HEC token>` |
+| Sumo Logic | Your HTTP source's URL, which contains its token | None |
+
+Splunk's raw endpoint and Sumo Logic split what they receive on line breaks, so each entry becomes its own event. Turn off line merging so that they don't join entries: in Splunk, give the token a source type with `SHOULD_LINEMERGE = false`; in Sumo Logic, turn off the source's multiline processing.
+
+Datadog's HTTP log intake documents a JSON array body and an API key in a `DD-API-KEY` header, neither of which the export sends. To send the log to Datadog, send the export to a log shipper, such as Vector, that forwards it to Datadog, or use the [S3 destination](#send-to-amazon-s3) with the Datadog Forwarder, which sends new S3 objects to Datadog.
+
+### Verify the signature
+
+Every request to an HTTPS endpoint has an `X-Vexo-Signature` header: `sha256=`, then the hex-encoded HMAC-SHA256 of the raw request body, keyed with your signing secret. Vexo signs outbound [webhooks](/settings/app-settings/webhooks) the same way.
+
+If your endpoint is a service that you run, verify the signature before you store the entries. Compute it over the body exactly as received, before you split it into lines. The following example is for Node.js:
+
+```js
+import crypto from 'node:crypto';
+
+// rawBody: the request body as received, as a Buffer.
+// signature: the X-Vexo-Signature header. secret: your signing secret.
+export function isFromVexo(rawBody, signature, secret) {
+  const expected = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
+  const received = Buffer.from(signature ?? '');
+  return received.length === expected.length && crypto.timingSafeEqual(received, Buffer.from(expected));
+}
+
+// After the signature checks out: one entry per line.
+export function entries(rawBody) {
+  return rawBody.toString('utf8').split('\n').filter(Boolean).map((line) => JSON.parse(line));
+}
+```
+
+### Send to Amazon S3
+
+Vexo writes each batch to your bucket as an object, using an IAM role in your AWS account that Vexo assumes with an external ID. The role can only add objects under the prefix that you choose.
+
+1. Create an S3 bucket for the log. Its name can't contain dots, and it must be in the same AWS account as the role that you create next.
+2. In IAM, create a role for Vexo, with the trust policy that follows these steps. You fill in its external ID in step 4.
+3. In the SIEM export settings, choose Amazon S3, and enter the bucket's name, its Region code, such as `us-east-1`, an optional key prefix, such as `vexo/`, and the role's ARN. Save the export.
+4. Vexo shows the role's trust policy with your external ID in it, once. Copy it, and paste it into the role's trust relationships.
+5. Give the role the permissions policy that follows the trust policy, with your bucket and prefix.
+
+Until the role's policies are in place, deliveries fail with an error such as `AccessDenied`, and the entries wait. No entries are lost.
+
+The trust policy lets Vexo's export role, `vexo-audit-export`, assume your role only with your external ID. Your role trusts only that export role, which Vexo uses for nothing but audit exports, not Vexo's servers.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": { "AWS": "arn:aws:iam::238865950570:role/vexo-audit-export" },
+      "Action": "sts:AssumeRole",
+      "Condition": { "StringEquals": { "sts:ExternalId": "<your external ID>" } }
+    }
+  ]
+}
+```
+
+The permissions policy is all that the role needs: it can add objects under your prefix, and nothing else. This example uses the bucket `example-audit-logs` and the prefix `vexo/`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::example-audit-logs/vexo/*"
+    }
+  ]
+}
+```
+
+If the bucket encrypts objects with a customer managed AWS KMS key, also allow `kms:GenerateDataKey` on that key.
+
+Optional: to keep anyone else from writing under the prefix, add a bucket policy like the following, with your role's ARN. The role's permissions policy already limits what Vexo can do; the bucket policy limits everyone else.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OnlyVexoWritesTheAuditLog",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::example-audit-logs/vexo/*",
+      "Condition": {
+        "ArnNotEquals": { "aws:PrincipalArn": "arn:aws:iam::123456789012:role/vexo-audit-export" }
+      }
+    }
+  ]
+}
+```
+
+### S3 objects and errors
+
+Each batch is one gzip-compressed NDJSON file, stored as `application/gzip`, so a download is the `.ndjson.gz` file itself. Its key is:
+
+```
+<prefix>yyyy/MM/dd/<time of the batch's first entry>-<first entry's id>.ndjson.gz
+```
+
+For example, `vexo/2026/11/16/20261116T120000Z-0b6e6c1e-3f0d-4f5c-9d61-2f7c1a9e8b42.ndjson.gz`. The date and time are in UTC, so keys sort by time. When Vexo retries a batch, it writes the same key again, replacing the object instead of adding another one.
+
+Vexo writes only to a bucket that the role's AWS account owns. If the bucket belongs to another account, the write fails.
+
+When a write fails, the export settings show the error, such as `AccessDenied` or `NoSuchBucket`. Vexo retries the batch every minute until it succeeds, and writes nothing newer until then.
+
+To change the external ID, rotate it in the export settings. Vexo shows the new external ID once. Update the role's trust policy to match: until you do, deliveries fail with `AccessDenied`. If you lose the external ID, rotate it.
+
+### Change or remove the export
+
+- To change the export's settings, edit the export and save it. Vexo continues from the last entry that it delivered.
+- To switch between an HTTPS endpoint and S3, choose the other destination, and enter its settings. Vexo continues from the last entry that it delivered. Switching back to S3 keeps your external ID, so your role's trust policy keeps working.
+- To stop the export, remove it. You can remove it even if your account no longer has the Enterprise package.
+- To get a new signing secret, remove the export and set it up again. The new export starts with entries written after you set it up, so entries written while no export exists aren't sent.
+
+export default ({ children }) => <DocLayout current="audit-log" previous={{href: '/settings/app-settings/directory-sync', label: 'Directory Sync'}} next={{href: '/settings/app-settings/delete-application', label: 'Delete Application'}}>{children}</DocLayout>

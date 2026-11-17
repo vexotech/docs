@@ -1,0 +1,113 @@
+import { DocLayout } from '../../../../components';
+
+# Directory sync (SCIM)
+
+With directory sync, your Vexo team follows your identity provider. When your IT team assigns someone to Vexo in the identity provider, they join your Vexo team. When IT deactivates or removes them, Vexo removes their access.
+
+Vexo is a SCIM 2.0 service provider: your identity provider, such as Okta or Microsoft Entra ID, sends changes to Vexo's SCIM endpoint as they happen.
+
+## Before you begin
+
+- Directory sync comes with the Enterprise package. To get it, [contact us](mailto:hello@vexo.co?subject=Vexo%20Enterprise).
+- Set up SSO first, and verify your email domains. Directory sync adds only people whose email address is in one of your verified domains. For more information, see [SSO and Team Security](/settings/team-security#set-up-sso).
+- You must be the account owner.
+
+## Create a SCIM token
+
+Your identity provider authenticates to Vexo with a bearer token that you create in Vexo.
+
+1. In **Settings** > **Security** > **Team security**, go to **Directory sync (SCIM)**.
+2. Copy the **SCIM base URL**: `https://api.vexo.co/scim/v2`.
+3. Click **Create token**, copy the **SCIM token**, and then click **Done**. Vexo shows the token only once.
+
+Your identity provider needs both values. It sends the token in the HTTP `Authorization` header, as `Bearer <token>`.
+
+Once the token exists, **Directory sync (SCIM)** shows when it was created, when it was last used, and how many members it manages.
+
+- To replace the token, click **Rotate token**. The old token stops working at once, so paste the new one into your identity provider right away.
+- To stop provisioning, click **Turn off directory sync**. Vexo deletes the token, so your identity provider can't add or remove members until you create a new one.
+
+## Connect Okta
+
+Use the Okta app integration that you created for [Vexo SSO](/settings/team-security#identity-provider-guides).
+
+1. In the Okta Admin Console, open the app, and go to the **General** tab.
+2. Under **App Settings**, click **Edit**, turn on SCIM provisioning, and click **Save**.
+3. Go to the **Provisioning** tab, and under **Integration**, click **Edit**. Enter:
+   - **SCIM connector base URL**: `https://api.vexo.co/scim/v2`.
+   - **Unique identifier field for users**: `userName`.
+   - **Supported provisioning actions**: **Push New Users** and **Push Profile Updates**. **Push Groups** is optional.
+   - **Authentication Mode**: **HTTP Header**, with your SCIM token as the bearer token.
+4. Click **Test Connector Configuration**, close the results, and click **Save**.
+5. Under **Provisioning** > **To App**, click **Edit**, enable **Create Users**, **Update User Attributes**, and **Deactivate Users**, and click **Save**.
+6. On the **Assignments** tab, assign the people or groups who use Vexo.
+
+## Connect Microsoft Entra ID
+
+Use the enterprise application that you created for [Vexo SSO](/settings/team-security#identity-provider-guides). If you set up SSO with an app registration, open the enterprise application of the same name.
+
+1. In the Microsoft Entra admin center, go to **Enterprise applications**, and open the app.
+2. Go to **Provisioning**, and set **Provisioning Mode** to **Automatic**.
+3. Under **Admin Credentials**, enter:
+   - **Tenant URL**: `https://api.vexo.co/scim/v2`.
+   - **Secret Token**: your SCIM token.
+4. Click **Test Connection**, and then click **Save**.
+5. Under **Mappings**, keep the default user attribute mappings. Vexo uses these:
+
+   | Vexo attribute | Entra ID attribute |
+   | --- | --- |
+   | `userName` | `userPrincipalName` |
+   | `emails[type eq "work"].value` | `mail` |
+   | `name.givenName` | `givenName` |
+   | `name.familyName` | `surname` |
+   | `active` | The default `IsSoftDeleted` expression |
+
+6. Under **Settings**, set **Scope** to **Sync only assigned users and groups**, and assign the people or groups who use Vexo in **Users and groups**.
+7. Set **Provisioning Status** to **On**, and click **Save**.
+
+Entra ID provisions on its own schedule, so changes can take a while to reach Vexo.
+
+## What happens when your directory changes
+
+| In your identity provider | In Vexo |
+| --- | --- |
+| You assign a person to Vexo. | The person joins your team with the Analyst role on every app that you own. If they don't have a Vexo account, Vexo creates one on a free seat, with their email address verified, and they sign in with SSO. If they already hold a seat on your account, Vexo links their account and keeps their roles. |
+| You deactivate, suspend, unassign, or delete a person. | Vexo removes them from your team and from every app that you own, and turns off the share links that they made on your apps. Vexo also signs them out of every Vexo session, and revokes every personal access token and MCP refresh token of their Vexo account, including ones that they use outside your team. |
+| You reactivate a person. | They rejoin your team with the Analyst role on every app, if a seat is free. Their earlier roles aren't restored. |
+
+Vexo creates the account with the person's work email address, or with their `userName` when the identity provider sends no email address.
+
+Vexo removes access even if your account no longer has the Enterprise package.
+
+An MCP access token that was issued before the removal keeps working until it expires, within an hour. It can't reach your apps, because the person no longer has a role on them.
+
+To give a member a role other than Analyst, change it in Vexo. For more information, see [Team and roles](/settings/app-settings/team#give-a-member-a-role).
+
+## When Vexo doesn't add someone
+
+Vexo refuses to add a person in these cases, and your identity provider shows the error:
+
+- **Their email address isn't in one of your verified domains.** Vexo never creates or links an account for an address outside your verified domains. [Verify the domain](/settings/team-security#verify-your-email-domain) first.
+- **They already have a Vexo account that's outside your team.** Vexo links an existing account only if it already holds a seat on your account. [Invite them to your team](/settings/app-settings/team#give-a-member-a-role) first.
+- **Every seat is in use.** Add a [seat](/settings/subscription#seats), or remove a member.
+- **The person is you, the account owner.** Directory sync never manages the owner's account, so that your password and 2FA still work if your identity provider fails. Removing you in your identity provider doesn't sign you out of Vexo.
+
+After you fix the cause, have your identity provider send the person again, for example by retrying the failed provisioning. Until Vexo adds a person, it can't remove them either: if your identity provider removes someone whom Vexo never added, remove them from your Vexo team yourself.
+
+## Limits
+
+- Everyone joins as Analyst. Vexo accepts groups, so group push succeeds, but groups don't map to Vexo roles.
+- Directory sync never changes a Vexo account's email address, and name changes in your directory don't update the Vexo account.
+- When you turn off directory sync in Vexo or provisioning in your identity provider, the people it added stay on your team. To remove them, remove them in Vexo.
+- Vexo limits SCIM requests per team. Over the limit, it answers with HTTP status `429`, and your identity provider tries again later.
+
+## Audit log
+
+Every change that directory sync makes appears in your [team audit log](/settings/app-settings/audit-log), with the actor `scim`:
+
+- `SCIM_PROVISION`: a person joined, rejoined, or couldn't be added. The entry shows `created`, `reactivated`, or `refused` with the reason: `domain_not_verified`, `outside_team`, `no_free_seat`, or `owner`.
+- `SCIM_DEPROVISION`: a person was removed. The entry shows how many personal access tokens and MCP tokens Vexo revoked.
+
+Each time you create or rotate the SCIM token, or turn off directory sync, the log records `SCIM_SETUP`.
+
+export default ({ children }) => <DocLayout current="directory-sync" previous={{href: '/settings/app-settings/team', label: 'Team and Roles'}} next={{href: '/settings/app-settings/audit-log', label: 'Audit Log'}}>{children}</DocLayout>
