@@ -66,6 +66,7 @@ export const sidebarData: SidebarData = [
                     { title: 'People', name: 'people', href: '/react-native-guide/mobile-features/people' },
                     { title: 'Locations', name: 'locations', href: '/react-native-guide/mobile-features/locations' },
                     { title: 'Error Triage', name: 'error-triage', href: '/react-native-guide/mobile-features/error-triage' },
+                    { title: 'Release Health', name: 'release-health', href: '/react-native-guide/mobile-features/release-health' },
                     { title: 'Session Replays & Heatmaps', name: 'session-replays-heatmaps', href: '/react-native-guide/mobile-features/session-replays-heatmaps' },
                     { title: 'Console Logs', name: 'console-logs', href: '/react-native-guide/mobile-features/console-logs' },
                     { title: 'Custom Events', name: 'custom-events', href: '/react-native-guide/mobile-features/custom-events' },
