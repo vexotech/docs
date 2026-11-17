@@ -4,7 +4,7 @@ import { DocLayout } from '../../../components/DocLayout';
 
 Send events and identifies from your backend: purchases, renewals, refunds, background jobs, anything that your app's SDK can't see. Server events go to the same Vexo app as your mobile and web events, and they belong to the same people.
 
-You can call the HTTP API directly, or use the Node.js or Python SDK, which batch and retry for you.
+You can call the [HTTP API](#http-api) directly from any language, or use an [SDK](#sdks) for Node.js, Python, PHP, Ruby, Go, Java and Kotlin, or .NET, which batches and retries for you.
 
 ## How server events work
 
@@ -151,20 +151,89 @@ When you retry, send the same messages with the same `messageId` values. Vexo st
 | `distinctId` | 200 characters |
 | Timestamps | No earlier than 2000-01-01. A timestamp more than 1 hour ahead of the server's clock is set to the time Vexo receives the event. |
 
-## Node.js
+## SDKs
 
-The `vexo-node` package works on Node.js 18 or later and has no dependencies. It queues messages, sends them in batches when 100 are queued or every 10 seconds, retries network errors, `429`, and `5xx` responses (and the messages in `failed`) with exponential backoff, and keeps each request under 5 MB.
+Each SDK queues your messages in memory and sends them to `/v1/batch` in the background, so a `capture` or `identify` call never waits for the network. All of them follow the same rules for batching, retries, and shutdown, described in [How the SDKs send messages](#how-the-sdks-send-messages), and none of them has runtime dependencies.
+
+| Language | Package | Requires |
+| --- | --- | --- |
+| [Node.js](#nodejs), Bun, Deno, and edge runtimes | `vexo-node` on npm | Node.js 18 or later |
+| [Python](#python) | `vexo-python` on PyPI | Python 3.8 or later |
+| [PHP](#php) | `vexo/vexo-php` on Packagist | PHP 8.1 or later, with the `curl` and `json` extensions |
+| [Ruby](#ruby) | `vexo` on RubyGems | Ruby 3.0 or later |
+| [Go](#go) | `github.com/vexotech/vexo-go` | Go 1.21 or later |
+| [Java and Kotlin](#java-and-kotlin) | `co.vexo:vexo-java` on Maven Central | Java 11 or later |
+| [.NET](#net) | `Vexo.Server` on NuGet | .NET 8 or later |
+
+Copy your app's API key from the app's [settings](/settings/app-settings/app-general-information), and read it from an environment variable or your secret store. It's the same key that your app SDK uses; see [Security](#security).
+
+### Options
+
+Every SDK takes the same options, spelled in its language's style: `flushAt` in Node.js, PHP, and Java; `flush_at` in Python and Ruby; and `FlushAt` in Go and .NET. Durations are milliseconds in Node.js; seconds in Python, PHP, and Ruby; a `time.Duration` in Go; a `Duration` in Java; and a `TimeSpan` in .NET.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `host` | `https://api.vexo.co` | API base URL. |
+| `flushAt` | `100` | Send a batch when this many messages are queued (1 to 500). |
+| `flushInterval` | 10 seconds | Send whatever is queued this often. 0 turns the timer off, so messages go out only at `flushAt`, on flush, and on shutdown: `0` in Node.js, Python, PHP, and Ruby; `Duration.ZERO` in Java; and `TimeSpan.Zero` in .NET. In Go, where a zero field selects the default, a negative `FlushInterval` turns it off. |
+| `maxRetries` | `3` | Retries for network errors, timeouts, `429`, and `5xx` responses. |
+| `maxQueueSize` | `10000` | Messages kept in memory. Once the queue is full, new messages are dropped. |
+| `timeout` | 10 seconds | Timeout of each request. |
+| `shutdownTimeout` | 10 seconds | How long shutting down keeps sending. |
+| `onError` | Log the error | Called with send failures and with the messages that Vexo dropped. |
+
+A few SDKs add or change an option; the language sections below say so.
+
+### How the SDKs send messages
+
+This section applies to every SDK.
+
+- **Batches.** The SDK sends a batch when the queue reaches `flushAt` messages, and whatever is queued every `flushInterval` (PHP has no timer; see [PHP](#php)). A request holds at most 500 messages and 5 MB. The SDK never splits one message across requests.
+- **Checks when you queue a message.** The SDK doesn't queue a message that has no distinct ID (or a capture without an event name), that's over 5 MB, or that arrives when the queue is full. It also drops a message that it can't encode as JSON, such as one with a circular reference, and a message with a `NaN` or infinite number, float or decimal, anywhere in it: the API rejects a whole batch that holds one of those numbers, and sending `null` instead would change your data without telling you. The SDK reports each of these messages to your error callback, and the rest of the queue isn't affected. Go returns the error from `Capture` or `Identify` instead.
+- **Values.** Every SDK sends the following values in properties and traits the same way, at any depth, so that a value reads the same in Vexo whichever SDK sent it (in Go, except a `time.Time` inside a struct; see [Go](#go)):
+  - A date-time is a string in UTC with milliseconds and `Z`, such as `2026-11-07T12:00:00.123Z`. A date-time with an offset is converted to UTC, and one without a time zone, such as Python's naive `datetime`, Java's `LocalDateTime`, or a .NET `DateTime` of kind `Unspecified`, is read as UTC.
+  - A date without a time of day, such as Python's `date`, Java's `LocalDate`, Ruby's `Date`, or .NET's `DateOnly`, is `YYYY-MM-DD`.
+  - An arbitrary-precision decimal, such as Python's `Decimal`, Java's or Ruby's `BigDecimal`, .NET's `decimal`, or PHP's `BcMath\Number`, is a string in plain decimal notation with all of its digits, never in scientific notation: `Decimal("1.5E-7")` is `"0.00000015"`. Floating-point numbers stay JSON numbers.
+  - A string that isn't valid Unicode is still sent: each invalid UTF-8 sequence (PHP, Ruby, and Go) or lone UTF-16 surrogate (Java and .NET) becomes `U+FFFD`. Node.js and Python send a lone surrogate as a `\uXXXX` escape, which JSON allows.
+  - A `NaN` or infinite number drops the message, as described in the previous item.
+  - A UUID, and other values that JSON has no type for, are sent as strings.
+- **Message IDs.** The SDK gives each message a random UUID `messageId` when you queue it, and sends the same ID and body on every retry, so Vexo stores the message once. When your code can send the same event twice, such as from a retried job, pass your own message ID, such as an order ID. Vexo keeps a message ID for 5 days.
+- **Timestamps.** The SDK sends a timestamp as integer epoch milliseconds, converted from your language's date-time type or from a number (a fraction is dropped). It defaults to the time that you call `capture`. A date-time without a time zone is read as UTC. The Node.js, Python, PHP, and Ruby SDKs also take a string, which they send unchanged, so it must be ISO 8601 with an offset.
+- **Retries.** The SDK retries a request that fails with a network error, a timeout, `429`, or `5xx`, up to `maxRetries` times. The wait before a retry starts at 1 second and doubles with each retry, up to 30 seconds; the SDK waits a random time between half and all of it. When the response has a `Retry-After` header, the SDK waits that many seconds instead, up to 60. The SDK doesn't retry any other `4xx`, such as `400`, `401`, `406`, or `413`: it reports the status and the batch's messages, and moves on to the next batch.
+- **Circuit breaker.** Once a batch uses up its retries, later batches get a single attempt each until a request succeeds, which restores the normal retries. An unreachable API doesn't hold up your process.
+- **Dropped and failed messages.** After a `200`, the SDK reports each message in [`dropped`](#responses) with the API's reason and never sends it again. It resends only the messages in `failed`, with the same `messageId`, the same backoff, and the same `maxRetries`, and reports them with the API's reason if they still fail.
+- **Shutdown deadline.** Shutting down stops the timer and sends everything queued, for up to `shutdownTimeout`. At the deadline, the SDK aborts the request in flight and any retry wait, starts no new attempt, and reports the messages that it didn't send. Shutting down again is safe. After shutdown, the SDK drops each new message and reports it.
+- **Errors.** `capture` and `identify` never throw. The SDK reports every failure to your error callback, with the affected messages and, when there is one, the HTTP status or the API's reason for each message.
+
+Each SDK sends what's still queued when your process exits normally, except Go, which has no exit hook. A process that's killed, for example with `SIGKILL`, loses what's still queued.
+
+| SDK | Send the queue now | Shut down | Runs at exit |
+| --- | --- | --- | --- |
+| Node.js | `await vexo.flush()` | `await vexo.shutdown()` | `beforeExit`, which doesn't run when a signal stops the process |
+| Python | `vexo.flush()` | `vexo.shutdown()` | `atexit` |
+| PHP | `$vexo->flush()` | `$vexo->shutdown()` | `register_shutdown_function()` and `__destruct()` |
+| Ruby | `vexo.flush` | `vexo.shutdown` | `at_exit` |
+| Go | `client.Flush(ctx)` | `client.Close(ctx)` | None: call `defer client.Close(ctx)` |
+| Java and Kotlin | `vexo.flush()` | `vexo.close()` | A JVM shutdown hook |
+| .NET | `await vexo.FlushAsync()` | `await vexo.DisposeAsync()` | `AppDomain.ProcessExit` |
+
+In a serverless function or an edge runtime, send the queue in every request; see [Edge and serverless runtimes](#edge-and-serverless-runtimes).
+
+### Node.js
+
+The `vexo-node` package runs on Node.js 18 or later, Bun, Deno, Cloudflare Workers, Vercel Edge, and Supabase Edge Functions. It's an ES module that uses only Web APIs, with a CommonJS build for `require()`.
 
 ```bash
 npm install vexo-node
 ```
 
 ```js
-const { Vexo } = require('vexo-node');
+import { Vexo } from 'vexo-node'; // or: const { Vexo } = require('vexo-node');
 
 const vexo = new Vexo(process.env.VEXO_API_KEY);
 
-vexo.identify({ distinctId: 'user@example.com', traits: { plan: 'pro' } });
+// Use the same ID that you pass to identifyDevice() in the app SDK.
+vexo.identify({ distinctId: 'user@example.com', traits: { plan: 'pro', company: 'Acme' } });
 vexo.capture({
     distinctId: 'user@example.com',
     event: 'purchase_completed',
@@ -178,24 +247,16 @@ process.on('SIGTERM', async () => {
 });
 ```
 
-`capture()` and `identify()` only queue the message, so they never slow down your request handlers. A script that ends on its own calls `shutdown()` when its event loop empties; a server that stops on a signal must call `await vexo.shutdown()` first. `shutdown()` gives up after `shutdownTimeout`, drops what is still queued, and reports it to `onError`.
+A script that ends on its own shuts the client down when its event loop empties. A server that stops on a signal must call `await vexo.shutdown()` first, as in the example.
 
-| Option | Default | Description |
-| --- | --- | --- |
-| `host` | `https://api.vexo.co` | API base URL. |
-| `flushAt` | `100` | Send a batch when this many messages are queued (1 to 500). |
-| `flushInterval` | `10000` | Send whatever is queued every this many milliseconds. |
-| `maxRetries` | `3` | Retries for network errors, `429`, and `5xx` responses. |
-| `maxQueueSize` | `10000` | Messages kept in memory; new messages are dropped once it's full. |
-| `timeout` | `10000` | Request timeout in milliseconds. |
-| `shutdownTimeout` | `10000` | How long `shutdown()` keeps sending, in milliseconds. |
-| `onError` | `console.error` | Called with send failures and with the messages that Vexo dropped. |
+- `capture()` takes `distinctId`, `event`, and optionally `properties`, `timestamp`, and `messageId`. `timestamp` is a `Date`, epoch milliseconds, or an ISO 8601 string with an offset.
+- Options are in milliseconds. In [edge and serverless runtimes](#edge-and-serverless-runtimes), set `flushInterval: 0`.
+- `onError` receives an `Error` with `status`, `batch` (the messages it held), or `dropped` (a list of `{ message, reason }`). A message that `JSON.stringify` can't serialize, such as one with a `BigInt` property, is dropped when you queue it.
+- On a long-lived Deno or Bun server, use the client as you would on Node.js: the default options work, and Bun runs the exit hook like Node.js does.
 
-A message that `JSON.stringify` can't serialize, such as one with a `BigInt` property, is dropped when you call `capture()` and reported to `onError`; the rest of the queue isn't affected.
+### Python
 
-## Python
-
-The `vexo-python` package works on Python 3.8 or later and uses only the standard library. It sends batches from a background thread when 100 messages are queued or every 10 seconds, retries network errors, `429`, and `5xx` responses (and the messages in `failed`) with exponential backoff, keeps each request under 5 MB, and sends its queue when the interpreter exits. It's safe to create before a fork (gunicorn `--preload`, Celery prefork): each child process starts its own sending thread.
+The `vexo-python` package works on Python 3.8 or later and uses only the standard library. It sends from a background thread.
 
 ```bash
 pip install vexo-python
@@ -207,26 +268,571 @@ from vexo import Vexo
 
 vexo = Vexo(os.environ["VEXO_API_KEY"])
 
-vexo.identify("user@example.com", {"plan": "pro"})
+# Use the same ID that you pass to identifyDevice() in the app SDK.
+vexo.identify("user@example.com", {"plan": "pro", "company": "Acme"})
 vexo.capture("user@example.com", "purchase_completed", {"amount": 49.9, "currency": "USD"})
 
 # Optional: send everything still queued now. It also runs when the interpreter exits.
 vexo.shutdown()
 ```
 
-`shutdown()` gives up after `shutdown_timeout`, drops what is still queued, and reports it to `on_error`. Timestamps are sent as epoch milliseconds; a naive `datetime` is read as UTC. Values that JSON can't encode, such as `Decimal`, `UUID`, or `datetime` properties, are sent as strings.
+- `capture(distinct_id, event, properties=None, timestamp=None, message_id=None)`. `timestamp` is a `datetime` (a naive one is read as UTC), epoch milliseconds, or an ISO 8601 string with an offset.
+- Options are keyword arguments in seconds, such as `flush_interval=5.0`.
+- `on_error` receives an exception with `batch` or `dropped`; a `VexoError` also has `status`. By default, it logs to the `vexo` logger.
+- You can create the client before your server forks workers (gunicorn `--preload`, Celery prefork): each child process starts its own sending thread, and the parent sends only what it queued itself.
 
-| Option | Default | Description |
-| --- | --- | --- |
-| `host` | `https://api.vexo.co` | API base URL. |
-| `flush_at` | `100` | Send a batch when this many messages are queued (1 to 500). |
-| `flush_interval` | `10.0` | Send whatever is queued every this many seconds. |
-| `max_retries` | `3` | Retries for network errors, `429`, and `5xx` responses. |
-| `max_queue_size` | `10000` | Messages kept in memory; new messages are dropped once it's full. |
-| `timeout` | `10.0` | Request timeout in seconds. |
-| `shutdown_timeout` | `10.0` | How long `shutdown()` keeps sending, in seconds. |
-| `on_error` | Log to the `vexo` logger | Called with send failures and with the messages that Vexo dropped. |
+On AWS Lambda and other functions, see [AWS Lambda](#aws-lambda).
 
-Both SDKs give every message a `messageId`, so a retried batch is stored once. After a batch uses up its retries, the next batches get a single attempt until a request succeeds, so an unreachable API doesn't hold up your process. Neither SDK raises an error from `capture()` or `identify()`: failures go to the error callback.
+### PHP
+
+The `vexo/vexo-php` package works on PHP 8.1 or later with the `curl` and `json` extensions.
+
+```bash
+composer require vexo/vexo-php
+```
+
+```php
+use Vexo\Vexo;
+
+$vexo = new Vexo(getenv('VEXO_API_KEY'));
+
+// Use the same ID that you pass to identifyDevice() in the app SDK.
+$vexo->identify('user@example.com', ['plan' => 'pro', 'company' => 'Acme']);
+$vexo->capture('user@example.com', 'purchase_completed', ['amount' => 49.9, 'currency' => 'USD']);
+
+// Nothing else to do: the client sends what's queued when the script ends.
+```
+
+PHP has no background timer or thread, so the client sends on your request's time: when a call brings the queue to `flushAt` messages, when a call finds the oldest queued message `flushInterval` seconds old (unless `flushInterval` is 0), when you call `flush()`, and when the script ends (from `register_shutdown_function()`, which also runs after a fatal error) or the client goes out of scope. In a typical web request, you capture a few events and the client sends one batch at the end. Each send gives up after `shutdownTimeout` seconds, including its retries.
+
+- `capture(?string $distinctId, ?string $event, array $properties = [], $timestamp = null, ?string $messageId = null)`. `$timestamp` is a `DateTimeInterface`, epoch milliseconds (not `time()`, which is seconds), or an ISO 8601 string with an offset.
+- Pass options as named arguments in seconds, such as `new Vexo($key, flushAt: 50)`. The constructor throws an `InvalidArgumentException` when the API key is empty.
+- Enums are sent as their value or name, and other `Stringable` objects as strings.
+- `onError` receives a `Vexo\VexoException` with `status`, `batch`, and `dropped`. By default, it writes with `error_log()`.
+- When you fork with `pcntl_fork()`, each child starts with an empty queue.
+
+#### PHP-FPM
+
+Under PHP-FPM, the client's end-of-request send keeps the connection open until it finishes, unless the response has already gone out. Call `fastcgi_finish_request()` to send the response first. Laravel and Symfony already do this, so you don't need to. Apache `mod_php` has no equivalent.
+
+```php
+echo $page;
+
+// Send the response now; the client sends its queue afterward.
+if (function_exists('fastcgi_finish_request')) {
+    fastcgi_finish_request();
+}
+```
+
+The worker is still busy until the send finishes. When the Vexo API is unreachable, each request spends up to `shutdownTimeout` retrying. On a busy server, lower that cost:
+
+```php
+$vexo = new Vexo(getenv('VEXO_API_KEY'), timeout: 2.0, maxRetries: 1, shutdownTimeout: 3.0);
+```
+
+A worker that serves many requests or jobs in one process (Laravel Octane, RoadRunner, Swoole, FrankenPHP worker mode, or a queue worker) keeps the client alive between them, so a message can wait in the queue until the next call. Call `$vexo->flush()` after each request or job.
+
+#### Laravel
+
+Bind one client in a service provider, with the key in `config/services.php` (`'vexo' => ['key' => env('VEXO_API_KEY')]`). For queue workers and Octane, also flush after each job and request:
+
+```php
+// app/Providers/AppServiceProvider.php
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
+use Laravel\Octane\Events\RequestTerminated;
+use Vexo\Vexo;
+
+public function register(): void
+{
+    $this->app->singleton(Vexo::class, fn () => new Vexo(config('services.vexo.key')));
+}
+
+public function boot(): void
+{
+    Queue::after(fn () => app(Vexo::class)->flush());
+    Event::listen(RequestTerminated::class, fn () => app(Vexo::class)->flush());
+}
+```
+
+Then call `app(Vexo::class)->capture(...)`, or inject `Vexo`.
+
+#### Symfony
+
+Register the client as a service, and inject `Vexo\Vexo` where you need it:
+
+```yaml
+# config/services.yaml
+services:
+    Vexo\Vexo:
+        arguments:
+            $apiKey: '%env(VEXO_API_KEY)%'
+```
+
+With a worker runtime (RoadRunner, FrankenPHP worker mode, or Swoole), flush on `KernelEvents::TERMINATE`. For Messenger workers, listen to `WorkerMessageHandledEvent` the same way:
+
+```php
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Vexo\Vexo;
+
+#[AsEventListener(event: KernelEvents::TERMINATE)]
+final class FlushVexo
+{
+    public function __construct(private Vexo $vexo) {}
+
+    public function __invoke(): void
+    {
+        $this->vexo->flush();
+    }
+}
+```
+
+#### WordPress
+
+Install the package with Composer in your plugin's folder, define `VEXO_API_KEY` in `wp-config.php`, and create the client on first use. Under PHP-FPM, send the page before the client sends its queue:
+
+```php
+require_once __DIR__ . '/vendor/autoload.php';
+
+function vexo(): Vexo\Vexo
+{
+    static $vexo;
+    return $vexo ??= new Vexo\Vexo(VEXO_API_KEY);
+}
+
+add_action('woocommerce_order_status_completed', function (int $order_id): void {
+    $order = wc_get_order($order_id);
+    vexo()->capture($order->get_billing_email(), 'order_completed', ['total' => (float) $order->get_total()]);
+});
+
+add_action('shutdown', function (): void {
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    }
+}, PHP_INT_MAX);
+```
+
+#### Bref and other serverless platforms
+
+On AWS Lambda with [Bref](https://bref.sh), and on other platforms that freeze the process once the response is sent, work after the response might never run. Call `$vexo->flush()` before you return the response, and don't call `fastcgi_finish_request()` first.
+
+### Ruby
+
+The `vexo` gem works on Ruby 3.0 or later and uses only the standard library. It sends from a background thread.
+
+```ruby
+# Gemfile
+gem "vexo", "~> 0.1.0"
+```
+
+Then run `bundle install`, or install the gem directly with `gem install vexo`.
+
+```ruby
+require "vexo"
+
+vexo = Vexo::Client.new(ENV.fetch("VEXO_API_KEY"))
+
+# Use the same ID that you pass to identifyDevice() in the app SDK.
+vexo.identify(distinct_id: "user@example.com", traits: { plan: "pro", company: "Acme" })
+vexo.capture(distinct_id: "user@example.com", event: "purchase_completed",
+             properties: { amount: 49.9, currency: "USD" })
+
+# Optional: send everything still queued now. It also runs at exit.
+vexo.shutdown
+```
+
+- `capture(distinct_id:, event:, properties: nil, timestamp: nil, message_id: nil)`. `timestamp` is a `Time`, a `Date` (read as midnight UTC), a `DateTime`, an `ActiveSupport::TimeWithZone`, epoch milliseconds, or an ISO 8601 string with an offset.
+- Options are keyword arguments in seconds, such as `flush_interval: 5.0`. `Vexo::Client.new` raises an `ArgumentError` when the API key is missing.
+- A `Time`, `DateTime`, or `ActiveSupport::TimeWithZone` in properties is sent as a UTC date-time string, and a `Symbol` as its name.
+- `on_error` receives a `Vexo::Error` with `status`, `batch`, and `dropped`. By default, it calls `warn`.
+- A process that ends without running `at_exit` hooks, such as on `exit!`, loses what's still queued. If your server stops workers that way, call `shutdown` from its worker-shutdown hook.
+
+#### Rails
+
+Create one client in an initializer, and call it from controllers, models, and jobs:
+
+```ruby
+# config/initializers/vexo.rb
+VEXO = Vexo::Client.new(
+  ENV.fetch("VEXO_API_KEY"),
+  on_error: ->(error) { Rails.logger.warn(error.message) }
+)
+```
+
+You can create the client before Puma, Unicorn, or Passenger forks its workers, for example with Puma's `preload_app!`. Each worker starts with an empty queue and its own background thread the first time it uses the client, so you don't need an `on_worker_boot` hook. The same applies to Sidekiq Enterprise swarms.
+
+#### Sidekiq and Active Job
+
+A retried job runs its code again, so pass a `message_id` that's the same on every run:
+
+```ruby
+class RenewSubscriptionJob < ApplicationJob
+  def perform(subscription_id)
+    subscription = Subscription.find(subscription_id)
+    subscription.renew!
+    VEXO.capture(
+      distinct_id: subscription.user.email,
+      event: "subscription_renewed",
+      properties: { plan: subscription.plan, amount: subscription.price },
+      message_id: "renewal-#{subscription.id}-#{subscription.current_period_start.to_i}"
+    )
+  end
+end
+```
+
+Sidekiq runs `at_exit` hooks when it shuts down normally, so the client sends its queue within `shutdown_timeout` (10 seconds), inside Sidekiq's default 25-second shutdown timeout.
+
+#### AWS Lambda (Ruby)
+
+Create the client outside your handler, and flush before the handler returns:
+
+```ruby
+VEXO = Vexo::Client.new(ENV.fetch("VEXO_API_KEY"))
+
+def handler(event:, context:)
+  VEXO.capture(distinct_id: event["userId"], event: "export_finished")
+  { statusCode: 200 }
+ensure
+  VEXO.flush
+end
+```
+
+### Go
+
+The `github.com/vexotech/vexo-go` module works on Go 1.21 or later and uses only the standard library. It sends from one goroutine and is safe for concurrent use.
+
+```bash
+go get github.com/vexotech/vexo-go
+```
+
+```go
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+
+	"github.com/vexotech/vexo-go"
+)
+
+func main() {
+	client, err := vexo.New(os.Getenv("VEXO_API_KEY"), vexo.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Go has no exit hook: send everything still queued before main returns.
+	defer client.Close(context.Background())
+
+	// Use the same ID that you pass to identifyDevice() in the app SDK.
+	if err := client.Identify(vexo.Identify{
+		DistinctID: "user@example.com",
+		Traits:     map[string]any{"plan": "pro", "company": "Acme"},
+	}); err != nil {
+		log.Print(err)
+	}
+	if err := client.Capture(vexo.Capture{
+		DistinctID: "user@example.com",
+		Event:      "purchase_completed",
+		Properties: map[string]any{"amount": 49.9, "currency": "USD"},
+	}); err != nil {
+		log.Print(err)
+	}
+}
+```
+
+- `vexo.Capture` has `DistinctID`, `Event`, `Properties`, `Timestamp` (a `time.Time`), and `MessageID`.
+- `Capture` and `Identify` return an error, and drop the message, when they can't queue it, such as `vexo.ErrQueueFull` or `vexo.ErrClosed`. Failures after that go to `OnError`, usually as a `*vexo.Error` with `Status`, `Batch`, and `Dropped`. `OnError` runs on the client's goroutine: return quickly, and don't call `Flush` or `Close` from it.
+- A zero field of `vexo.Config` selects its default. A negative `FlushInterval` turns off the timer, and a negative `MaxRetries` turns off retries.
+- A `time.Time` follows the shared date-time form when it's a value in `Properties` or `Traits`, or in a `map[string]any` or `[]any` inside them. Inside a struct or a typed map or slice, `encoding/json` sends it in RFC 3339 with its own offset. A type that implements `encoding.TextMarshaler` or `json.Marshaler`, such as most UUID and decimal types, is sent the way it encodes itself.
+- `Close` and `Flush` also give up when their context is done: `Close` reports what's still queued and returns the context error, and `Flush` leaves the messages queued.
+
+A server that stops on a signal closes the client after it stops serving. Don't pass the signal's context to `Close`: it's already done, so `Close` would give up at once.
+
+```go
+ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+defer stop()
+// Start the server, then wait for the signal.
+<-ctx.Done()
+server.Shutdown(context.Background())
+
+closeCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+defer cancel()
+client.Close(closeCtx)
+```
+
+#### AWS Lambda (Go)
+
+Create the client once in `main`, so that warm invocations reuse it, and flush at the end of each invocation with a short deadline:
+
+```go
+var client *vexo.Client
+
+func main() {
+	var err error
+	client, err = vexo.New(os.Getenv("VEXO_API_KEY"), vexo.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	lambda.Start(handler)
+}
+
+func handler(ctx context.Context, order Order) error {
+	client.Capture(vexo.Capture{DistinctID: order.UserID, Event: "order_paid"})
+	flushCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	client.Flush(flushCtx)
+	return nil
+}
+```
+
+If the deadline comes first, the messages stay queued, and the next invocation sends them.
+
+### Java and Kotlin
+
+The `co.vexo:vexo-java` library works on Java 11 or later and uses only the JDK. It sends from a daemon thread and is safe to share across threads.
+
+```xml
+<dependency>
+    <groupId>co.vexo</groupId>
+    <artifactId>vexo-java</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+With Gradle (Kotlin DSL):
+
+```kotlin
+implementation("co.vexo:vexo-java:0.1.0")
+```
+
+```java
+import co.vexo.server.Vexo;
+import java.util.Map;
+
+Vexo vexo = Vexo.builder(System.getenv("VEXO_API_KEY")).build();
+
+// Use the same ID that you pass to identifyDevice() in the app SDK.
+vexo.identify("user@example.com", Map.of("plan", "pro", "company", "Acme"));
+vexo.capture("user@example.com", "purchase_completed", Map.of("amount", 49.9, "currency", "USD"));
+
+// Optional: send everything still queued now. The JVM shutdown hook also does it.
+vexo.close();
+```
+
+- `capture(distinctId, event, properties, timestamp, messageId)` has overloads without the trailing arguments. `timestamp` is an `Instant`; convert other date-time types with `toInstant()`.
+- Set options on the builder, such as `.flushInterval(Duration.ofSeconds(5))`. `shutdownHook(false)` turns off the JVM shutdown hook. `Vexo.builder()` throws an `IllegalArgumentException` when the API key is null or blank.
+- An `Instant`, `OffsetDateTime`, `ZonedDateTime`, `java.util.Date`, or `LocalDateTime` is sent as a UTC date-time string. A `UUID`, an enum, or any other object is sent as its `toString()`.
+- `onError` receives a `VexoException` with `getStatus()` (0 when there was no response), `getBatch()`, and `getDropped()`. By default, it logs a warning to the `co.vexo.server` `java.util.logging` logger.
+
+#### Kotlin
+
+The client is plain Java, so Kotlin needs no extra module. `Vexo` is `AutoCloseable`, so `use()` closes a short-lived client:
+
+```kotlin
+import co.vexo.server.Vexo
+import java.time.Duration
+
+val vexo = Vexo.builder(System.getenv("VEXO_API_KEY"))
+    .flushInterval(Duration.ofSeconds(5))
+    .onError { error -> logger.warn(error.message) }
+    .build()
+
+vexo.capture("user@example.com", "purchase_completed", mapOf("amount" to 49.9, "currency" to "USD"))
+
+Vexo.builder(apiKey).build().use { client -> client.capture("job-runner", "nightly_export_done") }
+```
+
+#### Spring Boot
+
+Declare the client as a bean, and let Spring close it when the application context shuts down. Turn off the client's own shutdown hook, so that a bean that captures an event while it shuts down still reaches an open client:
+
+```java
+@Configuration
+class VexoConfiguration {
+    @Bean(destroyMethod = "close")
+    Vexo vexo(@Value("${vexo.api-key}") String apiKey) {
+        return Vexo.builder(apiKey).shutdownHook(false).build();
+    }
+}
+```
+
+#### AWS Lambda (Java)
+
+The runtime freezes the JVM between invocations and can stop it without running shutdown hooks. Call `flush()` before your handler returns:
+
+```java
+public class Handler implements RequestHandler<Map<String, Object>, String> {
+    private static final Vexo VEXO = Vexo.builder(System.getenv("VEXO_API_KEY")).build();
+
+    @Override
+    public String handleRequest(Map<String, Object> input, Context context) {
+        VEXO.capture("user@example.com", "report_generated");
+        VEXO.flush();
+        return "ok";
+    }
+}
+```
+
+### .NET
+
+The `Vexo.Server` package works on .NET 8 or later and has no dependencies beyond it. It sends from a background task and is safe to call from many threads.
+
+```bash
+dotnet add package Vexo.Server --version 0.1.0
+```
+
+```csharp
+using Vexo;
+
+await using var vexo = new VexoClient(Environment.GetEnvironmentVariable("VEXO_API_KEY")!);
+
+// Use the same ID that you pass to identifyDevice() in the app SDK.
+vexo.Identify("user@example.com", new { plan = "pro", company = "Acme" });
+vexo.Capture("user@example.com", "purchase_completed", new { amount = 49.9, currency = "USD" });
+
+// Disposing the client sends everything still queued.
+```
+
+If your process exits without disposing the client, the client disposes itself from `AppDomain.ProcessExit`, with the same deadline.
+
+- `Capture(distinctId, eventName, properties, timestamp, messageId)`: only `distinctId` and `eventName` are required. `properties` is a dictionary, an anonymous type, or a class. Property names of anonymous types and classes are sent in camelCase, as ASP.NET Core does; dictionary keys are sent as they are.
+- `timestamp` is a `DateTimeOffset` or a `DateTime`. A `DateTime` of kind `Local` is converted to UTC, and one of kind `Unspecified` is read as UTC.
+- Set options with `new VexoClient(apiKey, new VexoOptions { ... })`. `VexoOptions.HttpClient` sends through an `HttpClient` that you pass, such as one from `IHttpClientFactory`; the client doesn't dispose it. The constructor throws an `ArgumentException` when the API key is missing or an option is out of range.
+- `OnError` receives a `VexoException` with `StatusCode`, `Batch`, and `Dropped`. By default, it writes to standard error.
+
+#### ASP.NET Core
+
+Register the client as a singleton with a factory, so that the container disposes it when the host stops, after in-flight requests finish:
+
+```csharp
+builder.Services.AddSingleton(services => new VexoClient(
+    builder.Configuration["Vexo:ApiKey"]!,
+    new VexoOptions
+    {
+        OnError = error => services.GetRequiredService<ILogger<VexoClient>>().LogWarning(error, "Vexo: {Message}", error.Message),
+    }));
+```
+
+Inject `VexoClient` where you need it. Don't register an instance that you created yourself (`AddSingleton(vexo)`): the container doesn't dispose instances that it didn't create. Keep `ShutdownTimeout` inside your platform's grace period, such as Kubernetes' `terminationGracePeriodSeconds`.
+
+#### Azure Functions
+
+In the isolated worker model, register the client as a singleton in `Program.cs`, as in ASP.NET Core. The host can freeze an idle instance or recycle it without a normal exit, so send the queue before the function returns. The same applies to AWS Lambda.
+
+```csharp
+public class Checkout(VexoClient vexo)
+{
+    [Function("Checkout")]
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData request)
+    {
+        vexo.Capture("user@example.com", "purchase_completed", new { amount = 49.9 });
+        await vexo.FlushAsync();
+        return request.CreateResponse(HttpStatusCode.OK);
+    }
+}
+```
+
+## Edge and serverless runtimes
+
+A serverless function or an edge isolate has no long-lived process. The platform can freeze or stop it as soon as it returns a response, so the SDK's interval timer and exit hook might never run. Send the queue in every request, in one of two ways:
+
+- **The platform has `waitUntil()`** (Cloudflare Workers, Supabase Edge Functions, and Vercel Functions): create the Node.js client with `flushInterval: 0`, which turns off the interval timer, and hand `vexo.flush()` to `waitUntil()`. The platform keeps the function alive until the events are sent, without delaying the response.
+- **The platform has no `waitUntil()`** (AWS Lambda, Google Cloud Functions, Azure Functions, and Cloud Run with request-based billing): flush before you return. The flush runs on the request's time, so keep `maxRetries` and `timeout` small enough to fit your function's timeout. The interval timer doesn't run while the platform freezes the function, so you can turn it off with a `flushInterval` of 0 (a negative `FlushInterval` in Go), as the Node.js example does.
+
+Create the client once, outside the handler, so that warm invocations reuse it, except on Cloudflare Workers. Don't shut the client down in a handler that the next invocation reuses: the client stops accepting messages after shutdown.
+
+### Cloudflare Workers
+
+A Worker can't reuse a request's I/O in another request, so create the client inside `fetch()`. Hand `shutdown()` to `waitUntil()`: it sends the queue like `flush()` and also releases the client. You don't need the `nodejs_compat` compatibility flag.
+
+```js
+import { Vexo } from 'vexo-node';
+
+export default {
+    async fetch(request, env, ctx) {
+        const vexo = new Vexo(env.VEXO_API_KEY, { flushInterval: 0 });
+        vexo.capture({ distinctId: 'user@example.com', event: 'report_exported' });
+        ctx.waitUntil(vexo.shutdown());
+        return new Response('ok');
+    },
+};
+```
+
+### Supabase Edge Functions
+
+Supabase Edge Functions run on Deno. Import the package with the `npm:` specifier, and hand the flush to `EdgeRuntime.waitUntil()`:
+
+```ts
+import { Vexo } from 'npm:vexo-node';
+
+const vexo = new Vexo(Deno.env.get('VEXO_API_KEY')!, { flushInterval: 0 });
+
+Deno.serve(async (req) => {
+    const { userId } = await req.json();
+    vexo.capture({ distinctId: userId, event: 'report_exported' });
+    EdgeRuntime.waitUntil(vexo.flush());
+    return new Response('ok');
+});
+```
+
+### Vercel Functions
+
+On the Edge or the Node.js runtime, use `waitUntil()` from the [`@vercel/functions`](https://vercel.com/docs/functions/functions-api-reference/vercel-functions-package) package, which you install in your app:
+
+```js
+import { waitUntil } from '@vercel/functions';
+import { Vexo } from 'vexo-node';
+
+const vexo = new Vexo(process.env.VEXO_API_KEY, { flushInterval: 0 });
+
+export async function POST(request) {
+    const { userId } = await request.json();
+    vexo.capture({ distinctId: userId, event: 'report_exported' });
+    waitUntil(vexo.flush());
+    return new Response('ok');
+}
+```
+
+### AWS Lambda
+
+Lambda freezes your process between invocations and can end it without running exit hooks. Await the flush before you return, and keep `maxRetries` and `timeout` small.
+
+Node.js:
+
+```js
+const { Vexo } = require('vexo-node');
+
+const vexo = new Vexo(process.env.VEXO_API_KEY, { flushInterval: 0, maxRetries: 1, timeout: 3000 });
+
+exports.handler = async (event) => {
+    vexo.capture({ distinctId: event.userId, event: 'order_placed' });
+    await vexo.flush();
+    return { statusCode: 200 };
+};
+```
+
+Python, where `flush()` blocks while it sends and retries:
+
+```python
+import os
+from vexo import Vexo
+
+vexo = Vexo(os.environ["VEXO_API_KEY"], max_retries=1, timeout=3.0)
+
+def handler(event, context):
+    vexo.capture(event["userId"], "order_placed", {"total": event["total"]})
+    vexo.flush()  # Send now: Lambda freezes the process once the handler returns.
+    return {"statusCode": 200}
+```
+
+The same pattern works on Google Cloud Functions and Azure Functions. For the other languages, see [PHP with Bref](#bref-and-other-serverless-platforms), [Ruby](#aws-lambda-ruby), [Go](#aws-lambda-go), [Java](#aws-lambda-java), and [.NET](#azure-functions).
+
+### Google Cloud Run
+
+With request-based billing, Cloud Run gives your container CPU only while it handles a request, so flush before you send the response, as on Lambda. With instance-based billing, the interval timer runs between requests, so the default options work.
+
+Either way, Cloud Run sends `SIGTERM` and waits 10 seconds before it stops an instance. Shut the client down when your server gets `SIGTERM`, with a shutdown timeout shorter than 10 seconds, as in the [Node.js](#nodejs) and [Go](#go) examples.
 
 export default ({ children }) => <DocLayout current="server-side-capture" previous={{href: '/web-guide/web-features/custom-events', label: 'Custom Events'}} next={{href: '/settings/account-settings', label: 'Account Settings'}}>{children}</DocLayout>
