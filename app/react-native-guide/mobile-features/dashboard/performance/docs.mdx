@@ -15,7 +15,8 @@ collected on-device and sent through the same pipeline as your other events — 
 no manual instrumentation:
 
 - **App start** — how long the app takes to become ready.
-- **Frame health** — how many frames are slow or frozen while the app is on screen.
+- **Frame health** — how many frames are slow or frozen while the app is on screen, on the
+  JavaScript thread and on the native UI thread.
 - **Per-screen render** — how long each screen takes to appear after a navigation.
 
 ## App start
@@ -32,21 +33,65 @@ Both are reported in milliseconds and aggregated into percentiles on the dashboa
 
 ## Frame health (slow and frozen frames)
 
+Vexo measures frame health on two threads, because jank on one doesn't show on the other. A
+long JavaScript task delays your React updates, while heavy layout, drawing, or a native module
+on the UI thread stutters scrolling and animations even when JavaScript is idle.
+
+### JavaScript thread
+
 Vexo samples the JavaScript thread frame by frame and classifies each frame by how long it
 took to render:
 
-- **Slow frame** — took longer than **16 ms** (a dropped frame at 60 fps). A high slow-frame
-  rate reads as jank or stutter.
+- **Slow frame** — took longer than **1.5 frame budgets** at the screen's refresh rate: 25 ms
+  at 60 Hz, 16.7 ms at 90 Hz, and 12.5 ms at 120 Hz. A high slow-frame rate reads as jank or
+  stutter.
 - **Frozen frame** — took longer than **700 ms** (a freeze the user can clearly feel). Every
   frozen frame is also counted as a slow frame.
+
+The frame budget is the median time between frames in each window, so Vexo adapts to 90 Hz and
+120 Hz screens on its own. It's capped at 60 Hz: when most frames in a window miss 60 Hz
+deadlines, they're slow, not a slower screen.
 
 Frames are counted per screen and reported as slow, frozen, and total counts. A window is
 flushed when the user navigates to another screen, on a periodic interval while a screen stays
 open, and when the app is sent to the background.
 
-The 16 ms / 700 ms thresholds target 60 fps displays. On 90 Hz or 120 Hz screens more frames
-naturally exceed 16 ms, so treat the slow-frame rate as a relative trend to watch across
-releases rather than an absolute pass/fail line.
+#### Legacy JavaScript frame data
+
+`vexo-analytics` 1.14.0 and earlier counted any JavaScript frame that took longer than **16 ms**
+as slow. On-time frames at 60 Hz are 16 or 17 ms apart, so those versions counted about 2 in 3
+on-time frames as slow, and their slow-frame rate reads high. Vexo can't recount that data,
+because those versions sent only each window's counts.
+
+From 1.15.0, the SDK reports JavaScript frames under a new name, so the dashboard keeps the two
+apart. The **Frame Health (JavaScript)** panel shows frames from 1.15.0 or later whenever the
+date range has any, and says when it leaves older frames out. When the range has only older
+frames, the panel shows them as **Frame Health (JavaScript, legacy)**. Compare slow-frame rates
+only within one of the two.
+
+### UI thread
+
+**Note:** Available in `vexo-analytics` 1.15.0 or later, in a new native build of your app. An
+over-the-air JavaScript update doesn't add it.
+
+Vexo also counts slow and frozen frames on the native UI thread, the thread that lays out and
+draws your views:
+
+- **Android 7.0 and later:** Vexo reads each frame's duration from the platform's frame metrics
+  listener. A frame is slow when it takes longer than **16 ms** and frozen when it takes longer
+  than **700 ms**, the same thresholds as Android vitals. Android counts only the frames the
+  window draws, so a screen that doesn't change adds no frames.
+- **iOS:** Vexo times each display refresh. A frame is slow when the screen shows it for longer
+  than **20 ms**, which means at least one frame was missed at 60 Hz, and frozen when it's longer
+  than **700 ms**. iOS counts every refresh while the app is on screen, as the JavaScript sampler
+  does.
+
+Because Android and iOS count frames differently, compare UI-thread rates within one platform:
+filter the dashboard by operating system.
+
+The UI-thread counts use the JavaScript frames' windows: they're reported for the same screen,
+at the same moments. Measuring them adds no work to the UI thread on Android, and a small,
+constant amount of work per refresh on iOS.
 
 ## Per-screen render
 
@@ -71,7 +116,11 @@ Open the **Performance** page in your mobile app's dashboard. It has three panel
 
 - **App start** — a percentile toggle (p50 / p75 / p90 / p99) and a cold / warm toggle, a
   headline latency value, and a trend chart.
-- **Frame health** — a slow-frame-rate gauge plus slow-frame and frozen-frame rate trends.
+- **Frame health** — two panels side by side, **Frame Health (JavaScript)** and **Frame Health
+  (UI thread)**, each with a slow-frame-rate gauge plus slow-frame and frozen-frame rate trends.
+  Until your app sends UI-thread frames, that panel says it has none. For data from
+  `vexo-analytics` 1.14.0 and earlier, the JavaScript panel shows the legacy measurement; see
+  [Legacy JavaScript frame data](#legacy-javascript-frame-data).
 - **Per-screen render** — a table of routes with p50 / p75 / p95 render times.
 
 Like the rest of the dashboard, every panel respects the global **date range** and **app
@@ -81,7 +130,9 @@ version** filters, so you can confirm a new release didn't regress startup or in
 
 Each performance sample is an event, and it counts toward your account's monthly event total like any other.
 Frame health alone reports on an interval for as long as the app is in the foreground, so performance events
-can be a large share of an app's volume. See [Subscription](/settings/subscription).
+can be a large share of an app's volume. From `vexo-analytics` 1.15.0, each frame window sends one more event
+for the UI thread, so frame health sends up to twice as many events as before. See
+[Subscription](/settings/subscription).
 
 ## Turning it off
 
