@@ -50,6 +50,50 @@ Each request that your app makes for [feature flags](/react-native-guide/mobile-
 - Beyond the included 1,000,000, flag requests are **$20 per million**, billed monthly in arrears alongside your event usage.
 - On the free plan, flag requests aren't billed.
 
+### Other usage
+
+{/* Restates the meter prices and AI_CREDIT_COSTS in vexo-web src/_utils/pricing.ts (the pricing page's price book); change them together. */}
+
+Some features are metered too. Every account gets a free amount of each one every month. Past it, usage is billed monthly in arrears on accounts with billing enabled, at the same prices on every paid plan, Business included.
+
+| Usage | Free each month | Then |
+| --- | --- | --- |
+| AI credits | 500 | $0.01 a credit |
+| Export rows | 10 million | $5 per million up to 50 million, then $2 per million |
+| Feature flag requests | 1 million | $20 per million |
+| Survey responses | 1,500 | $0.03 a response |
+
+Export rows are graduated like events: each rate applies only to the rows that fall inside its band. For example, at **60 million export rows** in a billing period, the first 10 million are free, the next 40 million are billed at $5 per million, and the last 10 million at $2 per million: **$220** for the period.
+
+AI credits pay for AI features: a session summary costs 3 credits, a natural-language query or an Ask Vexo question costs 1, and AI issue discovery costs 10 for each app each week.
+
+Signing in with Google or Microsoft is free on every plan.
+
+### Plans
+
+- **Free:** the free amounts above, with no card required.
+- **Pay-as-you-go:** add billing, and pay for usage past the free amounts at the rates on this page.
+- **Business:** $299 a month, or $249 a month billed annually ($2,988 a year), on top of your usage. Adds single sign-on, custom roles, the team audit log, and a 99.5% uptime SLA. See [Business plan](/settings/business).
+- **Enterprise:** includes Business, adds SIEM export of the team audit log, and is sold through a conversation with the Vexo team. Email hello@vexo.co.
+
+### Example bill
+
+A mid-size app on monthly Business, for one month:
+
+| Usage | Billed |
+| --- | --- |
+| 5M events (4.5M past the free 500K, at $30 per million) | $135.00 |
+| 3,000 session replays (2,000 past the included 1,000) | $6.00 |
+| 5 seats (3 past the included 2) | $14.70 |
+| 2,000 AI credits (1,500 past the free 500) | $15.00 |
+| 2 million export rows (within the free 10 million) | $0.00 |
+| 3 million feature flag requests (2 million past the free 1 million) | $40.00 |
+| 2,500 survey responses (1,000 past the free 1,500) | $30.00 |
+| Business, billed monthly | $299.00 |
+| **Total** | **$539.70** |
+
+Amounts are before discounts and tax. The same app without Business pays $240.70.
+
 ### Enabling billing
 
 Free accounts don't need a card. To keep collecting events beyond the free allowance:
