@@ -1,0 +1,98 @@
+import { DocLayout } from '../../../components';
+
+# Revenue analytics
+
+See what your app earns next to how people use it: monthly recurring revenue (MRR), lifetime value (LTV) by cohort, and your paywall funnel. Vexo records revenue from your own [RevenueCat](#connect-revenuecat) project or [Stripe](#connect-stripe) account through a signed webhook. Vexo never asks for access to either account and never calls them.
+
+Revenue analytics is on paid plans: the app's owner needs a card on file. Without one, the **Revenue** page and its settings show **Available on paid plans**.
+
+## How revenue works
+
+- **People.** Vexo attaches each payment to a person by your app's own user ID: the ID that you pass to `identifyDevice`. Vexo never matches people by email. In RevenueCat, use that ID as the App User ID. In Stripe, put it in the subscription's `vexo_user_id` metadata. A payment without an ID still counts in your totals, but not in per-person figures such as LTV.
+- **Currencies.** RevenueCat converts every price to USD, so RevenueCat revenue is in USD. Stripe revenue stays in each invoice's currency. Vexo doesn't convert between currencies: the **Revenue** page shows one currency at a time and lists the others.
+- **Production only.** Vexo records RevenueCat production events and Stripe live-mode events. Sandbox events, test-mode events, and RevenueCat's **Send test event** return success and record nothing.
+- **Signed webhooks.** Every webhook must carry a valid signature by the signing secret that you saved in Vexo. Vexo rejects any request without one. Vexo stores the secret encrypted and never shows it again.
+- **Redeliveries count once.** A webhook that the vendor sends again is recorded once.
+
+Vexo records these events:
+
+| Vexo event | From RevenueCat | From Stripe |
+| --- | --- | --- |
+| Trial started | `INITIAL_PURCHASE` in a trial period | Not recorded |
+| Purchase | `INITIAL_PURCHASE`, `NON_RENEWING_PURCHASE` | `invoice.paid` for a new subscription or a one-off invoice |
+| Renewal | `RENEWAL` | `invoice.paid` for a renewal or a plan change |
+| Trial converted | `RENEWAL` that converts a trial | Recorded as a renewal |
+| Refund | `CANCELLATION` with a refund, `REFUND_REVERSED` | `refund.created` |
+
+Other events, such as cancellations, expirations, and billing issues, don't move money, so Vexo doesn't record them.
+
+## Connect RevenueCat
+
+1. In Vexo, open the app's **Settings**, go to **Revenue**, and copy the RevenueCat webhook URL. It looks like `https://api.vexo.co/inbound/revenuecat/YOUR_APP_ID`.
+2. In RevenueCat, add a webhook integration to your project with that URL, and turn on webhook signing. See [RevenueCat's webhook guide](https://www.revenuecat.com/docs/integrations/webhooks).
+3. Copy the signing secret that RevenueCat shows. RevenueCat shows it only once.
+4. In Vexo, paste the signing secret into the **RevenueCat** card, and click **Save**.
+5. In your app, log in to RevenueCat with the same user ID that you pass to Vexo:
+
+```js
+import Purchases from 'react-native-purchases';
+import { identifyDevice } from 'vexo-analytics';
+
+await identifyDevice(user.id);
+await Purchases.logIn(user.id);
+```
+
+Log in to RevenueCat before the purchase. A purchase that RevenueCat reports with only an anonymous ID (`$RCAnonymousID:...`) counts in your totals, but not for any person.
+
+## Connect Stripe
+
+1. In Vexo, open the app's **Settings**, go to **Revenue**, and copy the Stripe webhook URL. It looks like `https://api.vexo.co/inbound/stripe/YOUR_APP_ID`.
+2. In the Stripe Dashboard, add a webhook endpoint with that URL for the `invoice.paid` and `refund.created` events. See [Stripe's guide to webhook endpoints](https://docs.stripe.com/webhooks). Any API version works.
+3. Copy the endpoint's signing secret. It starts with `whsec_`.
+4. In Vexo, paste the signing secret into the **Stripe** card, and click **Save**.
+5. Add your app's user ID to each subscription's metadata under `vexo_user_id`. With Stripe Checkout, set it in `subscription_data.metadata`:
+
+```js
+const session = await stripe.checkout.sessions.create({
+  mode: 'subscription',
+  line_items: [{ price: 'price_123', quantity: 1 }],
+  subscription_data: { metadata: { vexo_user_id: user.id } },
+  success_url: 'https://example.com/success',
+});
+```
+
+Vexo also reads `vexo_user_id` from the invoice's metadata, an invoice line's metadata, and a refund's metadata. Vexo doesn't read customer metadata: webhooks don't include the customer, and Vexo never calls Stripe.
+
+## Read the Revenue page
+
+The **Revenue** page uses the date range at the top of the page.
+
+- **MRR** is the monthly value of every paid subscription period that covers a day. A monthly plan counts at its price, an annual plan at a twelfth of its price, and a weekly plan at about 4.35 times its price. Refunds and cancellations don't lower MRR: a subscription leaves MRR when its paid period ends.
+- **Net revenue** is everything paid in the range, minus refunds. **Refunds** is what was refunded. **Paying customers** counts the people with a payment.
+- **LTV by cohort** groups people by the month that Vexo first saw them, including people who never paid. Each column is the cohort's net revenue so far, divided by the number of people in it. A cohort's first column is the month that its people arrived.
+- **Paywall funnel** counts the people who saw your paywall, then started a trial or bought, then paid. To count paywall views, send a custom event when the paywall appears, and pick it on the page:
+
+```js
+import { customEvent } from 'vexo-analytics';
+
+customEvent('paywall_viewed', { offering: 'default' });
+```
+
+Without a paywall event, the funnel starts at the first trial or purchase.
+
+## Data and privacy
+
+- When you [erase a person's data](/settings/data-retention#erase-a-persons-data) by their user ID, Vexo also deletes their revenue events.
+- Revenue events follow your plan's aggregate [data retention](/settings/data-retention).
+- To stop receiving revenue, click **Disconnect** on the card. You can disconnect without a card on file.
+
+## Troubleshooting
+
+| Problem | What to check |
+| --- | --- |
+| The **Revenue** page stays empty | You're testing in RevenueCat's sandbox or Stripe's test mode, which Vexo doesn't record. |
+| RevenueCat or Stripe shows failed deliveries with status 401 | The signing secret in Vexo doesn't match the vendor's, or RevenueCat's webhook signing is off. Save the current secret again. |
+| Revenue shows, but **Paying customers** and LTV are low | Payments arrive without a user ID. Check RevenueCat's App User ID or Stripe's `vexo_user_id` metadata. |
+| LTV leaves out some payers | Vexo hasn't seen those people in the app: they paid on the web without using the app. |
+
+export default ({ children }) => <DocLayout current="revenue-analytics" previous={{href: '/server-side/capture', label: 'Server-side capture'}} next={{href: '/integrations/attribution', label: 'Install attribution'}}>{children}</DocLayout>
