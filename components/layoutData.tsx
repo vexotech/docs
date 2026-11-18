@@ -79,6 +79,17 @@ export const sidebarData: SidebarData = [
         ]
     },
     {
+        name: 'migrate',
+        title: 'Migrate',
+        isCollapsible: true,
+        defaultOpen: false,
+        children: [
+            { title: 'Migrate from Smartlook', name: 'migrate-smartlook', href: '/migrate/smartlook' },
+            { title: 'Migrate from UXCam', name: 'migrate-uxcam', href: '/migrate/uxcam' },
+            { title: 'Migrate from LogRocket', name: 'migrate-logrocket', href: '/migrate/logrocket' },
+        ]
+    },
+    {
         name: 'web-guide',
         title: 'Web Guide',
         isCollapsible: true,
