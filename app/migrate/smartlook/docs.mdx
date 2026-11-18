@@ -68,7 +68,7 @@ To switch, you replace the Smartlook package with `vexo-analytics` and call `vex
 - **Masking is whole-frame.** Vexo blurs every frame of a replay on the device before it's uploaded, with the [Blur session replays](/react-native-guide/mobile-settings#blur-session-replays) setting, which is on by default. No published release of `vexo-analytics` masks individual views yet: `VexoMask`, `VexoUnmask`, and the `masking` option of `vexo()` are in the API, but they don't hide anything. Keep blur on if your app shows sensitive content.
 - **Crash reporting covers JavaScript.** Vexo reports JavaScript errors and crashes, and records JavaScript-thread stalls in the session timeline. It doesn't capture native crashes. To see native crashes in Vexo, import them from Firebase Crashlytics. See [Crashes and handled errors](/react-native-guide/mobile-features/error-triage#crashes-and-handled-errors).
 - **Screens need no code.** With React Navigation or Expo Router, delete your `trackNavigationEnter` and `trackNavigationExit` calls. Don't add `trackScreen` calls for a navigator that Vexo already tracks, or each screen counts twice.
-- **Pricing is published.** See [Vexo pricing](https://www.vexo.co/pricing). If you're moving from Smartlook, the [SMARTLOOK50 switch offer](https://www.vexo.co/smartlook-alternative) takes 50% off for 6 months.
+- **Pricing is published.** See [Vexo pricing](https://www.vexo.co/pricing). If you're moving from Smartlook, the [Smartlook alternative page](https://www.vexo.co/smartlook-alternative) has the current switch offer.
 
 ## Move your data
 
