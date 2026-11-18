@@ -42,6 +42,14 @@ Session replays are priced separately from events, with the same shape: a free a
 - Your account has a **replay limit** — a hard cap on replays recorded per cycle, which you control in **Settings → Session Replays**. It defaults to 1,000. Raising it above 1,000 is how you opt in to pay-as-you-go replays; you can also lower it (even to 0) at any time for privacy or cost control. Free accounts can set it up to 1,000.
 - When you reach your replay limit, new session replays **pause** until the next cycle starts or you raise the limit. Events, dashboards, and existing replays are unaffected.
 
+### Feature flag requests
+
+Each request that your app makes for [feature flags](/react-native-guide/mobile-features/feature-flags) counts as one flag request, about one per app launch.
+
+- Every pay-as-you-go account includes **1,000,000 flag requests per billing cycle, free**, counted across all apps in your account.
+- Beyond the included 1,000,000, flag requests are **$20 per million**, billed monthly in arrears alongside your event usage.
+- On the free plan, flag requests aren't billed.
+
 ### Enabling billing
 
 Free accounts don't need a card. To keep collecting events beyond the free allowance:

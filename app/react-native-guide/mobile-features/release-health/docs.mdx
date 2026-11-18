@@ -1,0 +1,44 @@
+import { DocLayout } from '../../../../components';
+
+# Release health
+
+The **Releases** page shows how each release of your app is doing, and how it compares with the release before it. To open it, click **Releases** in the sidebar.
+
+## What a release is
+
+A release is an app version, such as `2.4.0`. If you ship JavaScript changes with EAS Update, click **Expo updates** at the top of the page to see each update as a release instead. Vexo shows an update by the first 8 characters of its ID; hold the pointer over it to see the whole ID.
+
+Releases are ordered by the day each one first had a session, newest first. The release before a release is the one users had before it, whatever its version number.
+
+## Release list
+
+The list shows the releases that had sessions in the date range that you choose at the top of the page. Each row shows:
+
+- When the release was first seen, and its number of sessions.
+- Its adoption: the share of the period's sessions that ran this release.
+- Its crash-free sessions, and the change from the release before it, in percentage points. A drop shows in red.
+- Its crash-free users.
+
+The **Adoption** chart shows each day's share of sessions for the five newest releases, with the rest as one line.
+
+## Release page
+
+Click a release to compare it with the release before it:
+
+- **Crash-free sessions** and **Crash-free users**, with the change from the release before.
+- **Adoption** and **Sessions**.
+- **Adoption** over time for both releases.
+- **App start (cold)**: the median (p50) and p90 cold app start of both versions. It shows for app versions only.
+- **New errors**: error groups in this release that the release before it didn't have during the period.
+- **Regressed errors**: error groups that you resolved and that came back in this release. See [Error triage](/react-native-guide/mobile-features/error-triage).
+
+Click an error to open its group. For an app version, the links at the end of the page open the version's errors and session replays.
+
+## How Vexo counts
+
+- A crash is an error that your app didn't handle. Errors that you report with `trackError` are handled, so they aren't crashes, unless you pass `{ handled: false }`. Crash-free sessions is the share of sessions without a crash; crash-free users is the share of users without one.
+- The pages read at most 90 days. If you choose a longer date range, they show its last 90 days, and say so.
+- New errors compare the two releases within the date range only. If the release before it had few sessions in the range, more groups can show as new; choose a longer range to compare more of its history.
+- Sessions that didn't report an app version, or an Expo update, count toward adoption but aren't listed as a release.
+
+export default ({ children }) => <DocLayout current="release-health" previous={{href: '/react-native-guide/mobile-features/error-triage', label: 'Error Triage'}} next={{href: '/react-native-guide/mobile-features/session-replays-heatmaps', label: 'Session Replays & Heatmaps'}}>{children}</DocLayout>

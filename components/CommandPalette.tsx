@@ -42,6 +42,9 @@ const synonyms: Record<string, string[]> = {
   sso: ['/settings/business'],
   sla: ['/settings/business'],
   annual: ['/settings/business'],
+  'remote config': ['/react-native-guide/mobile-features/feature-flags'],
+  'feature flag': ['/react-native-guide/mobile-features/feature-flags'],
+  usefeatureflag: ['/react-native-guide/mobile-features/feature-flags'],
 };
 
 const MAX_RESULTS = 8;
