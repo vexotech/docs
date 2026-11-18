@@ -135,6 +135,16 @@ export const sidebarData: SidebarData = [
         ]
     },
     {
+        name: 'integrations',
+        title: 'Integrations',
+        isCollapsible: true,
+        defaultOpen: false,
+        children: [
+            { title: 'Revenue analytics', name: 'revenue-analytics', href: '/integrations/revenue-analytics' },
+            { title: 'Install attribution', name: 'attribution', href: '/integrations/attribution' },
+        ]
+    },
+    {
         name: 'settings',
         title: 'Settings',
         isCollapsible: true,

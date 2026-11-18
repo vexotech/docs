@@ -229,4 +229,4 @@ vexo.shutdown()
 
 Both SDKs give every message a `messageId`, so a retried batch is stored once. After a batch uses up its retries, the next batches get a single attempt until a request succeeds, so an unreachable API doesn't hold up your process. Neither SDK raises an error from `capture()` or `identify()`: failures go to the error callback.
 
-export default ({ children }) => <DocLayout current="server-side-capture" previous={{href: '/web-guide/web-features/custom-events', label: 'Custom Events'}} next={{href: '/settings/account-settings', label: 'Account Settings'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout current="server-side-capture" previous={{href: '/web-guide/web-features/custom-events', label: 'Custom Events'}} next={{href: '/integrations/revenue-analytics', label: 'Revenue analytics'}}>{children}</DocLayout>
