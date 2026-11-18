@@ -66,11 +66,13 @@ export const sidebarData: SidebarData = [
                     { title: 'People', name: 'people', href: '/react-native-guide/mobile-features/people' },
                     { title: 'Locations', name: 'locations', href: '/react-native-guide/mobile-features/locations' },
                     { title: 'Error Triage', name: 'error-triage', href: '/react-native-guide/mobile-features/error-triage' },
+                    { title: 'Release Health', name: 'release-health', href: '/react-native-guide/mobile-features/release-health' },
                     { title: 'Session Replays & Heatmaps', name: 'session-replays-heatmaps', href: '/react-native-guide/mobile-features/session-replays-heatmaps' },
                     { title: 'Console Logs', name: 'console-logs', href: '/react-native-guide/mobile-features/console-logs' },
                     { title: 'Custom Events', name: 'custom-events', href: '/react-native-guide/mobile-features/custom-events' },
                     { title: 'In-App Surveys', name: 'surveys', href: '/react-native-guide/mobile-features/surveys' },
                     { title: 'Ask Vexo and AI Summaries', name: 'ask-vexo', href: '/react-native-guide/mobile-features/ask-vexo' },
+                    { title: 'Feature Flags', name: 'feature-flags', href: '/react-native-guide/mobile-features/feature-flags' },
                 ]
             },
             { title: 'Mobile Publishing', name: 'mobile-publishing', href: '/react-native-guide/mobile-publishing' },
@@ -135,6 +137,16 @@ export const sidebarData: SidebarData = [
         ]
     },
     {
+        name: 'integrations',
+        title: 'Integrations',
+        isCollapsible: true,
+        defaultOpen: false,
+        children: [
+            { title: 'Revenue analytics', name: 'revenue-analytics', href: '/integrations/revenue-analytics' },
+            { title: 'Install attribution', name: 'attribution', href: '/integrations/attribution' },
+        ]
+    },
+    {
         name: 'settings',
         title: 'Settings',
         isCollapsible: true,
@@ -164,6 +176,7 @@ export const sidebarData: SidebarData = [
                 ]
             },
             { title: 'Data Retention', name: 'data-retention', href: '/settings/data-retention' },
+            { title: 'SSO and Team Security', name: 'team-security', href: '/settings/team-security' },
         ]
     },
     { title: 'Contact Vexo', name: 'contact-vexo', href: '/contact-vexo' },

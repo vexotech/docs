@@ -39,6 +39,9 @@ const synonyms: Record<string, string[]> = {
   plans: [SUBSCRIPTION],
   billing: ['/settings/billing', SUBSCRIPTION],
   seats: [`${SUBSCRIPTION}#seats`],
+  'remote config': ['/react-native-guide/mobile-features/feature-flags'],
+  'feature flag': ['/react-native-guide/mobile-features/feature-flags'],
+  usefeatureflag: ['/react-native-guide/mobile-features/feature-flags'],
 };
 
 const MAX_RESULTS = 8;
