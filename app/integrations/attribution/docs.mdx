@@ -1,0 +1,95 @@
+import { DocLayout } from '../../../components';
+
+# Install attribution
+
+See which campaigns bring people to your app, next to what those people do. Your own [AppsFlyer](#connect-appsflyer), [Adjust](#connect-adjust), or [Branch](#connect-branch) account sends each install's attribution to Vexo, and Vexo stores the media source and campaign on the person. Vexo never asks for access to your attribution account.
+
+Attribution is included on every plan.
+
+## How attribution works
+
+- **Person traits.** Vexo stores the attribution as traits on the person, so you can [filter and break down](#filter-and-break-down-by-campaign) by campaign anywhere that you can filter by traits:
+
+| Trait | Value |
+| --- | --- |
+| `attribution_partner` | `appsflyer`, `adjust`, or `branch` |
+| `attribution_source` | The media source or network, or `organic` for an unattributed install |
+| `attribution_campaign` | The campaign name |
+| `attribution_adset` | The ad set or ad group name |
+| `attribution_ad` | The ad or creative name |
+| `attribution_channel` | The channel (AppsFlyer and Branch only) |
+| `attribution_time` | When Vexo received the attribution, in ISO 8601 UTC |
+
+- **People.** Each postback names the person with your app's own user ID: the ID that you pass to `identifyDevice`. Give the attribution SDK the same ID **before** it sends the install, or the install arrives without one. Vexo accepts a postback without an ID and doesn't store it. Vexo never matches people by email or advertising ID.
+- **Installs only.** Vexo reads installs, reinstalls, and re-attributions. Other events, such as in-app events and sessions, return success and change nothing.
+- **Last touch.** A newer attribution for the same person, such as a re-attribution, replaces all of the traits above.
+- **Tokens.** None of the three partners signs its requests, so Vexo issues a token for each partner and app. Vexo rejects any request without it, stores it encrypted, and shows it only once. AppsFlyer and Branch send it in a header. Adjust can't send headers, so its callback URL carries the token: keep that URL secret.
+
+## Connect AppsFlyer
+
+1. In Vexo, open the app's **Settings**, go to **Attribution**, and click **Generate token** on the **AppsFlyer** card. Copy the webhook URL and the token.
+2. In AppsFlyer, add a Push API endpoint for your app with that URL and the `POST` method. See [AppsFlyer's Push API guide](https://support.appsflyer.com/hc/en-us/articles/207034356-Push-API-streaming-raw-data).
+   - **Event types:** installs, organic installs, reinstalls, organic reinstalls, and re-attributions.
+   - **Fields:** include `media_source`, `campaign`, `af_adset`, `af_ad`, `af_channel`, `campaign_type`, and `customer_user_id`.
+   - **Authentication:** a header named `Authorization` with the value `Bearer YOUR_TOKEN`.
+3. In your app, set AppsFlyer's customer user ID to your user ID before AppsFlyer starts:
+
+```js
+import appsFlyer from 'react-native-appsflyer';
+
+appsFlyer.setCustomerUserId(user.id);
+```
+
+AppsFlyer's **Send test** messages don't include the authentication header, so Vexo answers them with `401`.
+
+## Connect Adjust
+
+1. In Vexo, open the app's **Settings**, go to **Attribution**, and click **Generate token** on the **Adjust** card. Copy the callback URL that Vexo shows. It includes the token and Adjust's placeholders:
+
+```text
+https://api.vexo.co/inbound/adjust/YOUR_APP_ID?token=YOUR_TOKEN&activity_kind={activity_kind}&network_name={network_name}&campaign_name={campaign_name}&adgroup_name={adgroup_name}&creative_name={creative_name}&is_organic={is_organic}
+```
+
+2. In Adjust, add server callbacks with that URL and the `GET` method for **Install**, **Reinstall**, and **Reattribution**. See [Adjust's server callbacks guide](https://help.adjust.com/en/article/server-callbacks).
+3. Adjust has no placeholder for your user ID, so send it as a global callback parameter named `vexo_id`. Add it before you start the Adjust SDK; Adjust appends it to every callback URL:
+
+```js
+import { Adjust } from 'react-native-adjust';
+
+Adjust.addGlobalCallbackParameter('vexo_id', user.id);
+```
+
+## Connect Branch
+
+1. In Vexo, open the app's **Settings**, go to **Attribution**, and click **Generate token** on the **Branch** card. Copy the webhook URL and the token.
+2. In Branch, go to **Data Feeds** > **Webhooks**, and add a webhook with that URL, the `POST` method, and the **INSTALL** event. Add another for **REINSTALL**. See [Branch's webhooks guide](https://help.branch.io/marketer-hub/webhooks.md).
+3. On each webhook's **Filters** tab, add a header named `Authorization` with the value `Bearer YOUR_TOKEN`.
+4. In your app, set Branch's identity to your user ID as early as you know it:
+
+```js
+import branch from 'react-native-branch';
+
+branch.setIdentity(user.id);
+```
+
+## Filter and break down by campaign
+
+- **Attribution page.** The app's **Attribution** page lists the media sources and campaigns of the people attributed in the date range, with how many people each brought in.
+- **Filters.** In the filter bar, add a trait filter such as `attribution_campaign` equals `Spring sale` to see dashboards, people, and replays for that campaign.
+- **Cohorts.** Add a trait rule on `attribution_source` or `attribution_campaign` to a [cohort](/react-native-guide/mobile-features/cohorts-segments).
+
+## Data and privacy
+
+- Attribution traits are person traits: [erasing a person's data](/settings/data-retention#erase-a-persons-data) by their user ID removes them.
+- Click **Regenerate token** to replace a token. The old one stops working at once, so update the partner right away.
+- To stop receiving attribution, click **Disconnect** on the card.
+
+## Troubleshooting
+
+| Problem | What to check |
+| --- | --- |
+| The partner shows failed deliveries with status `401` | The token is wrong or missing. For AppsFlyer and Branch, check the `Authorization` header; for Adjust, check the `token` parameter in the callback URL. |
+| Deliveries succeed, but no person gets the traits | The install arrived without your user ID. Set it in the partner SDK before the install, as shown above. |
+| A campaign is missing from the **Attribution** page | The page counts people by when Vexo received their attribution. Widen the date range. |
+
+export default ({ children }) => <DocLayout current="attribution" previous={{href: '/integrations/revenue-analytics', label: 'Revenue analytics'}} next={{href: '/settings/account-settings', label: 'Account Settings'}}>{children}</DocLayout>
