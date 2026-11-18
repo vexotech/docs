@@ -28,7 +28,7 @@ Ask Vexo takes the time period from your question, up to the last 365 days. If t
 
 ### Limits and data
 
-- Each app can answer 60 questions an hour, shared by everyone on its team. The count resets at the start of each hour, in UTC.
+- Each app can answer 60 questions an hour, shared by everyone on its team. The count resets at the start of each hour, in UTC. Past the limit, each question uses an [AI credit](/settings/billing#what-are-ai-credits) from the app owner's account.
 - Vexo reads up to 500 characters of each question.
 - Vexo sends only the question's text to OpenAI, which picks the metric and the time period. The numbers come from your Vexo data, and Vexo doesn't send them to OpenAI.
 
@@ -41,8 +41,8 @@ You see the summary when you open a session:
 - In **People**, open a person, and click one of their sessions.
 - In **Session Replays**, open a replay. The summary appears above the **Timeline**.
 
-Vexo generates the summary the first time that someone opens the session, and keeps it for 7 days. To generate a new one, click **Regenerate**.
+Click **Generate summary** to write one. Opening a session only shows a summary that someone generated earlier, which Vexo keeps for 7 days; to write a new one, click **Regenerate**. Each user can generate 20 summaries a day; past that, each summary uses 3 [AI credits](/settings/billing#what-are-ai-credits) from the app owner's account.
 
 To write the summary, Vexo sends OpenAI the session's events, up to 2,000 of them: the device model, OS, app version, and city and country; the screens visited, and bursts of 3 or more taps within 2 seconds; error messages; custom event names and properties; failed requests and requests that took 3 seconds or more, with their URLs; and when the app moved to the background or foreground. Vexo cuts each error message and custom event property to 200 characters.
 
-export default ({ children }) => <DocLayout current="ask-vexo" previous={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}} next={{href: '/react-native-guide/mobile-features/feature-flags', label: 'Feature Flags'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout current="ask-vexo" previous={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}} next={{href: '/react-native-guide/mobile-features/ai-issues', label: 'AI Issues'}}>{children}</DocLayout>
