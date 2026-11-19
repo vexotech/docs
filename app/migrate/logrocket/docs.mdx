@@ -1,0 +1,94 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Migrate from LogRocket
+
+This guide is for React Native and Expo teams that use the LogRocket React Native SDK, `@logrocket/react-native`, and want to move to Vexo.
+
+To switch, you replace the LogRocket package, and its Expo config plugin if you use one, with `vexo-analytics`, and call `vexo()` once with your API key. Vexo then records sessions, screens, taps, errors, network requests, and session replays without more code, so most LogRocket calls map to one Vexo call or go away.
+
+## Before you begin
+
+- [Create a Vexo account](https://www.vexo.co/sign-up) and an app, and copy the app's API key.
+- Use React Native 0.74 or later, and set your app's minimum iOS deployment target to 15.1 or later.
+
+## Swap the SDK
+
+1. Uninstall the LogRocket package and install `vexo-analytics`.
+
+   With Expo:
+
+   ```bash
+   npm uninstall @logrocket/react-native
+   npx expo install vexo-analytics
+   ```
+
+   With bare React Native:
+
+   ```bash
+   npm uninstall @logrocket/react-native
+   npm install vexo-analytics
+   cd ios && pod install
+   ```
+
+2. In your entry file, replace the LogRocket setup with a `vexo()` call. Call it at module scope, outside any component or `useEffect`, so tracking starts when the app starts. With Expo Router, the entry file is the root layout, `app/_layout.tsx`.
+
+   ```diff
+   -import LogRocket from '@logrocket/react-native';
+   +import { vexo } from 'vexo-analytics';
+   +
+   +vexo('YOUR_API_KEY');
+
+    const App = () => {
+   -  useEffect(() => {
+   -    LogRocket.init('<APP_SLUG>');
+   -  }, []);
+      // Your application entry
+    };
+   ```
+
+3. With Expo, remove the LogRocket config plugin from `app.json` (or `app.config.js`). If you installed `expo-build-properties` only for LogRocket, you can remove it and its entry too.
+
+   ```diff
+    "plugins": [
+   -  "@logrocket/react-native"
+    ]
+   ```
+
+   With bare React Native, remove LogRocket's Maven repository, `https://storage.googleapis.com/logrocket-maven/`, from `android/build.gradle`.
+4. Replace or delete the other LogRocket calls in your app, including LogRocket's Redux middleware, which has no Vexo equivalent. Use the [API mapping](#api-mapping) to find each replacement.
+5. Rebuild the app, because `vexo-analytics` includes native code. A JavaScript reload or an over-the-air update isn't enough. For the commands, see the [Quickstart](/get-started/quick-start#install).
+
+**Expo:** Vexo runs in a [development build](https://docs.expo.dev/development/introduction/) or an EAS Build. It doesn't run in Expo Go, because it needs custom native code. Unlike LogRocket, Vexo doesn't need a config plugin. On Expo SDK 58, use `vexo-analytics` 1.14.0 or later. See [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58).
+
+## API mapping
+
+{/* LogRocket sources (React Native SDK reference, checked 2026-11-17): https://docs.logrocket.com/reference/react-native https://docs.logrocket.com/reference/react-native-expo-adding-the-sdk https://docs.logrocket.com/reference/react-native-identify https://docs.logrocket.com/reference/react-native-custom-events https://docs.logrocket.com/reference/capture-custom-pages-reactnative https://docs.logrocket.com/reference/capture-exceptions https://docs.logrocket.com/reference/ending-sessions-react-native https://docs.logrocket.com/reference/react-native-redaction-tags https://docs.logrocket.com/reference/react-native-automatically-sanitize-text */}
+
+| Task | LogRocket | Vexo |
+|---|---|---|
+| Initialize | `LogRocket.init('<APP_SLUG>')` | `vexo('YOUR_API_KEY')` |
+| Identify the user | `LogRocket.identify(uid)` | `identifyDevice(id)`. To make the device anonymous again, for example when the user signs out, call `identifyDevice(null)`. |
+| User traits | `LogRocket.identify(uid, { name, email })` | No SDK call: `identifyDevice` takes only an ID. Send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
+| Custom event with properties | `LogRocket.track(name, properties)` | `customEvent(name, properties)`. Pass `{}` when the event has no properties. |
+| Screen tracking | Automatic for each iOS view controller and Android activity. `LogRocket.tagPage(name)` tags a page within one. | Automatic for each route with React Navigation and Expo Router. For other navigation, call `trackScreen(name)` on each screen change. |
+| Global event properties | No documented call | `registerProperties({ name: value })` adds the properties to every event in the session. A property of the same name in a `customEvent` call wins. |
+| Report a caught error | `LogRocket.captureException(err)` | `trackError(err)` |
+| Stop recording or opt out | `shutdown()` ends the session | `disableTracking()` stops events and recording, and the choice persists across launches. `enableTracking()` turns tracking back on. |
+| Session replay controls | `LogRocket.pauseViewCapture()` and `LogRocket.unpauseViewCapture()` | No pause call. `vexo('YOUR_API_KEY', { sessionReplay: false })` turns replay off on the device. `{ sessionReplaySampleRate: 0.1 }` records about 10% of sessions. |
+| Masking and privacy | `<LRRedact>` and `LRRedactProps()` around a view, `redactionTags` in `init`, and `textSanitizer: 'excluded'` for all text | Every replay frame is blurred on the device by default. No published release masks individual views yet. |
+
+## What changes
+
+- **Masking is whole-frame.** Vexo blurs every frame of a replay on the device before it's uploaded, with the [Blur session replays](/react-native-guide/mobile-settings#blur-session-replays) setting, which is on by default. No published release of `vexo-analytics` masks individual views yet: `VexoMask`, `VexoUnmask`, and the `masking` option of `vexo()` are in the API, but they don't hide anything. Keep blur on if your app shows sensitive content.
+- **Crash reporting covers JavaScript.** Vexo reports JavaScript errors and crashes, and records JavaScript-thread stalls in the session timeline. It doesn't capture native crashes. To see native crashes in Vexo, import them from Firebase Crashlytics. See [Crashes and handled errors](/react-native-guide/mobile-features/error-triage#crashes-and-handled-errors).
+- **Stack traces use source maps.** Instead of LogRocket's debug file upload, upload your JavaScript source maps with `npx vexo-upload-sourcemaps`. See [Source maps](/react-native-guide/mobile-features/error-triage#source-maps).
+- **Network capture is summary-level.** For each request, Vexo records the URL, status code, and latency, but not headers or bodies. See [Network Stats](/react-native-guide/mobile-features/dashboard/network-stats).
+- **Pricing is published.** See [Vexo pricing](https://www.vexo.co/pricing).
+
+## Move your data
+
+Your LogRocket sessions, events, and users don't move to Vexo, and Vexo can't import them. Your Vexo history starts when the first build with `vexo-analytics` reaches your users.
+
+To compare both tools before you remove LogRocket, you can run both SDKs for a short cutover window: add `vexo-analytics` and the `vexo()` call next to your LogRocket setup, and then remove LogRocket in a later release. Vexo uses its own native modules, and it passes JavaScript errors on to any error handler that was installed before it. Both SDKs record the screen, though, so test the pair in a development build before you ship it.
+
+export default ({ children }) => <DocLayout current="migrate-logrocket" previous={{href: '/migrate/uxcam', label: 'Migrate from UXCam'}} next={{href: '/web-guide/introduction', label: 'Web Introduction'}}>{children}</DocLayout>

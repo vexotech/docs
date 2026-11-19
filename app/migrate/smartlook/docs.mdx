@@ -1,0 +1,79 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Migrate from Smartlook
+
+This guide is for React Native and Expo teams that use the Smartlook React Native SDK, `react-native-smartlook-analytics`. Smartlook stopped selling new subscriptions on May 31, 2026, and shuts down on September 30, 2027, when it deletes the data that remains on its platform.
+
+To switch, you replace the Smartlook package with `vexo-analytics` and call `vexo()` once with your API key. Vexo then records sessions, screens, taps, errors, and session replays without more code, so most Smartlook calls map to one Vexo call or go away.
+
+## Before you begin
+
+- [Create a Vexo account](https://www.vexo.co/sign-up) and an app, and copy the app's API key.
+- Use React Native 0.74 or later, and set your app's minimum iOS deployment target to 15.1 or later. Smartlook needs iOS 13, so you might need to raise it.
+
+## Swap the SDK
+
+1. Uninstall the Smartlook package and install `vexo-analytics`.
+
+   With Expo:
+
+   ```bash
+   npm uninstall react-native-smartlook-analytics
+   npx expo install vexo-analytics
+   ```
+
+   With bare React Native:
+
+   ```bash
+   npm uninstall react-native-smartlook-analytics
+   npm install vexo-analytics
+   cd ios && pod install
+   ```
+
+2. In your entry file, replace the Smartlook setup with a `vexo()` call. Call it at module scope, outside any component or `useEffect`, so tracking starts when the app starts. With Expo Router, the entry file is the root layout, `app/_layout.tsx`.
+
+   ```diff
+   -import Smartlook from 'react-native-smartlook-analytics';
+   +import { vexo } from 'vexo-analytics';
+
+   -Smartlook.instance.preferences.setProjectKey('your-unique-project-key');
+   -Smartlook.instance.start();
+   +vexo('YOUR_API_KEY');
+   ```
+
+3. Replace or delete the other Smartlook calls in your app. Use the [API mapping](#api-mapping) to find each replacement.
+4. If you added Smartlook's Maven repository, `https://sdk.smartlook.com/android/release`, to `extraMavenRepos` in `app.json`, remove it.
+5. Rebuild the app, because `vexo-analytics` includes native code. A JavaScript reload or an over-the-air update isn't enough. For the commands, see the [Quickstart](/get-started/quick-start#install).
+
+**Expo:** Vexo runs in a [development build](https://docs.expo.dev/development/introduction/) or an EAS Build. It doesn't run in Expo Go, because it needs custom native code. You don't need a config plugin. On Expo SDK 58, use `vexo-analytics` 1.14.0 or later. See [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58).
+
+## API mapping
+
+{/* Smartlook sources (React Native SDK reference, checked 2026-11-17): https://mobile.developer.smartlook.com/reference/react-native-sdk-installation https://mobile.developer.smartlook.com/reference/react-native-user https://mobile.developer.smartlook.com/reference/react-native-analytics https://mobile.developer.smartlook.com/reference/react-native-lifecycle-recording https://mobile.developer.smartlook.com/reference/react-native-handling-sensitive-data */}
+
+| Task | Smartlook | Vexo |
+|---|---|---|
+| Initialize | `Smartlook.instance.preferences.setProjectKey(key)`, then `Smartlook.instance.start()` | `vexo('YOUR_API_KEY')` |
+| Identify the user | `Smartlook.instance.user.setIdentifier(id)` | `identifyDevice(id)`. To make the device anonymous again, for example when the user signs out, call `identifyDevice(null)`. |
+| User name, email, and properties | `Smartlook.instance.user.setName(name)`, `setEmail(email)`, and `setUserProperty(name, value)` | No SDK call. Send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
+| Custom event with properties | `Smartlook.instance.analytics.trackEvent(name, properties)`, with a `Properties` object | `customEvent(name, { plan: 'pro' })`, with a plain object. Pass `{}` when the event has no properties. |
+| Screen tracking | `Smartlook.instance.analytics.trackNavigationEnter(name)` and `trackNavigationExit(name)` | Automatic with React Navigation and Expo Router. For other navigation, call `trackScreen(name)` on each screen change. There's no exit call. |
+| Global event properties | `Smartlook.instance.analytics.putStringEventProperty(name, value)` | `registerProperties({ name: value })`. Values last for the session, and a property of the same name in a `customEvent` call wins. |
+| Stop recording or opt out | `Smartlook.instance.stop()` | `disableTracking()` stops events and recording, and the choice persists across launches. `enableTracking()` turns tracking back on. |
+| Session replay controls | `setRenderingMode(SmartlookRenderingMode.NoRendering)` | `vexo('YOUR_API_KEY', { sessionReplay: false })` turns replay off on the device. `{ sessionReplaySampleRate: 0.1 }` records about 10% of sessions. |
+| Masking and privacy | `<SmartlookSensitiveView isSensitive={true}>` around a view. Text fields and web views are sensitive by default. | Every replay frame is blurred on the device by default. No published release masks individual views yet. |
+
+## What changes
+
+- **Masking is whole-frame.** Vexo blurs every frame of a replay on the device before it's uploaded, with the [Blur session replays](/react-native-guide/mobile-settings#blur-session-replays) setting, which is on by default. No published release of `vexo-analytics` masks individual views yet: `VexoMask`, `VexoUnmask`, and the `masking` option of `vexo()` are in the API, but they don't hide anything. Keep blur on if your app shows sensitive content.
+- **Crash reporting covers JavaScript.** Vexo reports JavaScript errors and crashes, and records JavaScript-thread stalls in the session timeline. It doesn't capture native crashes. To see native crashes in Vexo, import them from Firebase Crashlytics. See [Crashes and handled errors](/react-native-guide/mobile-features/error-triage#crashes-and-handled-errors).
+- **Screens need no code.** With React Navigation or Expo Router, delete your `trackNavigationEnter` and `trackNavigationExit` calls. Don't add `trackScreen` calls for a navigator that Vexo already tracks, or each screen counts twice.
+- **Pricing is published.** See [Vexo pricing](https://www.vexo.co/pricing). If you're moving from Smartlook, the [Smartlook alternative page](https://www.vexo.co/smartlook-alternative) has the current switch offer.
+
+## Move your data
+
+Your Smartlook recordings, events, and users don't move to Vexo, and Vexo can't import them. Your Vexo history starts when the first build with `vexo-analytics` reaches your users. Smartlook deletes its remaining data when it shuts down on September 30, 2027, so export anything that you need to keep before then.
+
+To compare both tools before you remove Smartlook, you can run both SDKs for a short cutover window: add `vexo-analytics` and the `vexo()` call next to your Smartlook setup, and then remove Smartlook in a later release. Vexo uses its own native modules, and it passes JavaScript errors on to any error handler that was installed before it. Both SDKs record the screen, though, so test the pair in a development build before you ship it.
+
+export default ({ children }) => <DocLayout current="migrate-smartlook" previous={{href: '/react-native-guide/mobile-settings', label: 'Mobile Settings'}} next={{href: '/migrate/uxcam', label: 'Migrate from UXCam'}}>{children}</DocLayout>

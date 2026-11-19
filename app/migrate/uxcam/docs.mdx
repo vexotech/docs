@@ -1,0 +1,88 @@
+import { DocLayout } from '../../../components/DocLayout';
+
+# Migrate from UXCam
+
+This guide is for React Native and Expo teams that use the UXCam React Native SDK, `react-native-ux-cam`, and want to move to Vexo.
+
+To switch, you replace the UXCam package with `vexo-analytics` and call `vexo()` once with your API key. Vexo tracks screens on its own with React Navigation and Expo Router, so you can delete your manual screen tagging instead of porting it.
+
+## Before you begin
+
+- [Create a Vexo account](https://www.vexo.co/sign-up) and an app, and copy the app's API key.
+- Use React Native 0.74 or later, and set your app's minimum iOS deployment target to 15.1 or later.
+
+## Swap the SDK
+
+1. Uninstall the UXCam package and install `vexo-analytics`.
+
+   With Expo:
+
+   ```bash
+   npm uninstall react-native-ux-cam
+   npx expo install vexo-analytics
+   ```
+
+   With bare React Native:
+
+   ```bash
+   npm uninstall react-native-ux-cam
+   npm install vexo-analytics
+   cd ios && pod install
+   ```
+
+2. In your entry file, replace the UXCam setup with a `vexo()` call. Call it at module scope, outside any component or `useEffect`, so tracking starts when the app starts. With Expo Router, the entry file is the root layout, `app/_layout.tsx`.
+
+   ```diff
+   -import RNUxcam from 'react-native-ux-cam';
+   +import { vexo } from 'vexo-analytics';
+   +
+   +vexo('YOUR_API_KEY');
+
+    const App = () => {
+   -  useEffect(() => {
+   -    RNUxcam.optIntoVideoRecording();
+   -    RNUxcam.startWithConfiguration({
+   -      userAppKey: 'YOUR_APP_KEY',
+   -      enableAutomaticScreenNameTagging: false,
+   -    });
+   -  }, []);
+   -
+      return (/* Your app */);
+    };
+   ```
+
+3. Delete your `RNUxcam.tagScreenName` calls, and replace or delete the other UXCam calls in your app. Use the [API mapping](#api-mapping) to find each replacement.
+4. Rebuild the app, because `vexo-analytics` includes native code. A JavaScript reload or an over-the-air update isn't enough. For the commands, see the [Quickstart](/get-started/quick-start#install).
+
+**Expo:** Vexo runs in a [development build](https://docs.expo.dev/development/introduction/) or an EAS Build. It doesn't run in Expo Go, because it needs custom native code. You don't need a config plugin. On Expo SDK 58, use `vexo-analytics` 1.14.0 or later. See [Upgrading to Expo SDK 58](/react-native-guide/expo-sdk-58).
+
+## API mapping
+
+{/* UXCam sources (React Native SDK docs, checked 2026-11-17): https://developer.uxcam.com/docs/react-native https://developer.uxcam.com/docs/user-properties-react-native https://developer.uxcam.com/docs/events-react-native https://developer.uxcam.com/docs/screen-tagging-react-native https://developer.uxcam.com/docs/opt-in-opt-out-your-users-react-native https://developer.uxcam.com/docs/pause-and-resume-react-native https://developer.uxcam.com/docs/sensitive-data-occlusion-react-native https://developer.uxcam.com/docs/crashes-and-anrs-react-native */}
+
+| Task | UXCam | Vexo |
+|---|---|---|
+| Initialize | `RNUxcam.optIntoVideoRecording()`, then `RNUxcam.startWithConfiguration({ userAppKey })` | `vexo('YOUR_API_KEY')` |
+| Identify the user | `RNUxcam.setUserIdentity(id)` | `identifyDevice(id)`. To make the device anonymous again, for example when the user signs out, call `identifyDevice(null)`. |
+| User properties | `RNUxcam.setUserProperty(name, value)` | No SDK call. Send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
+| Custom event with properties | `RNUxcam.logEvent(name, properties)` | `customEvent(name, properties)`. Pass `{}` when the event has no properties. |
+| Screen tracking | `RNUxcam.tagScreenName(name)` on each screen | Automatic with React Navigation and Expo Router. For other navigation, call `trackScreen(name)` on each screen change. |
+| Global event properties | No documented call | `registerProperties({ name: value })` adds the properties to every event in the session. A property of the same name in a `customEvent` call wins. |
+| Opt out | `RNUxcam.optOutOverall()` and `RNUxcam.optInOverall()` | `disableTracking()` and `enableTracking()`. The choice persists across launches. |
+| Session replay controls | `RNUxcam.pauseScreenRecording()` and `RNUxcam.resumeScreenRecording()` | No pause call. `vexo('YOUR_API_KEY', { sessionReplay: false })` turns replay off on the device. `{ sessionReplaySampleRate: 0.1 }` records about 10% of sessions. |
+| Masking and privacy | `RNUxcam.occludeSensitiveView(view)`, `RNUxcam.occludeAllTextFields(true)`, and `occlusions` rules that overlay or blur named screens | Every replay frame is blurred on the device by default. No published release masks individual views yet. |
+
+## What changes
+
+- **Masking is whole-frame.** Vexo blurs every frame of a replay on the device before it's uploaded, with the [Blur session replays](/react-native-guide/mobile-settings#blur-session-replays) setting, which is on by default. You can't occlude one view or blur only some screens. No published release of `vexo-analytics` masks individual views yet: `VexoMask`, `VexoUnmask`, and the `masking` option of `vexo()` are in the API, but they don't hide anything. Keep blur on if your app shows sensitive content.
+- **Crash reporting moves from native to JavaScript.** UXCam's React Native SDK captures native crashes and ANRs. Vexo reports JavaScript errors and crashes, and records JavaScript-thread stalls in the session timeline. It doesn't capture native crashes. To see native crashes in Vexo, import them from Firebase Crashlytics. See [Crashes and handled errors](/react-native-guide/mobile-features/error-triage#crashes-and-handled-errors).
+- **Screen names come from your routes.** Vexo names each screen after its route, not after a name that you choose in `tagScreenName`. Rebuild any funnels or reports that you based on UXCam screen names. Don't add `trackScreen` calls for a navigator that Vexo already tracks, or each screen counts twice.
+- **Pricing is published.** See [Vexo pricing](https://www.vexo.co/pricing).
+
+## Move your data
+
+Your UXCam sessions, events, and users don't move to Vexo, and Vexo can't import them. Your Vexo history starts when the first build with `vexo-analytics` reaches your users.
+
+To compare both tools before you remove UXCam, you can run both SDKs for a short cutover window: add `vexo-analytics` and the `vexo()` call next to your UXCam setup, and then remove UXCam in a later release. Vexo uses its own native modules, and it passes JavaScript errors on to any error handler that was installed before it. Both SDKs record the screen, though, so test the pair in a development build before you ship it.
+
+export default ({ children }) => <DocLayout current="migrate-uxcam" previous={{href: '/migrate/smartlook', label: 'Migrate from Smartlook'}} next={{href: '/migrate/logrocket', label: 'Migrate from LogRocket'}}>{children}</DocLayout>
