@@ -16,6 +16,12 @@ module.exports = withMDX({
     async redirects() {
         return [
             {
+                // The docs have no home page of their own; the introduction is where they start.
+                source: '/',
+                destination: '/get-started/introduction',
+                permanent: true,
+            },
+            {
                 source: '/features',
                 destination: '/react-native-guide/mobile-features/overview',
                 permanent: true,
