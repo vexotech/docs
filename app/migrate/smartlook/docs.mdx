@@ -55,7 +55,7 @@ To switch, you replace the Smartlook package with `vexo-analytics` and call `vex
 |---|---|---|
 | Initialize | `Smartlook.instance.preferences.setProjectKey(key)`, then `Smartlook.instance.start()` | `vexo('YOUR_API_KEY')` |
 | Identify the user | `Smartlook.instance.user.setIdentifier(id)` | `identifyDevice(id)`. To make the device anonymous again, for example when the user signs out, call `identifyDevice(null)`. |
-| User name, email, and properties | `Smartlook.instance.user.setName(name)`, `setEmail(email)`, and `setUserProperty(name, value)` | No SDK call. Send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
+| User name, email, and properties | `Smartlook.instance.user.setName(name)`, `setEmail(email)`, and `setUserProperty(name, value)` | `identifyDevice(id, { name, email, [property]: value })`, with `vexo-analytics` 1.15.0 or later. See [User traits](/react-native-guide/integration#user-traits). You can also send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
 | Custom event with properties | `Smartlook.instance.analytics.trackEvent(name, properties)`, with a `Properties` object | `customEvent(name, { plan: 'pro' })`, with a plain object. Pass `{}` when the event has no properties. |
 | Screen tracking | `Smartlook.instance.analytics.trackNavigationEnter(name)` and `trackNavigationExit(name)` | Automatic with React Navigation and Expo Router. For other navigation, call `trackScreen(name)` on each screen change. There's no exit call. |
 | Global event properties | `Smartlook.instance.analytics.putStringEventProperty(name, value)` | `registerProperties({ name: value })`. Values last for the session, and a property of the same name in a `customEvent` call wins. |
