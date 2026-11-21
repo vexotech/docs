@@ -5,7 +5,7 @@ import path from 'node:path';
 // scripts can import it too.
 
 export const APP = path.join(process.cwd(), 'app');
-const PAGE_FILES = ['page.tsx', 'page.ts', 'page.jsx', 'page.js'];
+export const PAGE_FILES = ['page.tsx', 'page.ts', 'page.jsx', 'page.js'];
 
 // Every route that has a page file, walked from app/ so it always matches the deployed routes.
 // ponytail: skips route groups and dynamic segments — this repo has neither;

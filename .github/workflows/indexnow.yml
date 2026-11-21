@@ -1,0 +1,30 @@
+name: IndexNow
+
+# Once Vercel reports a production deploy as live, submit the docs pages it changed to IndexNow (Bing, Yandex, and
+# others). Vercel creates the GitHub deployment, so this runs only after the new pages are being served.
+on: deployment_status
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.deployment.sha }}
+          fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # HEAD^1 is main before this merge, so the diff is everything the merged PR changed. --no-renames also lists a
+      # moved page's old path, so engines recrawl the old URL and see its redirect or 404.
+      # ponytail: a direct push of several commits submits only the last one's pages.
+      - name: Submit changed pages
+        run: git diff --name-only --no-renames HEAD^1 HEAD | node scripts/indexnow.mjs
