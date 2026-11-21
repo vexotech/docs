@@ -68,7 +68,7 @@ To switch, you replace the LogRocket package, and its Expo config plugin if you 
 |---|---|---|
 | Initialize | `LogRocket.init('<APP_SLUG>')` | `vexo('YOUR_API_KEY')` |
 | Identify the user | `LogRocket.identify(uid)` | `identifyDevice(id)`. To make the device anonymous again, for example when the user signs out, call `identifyDevice(null)`. |
-| User traits | `LogRocket.identify(uid, { name, email })` | No SDK call: `identifyDevice` takes only an ID. Send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
+| User traits | `LogRocket.identify(uid, { name, email })` | `identifyDevice(id, { name, email })`, with `vexo-analytics` 1.15.0 or later. See [User traits](/react-native-guide/integration#user-traits). You can also send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
 | Custom event with properties | `LogRocket.track(name, properties)` | `customEvent(name, properties)`. Pass `{}` when the event has no properties. |
 | Screen tracking | Automatic for each iOS view controller and Android activity. `LogRocket.tagPage(name)` tags a page within one. | Automatic for each route with React Navigation and Expo Router. For other navigation, call `trackScreen(name)` on each screen change. |
 | Global event properties | No documented call | `registerProperties({ name: value })` adds the properties to every event in the session. A property of the same name in a `customEvent` call wins. |
@@ -82,7 +82,7 @@ To switch, you replace the LogRocket package, and its Expo config plugin if you 
 - **Masking is whole-frame.** Vexo blurs every frame of a replay on the device before it's uploaded, with the [Blur session replays](/react-native-guide/mobile-settings#blur-session-replays) setting, which is on by default. No published release of `vexo-analytics` masks individual views yet: `VexoMask`, `VexoUnmask`, and the `masking` option of `vexo()` are in the API, but they don't hide anything. Keep blur on if your app shows sensitive content.
 - **Crash reporting covers JavaScript.** Vexo reports JavaScript errors and crashes, and records JavaScript-thread stalls in the session timeline. It doesn't capture native crashes. To see native crashes in Vexo, import them from Firebase Crashlytics. See [Crashes and handled errors](/react-native-guide/mobile-features/error-triage#crashes-and-handled-errors).
 - **Stack traces use source maps.** Instead of LogRocket's debug file upload, upload your JavaScript source maps with `npx vexo-upload-sourcemaps`. See [Source maps](/react-native-guide/mobile-features/error-triage#source-maps).
-- **Network capture is summary-level.** For each request, Vexo records the URL, status code, and latency, but not headers or bodies. See [Network Stats](/react-native-guide/mobile-features/dashboard/network-stats).
+- **Network headers and bodies are opt-in.** For each request, Vexo records the URL's origin and path, the status code, and the latency. It drops the query string on the device, and records headers and bodies only for the URLs you allow. See [Network Stats](/react-native-guide/mobile-features/dashboard/network-stats).
 - **Pricing is published.** See [Vexo pricing](https://www.vexo.co/pricing).
 
 ## Move your data
