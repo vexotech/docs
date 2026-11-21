@@ -71,7 +71,7 @@ credentials, or other personal data, that text will appear in the replay's Conso
 console output as user-visible data:
 
 - Avoid logging secrets or PII, or strip/gate those logs in production builds.
-- From `vexo-analytics` X.Y.Z, redact or drop messages on the device with `console.beforeSend`.
+- With `vexo-analytics` 1.15.0 or later, redact or drop messages on the device with `console.beforeSend`.
   It receives each whole message (before the 4000-character cap) and its level, and returns the
   string to capture, or `null` to drop it. If it throws or returns anything but a string, the
   message is dropped. Your console output itself is unchanged.
