@@ -2,7 +2,7 @@ import { DocLayout } from '../../../components/DocLayout';
 
 # Subscription
 
-Vexo pricing is **usage-based**: a generous free allowance every month, then you pay for the events you send, plus any seats beyond 2 and any session replays past the included 1,000. There are no plans to pick, no annual contracts, and no overage toggles.
+Vexo pricing is **usage-based**: a generous free allowance every month, then you pay for the events you send, plus any seats beyond 2 and any session replays past the included 1,000. Usage has no tiers to pick, no annual contracts, and no overage toggles. Teams that need single sign-on and an uptime SLA can add the [Business plan](/settings/business), monthly or annually.
 
 ### How it works
 
@@ -87,4 +87,4 @@ On the free plan, event collection **stops** once you reach 500,000 events in a 
 
 Usage-based pricing applies to all new accounts. Accounts still on an earlier tiered plan keep that plan's price and limits until they move to usage-based pricing.
 
-export default ({ children }) => <DocLayout current="subscription" previous={{href: '/settings/billing', label: 'Billing'}} next={{href: '/settings/usage-limits', label: 'Usage and Limits'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout current="subscription" previous={{href: '/settings/billing', label: 'Billing'}} next={{href: '/settings/business', label: 'Business Plan'}}>{children}</DocLayout>

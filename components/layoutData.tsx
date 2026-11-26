@@ -168,6 +168,7 @@ export const sidebarData: SidebarData = [
             { title: 'MCP Server', name: 'mcp-server', href: '/settings/mcp-server' },
             { title: 'Billing', name: 'billing', href: '/settings/billing' },
             { title: 'Subscription', name: 'subscription', href: '/settings/subscription' },
+            { title: 'Business Plan', name: 'business', href: '/settings/business' },
             { title: 'Usage and Limits', name: 'usage-limits', href: '/settings/usage-limits' },
             {
                 name: 'app-settings',

@@ -101,4 +101,4 @@ Events that you turn off or sample out in Event Tracking aren't counted in this 
 | Server-side capture API | 500 messages and 5 MB for each request, and 1,200 requests a minute for each app. Over the rate limit, the API responds with `429`. See [Server-side capture](/server-side/capture#limits). |
 | Paginated API endpoints | The endpoints that return lists, such as apps, people, sessions, screens, custom events, and errors, accept at most 30 items per page (`itemsPerPage`) and 50 requests a minute for each user. Over the rate limit, the API responds with `429`. |
 
-export default ({ children }) => <DocLayout current="usage-limits" previous={{href: '/settings/subscription', label: 'Subscription'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>
+export default ({ children }) => <DocLayout current="usage-limits" previous={{href: '/settings/business', label: 'Business Plan'}} next={{href: '/settings/app-settings/app-general-information', label: 'General Information'}}>{children}</DocLayout>
