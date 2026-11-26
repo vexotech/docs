@@ -101,7 +101,17 @@ curl -X POST https://api.vexo.co/integrations/crashlytics/import \
 
 Use the app's API key, the same key as the SDK. The response counts the rows that Vexo `received`, `imported`, skipped as `duplicates`, and `skipped` because they had no readable `event_timestamp`. Vexo uses `event_id` to skip rows that it already imported, so you can safely send a row again.
 
-Vexo imports every row that you send into this app. It treats `FATAL` and `ANR` crashes as unhandled and `NON_FATAL` ones as handled. To show the screen where a crash happened, set a Crashlytics custom key named `current_screen`, `screen`, or `route`. Imported crashes have no session replay.
+Vexo imports every row that you send into this app. It treats `FATAL` and `ANR` crashes as unhandled and `NON_FATAL` ones as handled. To show the screen where a crash happened, set a Crashlytics custom key named `current_screen`, `screen`, or `route`.
+
+### Link crashes to sessions and replays
+
+With `vexo-analytics` 1.15.0 or later, the SDK writes the current Vexo session into Crashlytics as custom keys: `vexo_device_id`, `vexo_session_id`, and `vexo_session_url`, a link to the session on the Vexo dashboard. Vexo imports a crash that carries `vexo_device_id` and `vexo_session_id` into that session, so the crash's error group lists the session with **Watch replay** when the session was recorded. The SDK needs no setup for this, and adds no Firebase dependency.
+
+Crashes from older SDK versions, and crashes before the SDK starts, have no session keys. Vexo imports each of them into a session of its own, with no replay.
+
+The SDK writes the same keys as tags when your app uses Sentry, so a Sentry issue shows the Vexo session and links to it with `vexo_session_url`. Vexo doesn't import Sentry crashes.
+
+While tracking is off, for example after `disableTracking()`, the SDK clears the keys.
 
 The section shows **Last import** and **Imported crashes** so you can check that the job runs. To pause imports, turn off **Import enabled** and click **Save**.
 
