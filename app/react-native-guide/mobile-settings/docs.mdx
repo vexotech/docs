@@ -27,6 +27,31 @@ On a paid plan, you can set how long a replay can be:
 
 On the free plan, replays record for up to 5 minutes, and you can't change the length.
 
+### Replay triggers
+
+From `vexo-analytics` X.Y.Z, you can keep a session's replay only when something happens in it. Under **Replay triggers**, set any of these:
+
+- **An error or crash happens**: a handled error, an unhandled error, or a crash.
+- **One of these custom events is sent**: the exact names of custom events, for example `checkout_failed`.
+- **One of these screens is visited**: the exact screen names your app reports, for example `Checkout`. Use the original name, not a display name you set under **Screen names**. The screen a session opens on counts.
+
+Type a name and press Enter, or select **Add**. The field suggests your app's custom events and recent screens. Each list holds up to 50 names.
+
+With any trigger set, each device still records every session, and decides when the recording ends:
+
+- If a trigger fired in the session, the device uploads the replay as usual. The replay covers the whole session up to your replay length limit, including what happened before the trigger.
+- If no trigger fired, the device deletes the replay. It's never uploaded, stored, or counted toward your replay allowance.
+
+The session's events, screens, taps, and errors are recorded either way, so analytics don't change. With no trigger set, every recorded session keeps its replay.
+
+Triggers can only drop replays: **Enable session replays**, sampling in your code (`sessionReplaySampleRate`), and `sessionReplay: false` still decide whether a session records at all. Apps on an SDK version before X.Y.Z ignore triggers and keep every replay.
+
+Limits:
+
+- A trigger that fires after the recording reaches your replay length limit doesn't keep the replay. The device decides 5 seconds before the limit.
+- A session that starts within 3 seconds of a deleted replay starts recording up to 3 seconds late.
+- In the first moments of a launch, before the device first syncs with Vexo, the device can't delete a replay yet; that replay is uploaded.
+
 ## Event Tracking
 
 The **Event Tracking** table lists each kind of event that your app sends, how many it sent in the last 30 days, and what it powers in your dashboard. For each row, under **Keep**, choose how much of it Vexo keeps:
