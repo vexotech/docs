@@ -1,0 +1,83 @@
+import { DocLayout } from '../../../../components';
+
+# In-app surveys
+
+In-app surveys ask your users a short question inside your app and show each answer next to the [session replay](/react-native-guide/mobile-features/session-replays-heatmaps) it came from, so you see why users feel the way they do, in their own words.
+
+- **Question types:** NPS (0 to 10), rating (1 to 5), single choice (2 to 6 choices), and open text. A survey has 1 to 5 questions, shown one at a time.
+- **When it shows:** when the app opens, on a screen, after a custom event, or when your code calls `showSurvey`.
+- **Who sees it:** everyone, or the people whose traits match, or a cohort built from person traits, sampled to a share of them. Each person answers a survey once per device.
+
+In-app surveys need vexo-analytics with surveys support. They aren't available for websites.
+
+## Show surveys in your app
+
+Render `<VexoSurveys />` once, as the last child of your root layout, so a survey can cover your screens:
+
+```jsx
+import { VexoSurveys } from 'vexo-analytics';
+
+export default function RootLayout() {
+  return (
+    <>
+      <Stack />
+      <VexoSurveys />
+    </>
+  );
+}
+```
+
+The SDK fetches the surveys a device can see only while `<VexoSurveys />` is mounted, so apps that don't render it send no extra requests. A survey shows as a sheet at the bottom of the screen. The SDK shows at most one survey per session.
+
+To show a survey at a moment that you choose, give it the **Only from code (showSurvey)** trigger and call `showSurvey` with the survey's ID, which is the last part of its URL in the dashboard:
+
+```js
+import { showSurvey } from 'vexo-analytics';
+
+const shown = showSurvey('SURVEY_ID');
+```
+
+`showSurvey` returns `false` if Vexo didn't deliver that survey to this device (it isn't running, or the person isn't in its audience, or they already answered it) or if another survey is on screen.
+
+## Create a survey
+
+1. In the sidebar, click **Surveys**, and then click **New survey**.
+2. Enter a name for the survey.
+3. Add 1 to 5 questions. For a **Single choice** question, enter one choice per line.
+4. Under **When to show it**, choose a trigger. For **On a screen**, enter the screen's name as Vexo records it (the name that you see in your replays and dashboard). For **After a custom event**, enter the [custom event](/react-native-guide/mobile-features/custom-events)'s name.
+5. Under **Who sees it**, optionally set the share of people who can see it, choose a cohort, or add person traits. All trait conditions must match.
+6. Click **Save as draft**, and then click **Launch** on the survey's page.
+
+You can stop a running survey and resume it later. You can change a survey's name, trigger, and audience at any time, but its questions are fixed once you launch it, so every answer keeps meaning what its question said. To ask something else, create a new survey.
+
+### How Vexo picks who sees a survey
+
+Vexo decides on its servers, each time the app starts or returns to the foreground. A device gets a running survey only if all of these are true:
+
+- The device hasn't answered or dismissed the survey.
+- The device falls in the survey's sample. The same device always falls in or out, so raising the share adds people without reshuffling them.
+- The person matches every trait condition. Traits come from [`identifyDevice`](/react-native-guide/mobile-features/people).
+- The person is in the survey's cohort, if it has one. A survey can target a [cohort](/react-native-guide/mobile-features/cohorts-segments) built only from person traits; cohorts built from events aren't available for surveys yet. If you delete the cohort, the survey stops showing until you choose another one.
+
+## Read the results
+
+Click a survey in **Surveys** to see its results over the survey's whole life:
+
+- **NPS** questions show the score (the percentage of promoters, who answered 9 or 10, minus the percentage of detractors, who answered 0 to 6) and how many people gave each answer.
+- **Rating** questions show the average rating and how many people gave each rating.
+- **Single choice** questions show how many people picked each choice.
+- **Responses** lists each answered response, newest first, with all of its answers. Click **Watch replay** to open the session replay of the session in which the person answered, or **Go to session** when the session has no replay.
+
+A person who closes the survey after answering some questions counts as a response with those answers. A person who closes it before answering counts as dismissed. Dismissals aren't responses, and they aren't billed.
+
+## Privacy
+
+- The survey sheet is wrapped in `VexoMask`, so its answers are masked in session replays once masking is available in the SDK's recording engine. Until then, replays are protected by the replay blur setting, as for every other input in your app.
+- With `requireConsent`, the SDK fetches and sends nothing before `grantConsent()`. After `disableTracking()`, it fetches no surveys and sends no answers.
+- Answers are stored by Vexo and aren't sent to any other service. Erasing a person's data deletes their survey responses, and responses are kept as long as your app's session data.
+
+## Pricing
+
+Every account gets **1,500 answered survey responses each billing period** for free, across all its apps. Without billing, your surveys pause when you reach 1,500 and start again the next billing period; responses to surveys already on screen are still saved. With billing, surveys keep running, and responses past 1,500 in a billing period cost **$0.03 each**. Your survey usage for the current period shows on the **Surveys** page.
+
+export default ({ children }) => <DocLayout current="surveys" previous={{href: '/react-native-guide/mobile-features/custom-events', label: 'Custom Events'}} next={{href: '/react-native-guide/mobile-features/ask-vexo', label: 'Ask Vexo and AI Summaries'}}>{children}</DocLayout>
