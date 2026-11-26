@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
     title: 'Revenue analytics',
-    description: 'Connect RevenueCat or Stripe to see MRR, LTV by cohort, and your paywall funnel next to how people use your app.',
+    description: 'Connect RevenueCat or Stripe to see MRR, lifetime value by cohort, and your paywall funnel in Vexo, next to how people use your app. Available on paid plans.',
 }
 
 export default function Home() {
