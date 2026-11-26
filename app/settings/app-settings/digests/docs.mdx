@@ -1,0 +1,37 @@
+import { DocLayout } from '../../../../components';
+
+# Email digests
+
+An email digest is a scheduled summary of an app's key metrics and top errors. Vexo sends it daily or weekly to the app owner or to the recipients that you choose.
+
+## Set up a digest
+
+You need write access to the app. Each app has one digest.
+
+1. Open the app's **App Settings**, and go to **Anomaly alerts & digests**.
+2. In **Email digest**, turn on **Send this digest**.
+3. In **Cadence**, select **Daily** or **Weekly**.
+4. Optional: in **Recipients**, enter email addresses separated by commas. If you leave it empty, the digest goes to the app owner. Recipients don't need to be on the app's team.
+5. Click **Save**.
+
+To stop the digest, turn off **Send this digest** and click **Save**.
+
+## When Vexo sends it
+
+Vexo sends digests once a day at 13:00 UTC. You can't change the time or time zone. The first digest goes out at the first 13:00 UTC run after you turn it on.
+
+- **Daily**: every day.
+- **Weekly**: every 7 days, counted from the first digest. A weekly digest doesn't land on a fixed weekday.
+
+## What a digest contains
+
+The subject line is *App name — your daily Vexo digest*, or *your weekly Vexo digest*. The email contains:
+
+- **Key metrics**: **Events**, **Active users**, **Crash-free sessions**, and **Errors**, each with its change since the previous period. Green shows a change for the better and red a change for the worse. A daily digest compares yesterday with the day before. A weekly digest compares the last 7 days with the 7 days before them. Periods end at 00:00 UTC on the day that the digest is sent.
+- **Top errors**: up to 5 of the app's most frequent errors, with their counts.
+
+Errors and crash-free sessions come from your mobile app.
+
+To be told as soon as a metric changes, instead of waiting for the digest, turn on alerts in the app's **App Settings**, under **Alerts** and **Anomaly alerts & digests**.
+
+export default ({ children }) => <DocLayout current="digests" previous={{href: '/settings/app-settings/app-general-information', label: 'General Information'}} next={{href: '/settings/app-settings/webhooks', label: 'Webhooks'}}>{children}</DocLayout>
