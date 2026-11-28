@@ -5,6 +5,32 @@ import Link from 'next/link'
 
 For dashboard, integration, and API changes, see the product changelog at [https://www.vexo.co/changelog](https://www.vexo.co/changelog).
 
+## 1.15.0 (2026-11-26)
+
+### Features
+
+* Feature flags in your app: `useFeatureFlag()`, `getFeatureFlag()`, and the `bootstrapFlags` option. See [Feature flags](/react-native-guide/mobile-features/feature-flags)
+* Wait for consent at startup: `vexo('YOUR_API_KEY', { requireConsent: true })` collects and sends nothing until you call `grantConsent()`. Apps that don't pass `requireConsent` track as before. See [Store compliance](/react-native-guide/store-compliance)
+* User traits: `identifyDevice(id, traits)` attaches properties such as `name`, `email`, and `plan` to the user. See [User traits](/react-native-guide/integration#user-traits)
+* `console.beforeSend` redacts or drops console messages on the device. See [Console Logs](/react-native-guide/mobile-features/console-logs)
+* Request and response headers and bodies, off by default: `network.captureHeadersAndBodies` records them for the URLs you choose. See [Headers and bodies](/react-native-guide/mobile-features/dashboard/network-stats#headers-and-bodies)
+
+### Changed
+
+* Network capture drops each request's query string and fragment on the device, so the replay **Network** tab and **Network stats** show the origin and path only. To keep query strings, pass `network: { captureQueryParams: true }`. See [Network Stats](/react-native-guide/mobile-features/dashboard/network-stats)
+* The iOS engine ships inside the package instead of as the `VexoAnalytics` pod. Run `pod install` after you update, and remove any `pod 'VexoAnalytics'` line from your Podfile
+
+### Bug Fixes
+
+* `disableTracking()` deletes a session recording in progress instead of uploading it. A recording stopped before the device's first sync with Vexo is still uploaded
+* React Native Web: `VexoProvider` loads the web tracker only once it has an API key
+
+## 1.14.1 (2026-11-17)
+
+### Changed
+
+* README and npm page updates only, with no code changes
+
 ## 1.14.0 (2026-10-24)
 
 ### Features

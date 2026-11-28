@@ -64,7 +64,7 @@ To switch, you replace the UXCam package with `vexo-analytics` and call `vexo()`
 |---|---|---|
 | Initialize | `RNUxcam.optIntoVideoRecording()`, then `RNUxcam.startWithConfiguration({ userAppKey })` | `vexo('YOUR_API_KEY')` |
 | Identify the user | `RNUxcam.setUserIdentity(id)` | `identifyDevice(id)`. To make the device anonymous again, for example when the user signs out, call `identifyDevice(null)`. |
-| User properties | `RNUxcam.setUserProperty(name, value)` | No SDK call. Send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
+| User properties | `RNUxcam.setUserProperty(name, value)` | `identifyDevice(id, { [name]: value })`, with `vexo-analytics` 1.15.0 or later. See [User traits](/react-native-guide/integration#user-traits). You can also send traits from your backend with an [identify](/server-side/capture#identify-a-person). |
 | Custom event with properties | `RNUxcam.logEvent(name, properties)` | `customEvent(name, properties)`. Pass `{}` when the event has no properties. |
 | Screen tracking | `RNUxcam.tagScreenName(name)` on each screen | Automatic with React Navigation and Expo Router. For other navigation, call `trackScreen(name)` on each screen change. |
 | Global event properties | No documented call | `registerProperties({ name: value })` adds the properties to every event in the session. A property of the same name in a `customEvent` call wins. |
